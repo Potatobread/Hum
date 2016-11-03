@@ -1,0 +1,35 @@
+# include <stdio.h>
+# define L 5
+# define C 5
+
+int main () {
+	int i,j,mat[L][C],soma_a=0,soma_b=0,soma_c=0,soma_d=0;
+	
+	for(j=0;j<L;j++){
+		for(i=0;i<C;i++)
+			scanf("%d", &mat[j][i]);
+	}
+	
+	for(j=0;j<L;j++)
+		soma_a = soma_a + mat[j][j];   	
+	
+	x = 2;
+	for(j=0;j<L;j++){
+		soma_b = soma_b + mat[x][j]
+		x--;
+	}	
+	
+	y = 4;
+	for(j=0;j<L;j++){
+		for(i=0;i<C;i++){
+			soma_c = soma_c + mat[j][i];
+						
+		}
+	}
+	
+	printf("%d\n", soma_a);
+	printf("%d\n", soma_b);
+	
+	
+	return 0;
+}
