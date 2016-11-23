@@ -1,0 +1,44 @@
+# include <stdio.h>
+
+int main (){
+	float salario,aumento,s_novo,porcentagem;
+	
+	scanf("%f", &salario);
+	
+	if (salario >= 0 && salario <= 400.00)
+	{
+		porcentagem = 15;
+		aumento = salario * (porcentagem/100);
+		s_novo = salario + aumento;
+	}
+	else if (salario >= 400.01 && salario <= 800.00)
+	{
+		porcentagem = 12;
+		aumento = salario * (porcentagem/100);
+		s_novo = salario + aumento;
+	}
+	else if (salario >= 800.01 && salario <= 1200.00)
+	{
+		porcentagem = 10;
+		aumento = salario * (porcentagem/100);
+		s_novo = salario + aumento;
+	}
+	else if (salario >= 1200.01 && salario <= 2000.00)
+	{
+		porcentagem = 7;
+		aumento = salario * (porcentagem/100);
+		s_novo = salario + aumento;
+	}
+	else
+	{
+		porcentagem = 4;
+		aumento = salario * (porcentagem/100);
+		s_novo = salario + aumento;
+	}
+	
+	printf("Novo salario: %.2f\n", s_novo);
+	printf("Reajuste ganho: %.2f\n", aumento);
+	printf("Em percentual: %f %%\n", porcentagem);
+	
+	return 0;
+}
