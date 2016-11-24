@@ -2,20 +2,9 @@
 
 int fatorial (int f){
 	int fat = 1;
-	while(f >= 1){
-		fat = fat * f;
+	while(f > 1){
+		fat *= f;
 		f--;
 	} 
 	return fat;
-}
-
-int main (){
-	int f;
-	
-	printf("Digite um numero: ");
-	scanf("%d", &f);
-	
-	printf("O fatorial do numero digitado %d\n", fatorial(f));
-	
-	return 0;
 }
