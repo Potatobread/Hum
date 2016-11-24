@@ -10,7 +10,8 @@ typedef struct {
 
 int main (){
 	carro vetcarro[TOT];
-	int i,x;
+	int i;
+	float x;
 	
 	for(i=0; i<TOT; i++){
 		printf("Carro %d\n", i+1);
@@ -27,6 +28,7 @@ int main (){
 		
 	printf("Digite o preco que deseja pagar: ");
 	scanf(" %f", &x);
+	
 	for(i=0; i<TOT; i++){
 		if (vetcarro[i].preco <= x){
 			printf("Carro %d\n", i+1);
@@ -34,7 +36,7 @@ int main (){
 			printf("Cor %s\n", vetcarro[i].cor);
 			printf("Ano %d\n", vetcarro[i].ano);
 			printf("\n");				
-		}	
-	}
+		}
+	}	
 	return 0;
 }
