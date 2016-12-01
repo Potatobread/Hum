@@ -1,5 +1,5 @@
 # include <stdio.h>
-# define TOT 2
+# define TOT 4
 
 typedef struct {
 	char marca[15];
@@ -10,8 +10,9 @@ typedef struct {
 
 int main (){
 	carro vetcarro[TOT];
-	int i;
+	int i,b;
 	float x;
+	char y[10],a[10],c[10];
 	
 	for(i=0; i<TOT; i++){
 		printf("Carro %d\n", i+1);
@@ -37,6 +38,37 @@ int main (){
 			printf("Ano %d\n", vetcarro[i].ano);
 			printf("\n");				
 		}
-	}	
+	}
+	printf("\n");
+	
+	printf("Diga a marca que deseja: ");
+	scanf(" %s", y);
+	
+	for(i=0; i<TOT; i++){
+		if (vetcarro[i].marca == y){
+			printf("Carro %d\n", i+1);
+			printf("Preco %f\n", vetcarro[i].preco);
+			printf("Ano %d\n", vetcarro[i].ano);
+			printf("Cor %s\n", vetcarro[i].cor);
+			printf("\n");
+		}
+	}
+	printf("\n");
+	
+	printf("Escreva uma marca: ");
+	scanf(" %s", a);
+	printf("Digite um ano: ");
+	scanf(" %d", &b);
+	printf("Escreva a cor: ");
+	scanf(" %s", c);
+	
+	for(i=0; i<TOT; i++){
+		if ((vetcarro[i].marca == a) && (vetcarro[i].ano == b) && (vetcarro[i].cor == c)){
+			printf("Carro %d\n", i+1);
+			printf("Preco %f\n", vetcarro[i].preco);
+			printf("\n");
+		}
+	}
+		
 	return 0;
 }
