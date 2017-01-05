@@ -38,6 +38,8 @@ vir a dos funcionarios. */
 /* No momento necessario atribuir essa parte de codigo do departamento como sendo o 
 departamento inteiro em si.*/
 
+
+//Funçao utilizada para verificar se uma data inserida pelo usuario é valida.
 int ValidarData(int dia,int mes,int ano){	
 	if((dia >= 1 && dia <= 31) && (mes >= 1 && mes <= 12) && (ano >= 1900 && ano <= 2100)){
 		if(ano % 4 == 0 && (ano % 400 == 0 || ano % 100 != 0)){ 
@@ -260,7 +262,7 @@ void cadastrar(){
 			break;
 		}	   
 	}
-	printf("Funcionário cadastrado com sucesso!\n");
+	printf("Funcionario cadastrado com sucesso!\n");
 	printf("\n");
 	i++;
 
@@ -269,76 +271,94 @@ void cadastrar(){
 }
 
 void alterar(){
-	int resp,fun,cargo,cont;
-	char resp2;
+	int resp,resp2,resp3,cont=0,cont2=0,j,a,x,y,cargo;
+	char cpf[12],cpf2[12];
 	
-	printf("Digite o numero do funcionario que deseja alterar: ");
-	scanf(" %d", &fun);
-	printf("Deseja alterar:\n");
-	printf("1 - Nome\n2 - CPF\n3 - Data de Nascimento\n4 - Data de Admissao\n5 - Cargo\n0 - Sair\n");
-	scanf(" %d", &resp);
-	
-	while(resp != 0){
-		while((resp2 != 's') || (resp2 != 'S')){
-			switch(resp){
-				case 1:
-				   	printf("Antigo NOME: %s\n", func[fun].nome);
-				   	printf("Digite o novo nome: ");
-				   	scanf(" %s", func[fun].nome);
-				   	printf("Novo NOME: %s\n", func[fun].nome);
-				   	break;
-				case 2:
-				   	printf("Antigo CPF: %s\n", func[fun].cpf);
-				   	printf("Digite o novo CPF: ");
-					scanf(" %s", func[fun].cpf);
-				   	printf("Novo CPF: %s\n", func[fun].cpf);
-				   	break;
-				case 3:
-					printf("Antiga Data de Nascimento: %d %d %d\n", func[fun].dt_nasc.dia,func[fun].dt_nasc.mes,func[fun].dt_nasc.ano);
-					printf("Digite a nova data(DD MM AA): ");
-					scanf("%d %d %d", &func[fun].dt_nasc.dia,&func[fun].dt_nasc.mes,&func[fun].dt_nasc.ano);
-					printf("Nova Data de Nascimento: %d %d %d\n", func[fun].dt_nasc.dia,func[fun].dt_nasc.mes,func[fun].dt_nasc.ano);
-					break;
-				case 4:
-					printf("Antiga Data de Admissao: %d %d %d\n", func[fun].dt_adm.dia,func[fun].dt_adm.mes,func[fun].dt_adm.ano);
-					printf("Digite a nova data(DD MM AA): ");
-					scanf("%d %d %d", &func[fun].dt_adm.dia,&func[fun].dt_adm.mes,&func[fun].dt_adm.ano);
-					printf("Nova Data de Admissao: %d %d %d\n", func[fun].dt_adm.dia,func[fun].dt_adm.mes,func[fun].dt_adm.ano);
-					break;  
-				case 5:
-				   	printf("Antigo Cargo: %d\n", func[fun].cargo);
-				   	printf("Digite o novo cargo: ");
-				   	scanf(" %d", &cargo);
-				   	func[fun].cargo = cargo;
-				   	printf("Novo Cargo: %d\n", func[fun].cargo);
-				   	break;
-				default:
-				   	printf("Try again\n");
-				   	break;
-		  	}
-		  	printf("Deseja continuar alterando os dados desse funcionario <s/n>: ");
-        	scanf(" %c", &resp2);
-        	if((resp2 == 'S') || (resp2 == 's')){
-				printf("1 - Nome\n2 - CPF\n3 - Data de Nascimento\n4 - Data de Admissao\n5 - Cargo\n0 - Sair\n");
-	    		scanf(" %d", &resp);
+	while(resp!=2){
+		printf("Qual o CPF do funcionario?: ");
+   		scanf(" %s", cpf);
+		for(j=0;j<F;j++){
+			a = strcmp(func[j].cpf,cpf);
+			if(a==0){
+				cont++;
+				x = j;
 			}
-			else{
-				cont = 1;
-			}
-			if(cont==1){
+		}
+		if(cont==0){
+			printf("CPF %s nao cadastrado!\n", cpf);
+			printf("---------------\n0 - Voltar ao Menu Funcionario\n1 - Digitar um novo cpf\n---------------\n");
+			scanf(" %d", &resp);
+			if(resp==0)
+				return;
+		}
+		else{
+			printf("MENU ALTERAR FUNCIONARIO(CPF: %s)\n", cpf);
+			printf("1 - CPF\n2 - Nome\n3 - Data de Nascimento\n4 - Data de Admissao na empresa\n5 - Cargo\n0 - Sair\n");
+			scanf(" %d", &resp2);
+			
+			while(resp2!=0){
+				switch(resp2){
+					case 1:
+						while(resp3!=2){
+							printf("Antigo CPF: %s\n", func[x].cpf);
+				   			printf("Digite o novo CPF: ");
+				   			scanf(" %s", cpf2);
+							for(j=0;j<F;j++){
+								a = strcmp(func[j].cpf,cpf2);
+								if(a==0){
+									cont2++;
+									y = j;
+								}
+							}
+							if(cont2==0){
+								printf("CPF %s ja cadastrado!\n", cpf2);
+								printf("---------------\n0 - Voltar ao Menu Alterar Funcionario\n1 - Digitar um novo cpf\n---------------\n");
+								scanf(" %d", &resp3);
+								if(resp==0)
+									break;
+							}
+							else{
+								strcpy(func[y].cpf,cpf2);
+								printf("CPF alterado com sucesso!\n");			   		
+				   				break;	
+							}				   			
+					   	}
+					case 2:
+						printf("Antigo NOME: %s\n", func[x].nome);
+				   		printf("Digite o novo nome: ");
+				   		scanf(" %s", func[x].nome);
+				   		printf("Novo NOME: %s\n", func[x].nome);
+				   		break;
+					case 3:
+						printf("Antiga Data de Nascimento: %d %d %d\n", func[x].dt_nasc.dia,func[x].dt_nasc.mes,func[x].dt_nasc.ano);
+						printf("Digite a nova data(DD MM AA): ");
+						scanf("%d %d %d", &func[x].dt_nasc.dia,&func[x].dt_nasc.mes,&func[x].dt_nasc.ano);
+						printf("Nova Data de Nascimento: %d %d %d\n", func[x].dt_nasc.dia,func[x].dt_nasc.mes,func[x].dt_nasc.ano);
+						break;
+					case 4:
+						printf("Antiga Data de Admissao: %d %d %d\n", func[x].dt_adm.dia,func[x].dt_adm.mes,func[x].dt_adm.ano);
+						printf("Digite a nova data(DD MM AA): ");
+						scanf("%d %d %d", &func[x].dt_adm.dia,&func[x].dt_adm.mes,&func[x].dt_adm.ano);
+						printf("Nova Data de Admissao: %d %d %d\n", func[x].dt_adm.dia,func[x].dt_adm.mes,func[x].dt_adm.ano);
+						break;  
+					case 5:
+				   		printf("Antigo Cargo: %d\n", func[x].cargo);
+				   		printf("Digite o novo cargo: ");
+				   		scanf(" %d", &cargo);
+				   		func[x].cargo = cargo;
+				   		printf("Novo Cargo: %d\n", func[x].cargo);
+				   	   	break;
+					default:
+				   		printf("Try again\n");
+				   		break;
+				}
+				printf("Saiu\n");
 				break;
 			}
 		}
-		printf("Digite o numero do funcionario que deseja alterar(para sair digite um numero negativo): ");
-		scanf(" %d", &fun);
-		if(fun < 0){
-			break;
-		}
-		printf("Deseja alterar:\n");
-		printf("1 - Nome\n2 - CPF\n5 - Cargo\n0 - Sair\n");
-		scanf(" %d", &resp);
 	}
 }
+
 
 void transferir(){
 	printf("O usuario foi transferido\n");
@@ -463,4 +483,4 @@ void menurel(){
 int main(){
 	menurel();
 	return 0;
-};
+};    
