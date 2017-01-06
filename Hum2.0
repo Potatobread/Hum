@@ -412,7 +412,7 @@ void alterar(){
 
 //Objetivo: Transferir um funcionario para outro departamento.
 void transferir(){
-	int resp,cod,j,cont=0,x,y,a;
+	int resp,cod,j,cont=0,x,y,z,a,cod2;
 	char cpf[12];
 	
 	while(resp!=2){
@@ -436,6 +436,7 @@ void transferir(){
 				return;
 		}
 		else{
+			printf("Quantidade de func. dentro do departamento q perdera gente: %d\n", dep[x-1].quant);//EXCLUIR FINAL
 			break;
 		}
 	}
@@ -461,20 +462,130 @@ void transferir(){
 				return;
 		}
 		else{
-			printf("SAIU, DESSA DISGRACA\n");
+			printf("Antigo Departamento: %d\n", func[y].dept); //EXCLUIR NO FINAL
+			break;
+		}
+	}
+	resp = 3;
+	cont = 0;
+	while(resp!=2){
+		printf("Qual o codigo do departamento destino?: ");
+		scanf(" %d", &cod2);
+		for(j=0;j<10;j++){
+			if(dep[j].cod == cod2){
+				cont++;
+			}			
+		}
+		if(cont==0){
+			printf("Departamento %d nao existe!\n", cod2);
+			printf("Codigo e Nome dos Departamentos q existem: \n");
+			for(j=0;j<10;j++){
+				printf("Code: %d, Nome: %s\n", dep[j].cod,dep[j].nome);
+			}
+			printf("---------------\n0 - Para retornar ao Menu Funcionario\n1 - Digitar um novo codigo de departamento\n---------------\n");
+			scanf(" %d", &resp);
+			if(resp==0)
+				return;
+		}
+		else{
+			func[y].dept = cod2;
+			printf("Novo Departamento: %d\n", func[y].dept);
+			dep[x-1].quant = dep[x-1].quant - 1;
+			for(j=0;j<10;j++){
+				if(dep[j].cod == cod2){
+					dep[j].quant++;
+					z = j;
+				}
+			}
+			printf("Transferencia realizada com sucesso!\n");
+			printf("Quantidade de funcioarios no departamento q perdeu gente: %d\n", dep[x-1].quant); //EXCLUIR FINAL
+			printf("Quantidade de func. no departamento q ganhou gente: %d\n", dep[z].quant);//EXCLUIR FINAL
 			break;
 		}
 	}
 }
 
-
 //Objetivo: Demitir um funcionario.
 void demitir(){
-	printf("O funcionario foi demitido\n");
+	int resp,j,cod,cont=0,x,a;
+	char cpf[12],resp2;
+	
+	while(resp!=2){
+		printf("Qual o codigo do departamento?: ");
+		scanf(" %d", &cod);
+		for(j=0;j<10;j++){
+			if(dep[j].cod == cod){
+				cont++;
+				x = j+1;	
+			}			
+		}
+		if(cont==0){
+			printf("Departamento %d nao existe!\n", cod);
+			printf("Codigo e Nome dos Departamentos q existem: \n");
+			for(j=0;j<10;j++){
+				printf("Code: %d, Nome: %s\n", dep[j].cod,dep[j].nome);
+			}
+			printf("---------------\n0 - Para retornar ao Menu Funcionario\n1 - Digitar um novo codigo de departamento\n---------------\n");
+			scanf(" %d", &resp);
+			if(resp==0)
+				return;
+		}
+		else{
+			break;
+		}
+	}
+	resp = 3;
+	cont = 0;
+	while(resp!=2){
+		printf("Qual o cpf?: ");
+		scanf(" %s", cpf);
+		for(j=0;j<10;j++){
+			if(func[j].dept==x){
+				a = strcmp(func[j].cpf,cpf);
+				if (a==0){
+					cont++;
+				}	
+			}
+		}
+		if(cont==0){
+			printf("Departamento %d nao possui funcionario com o cpf %s!\n", x,cpf);
+			printf("---------------\n0 - Para retornar ao Menu Funcionario\n1 - Digitar outro cpf\n---------------\n");
+			scanf(" %d", &resp);
+			if(resp==0)
+				return;
+		}
+		else{
+			break;
+		}
+	}
+	while((resp2!='s') || (resp2!='n')){
+		printf("Deseja realmente demitir o funcionario? <s/n>: ");
+		scanf(" %c", &resp2);
+		if(resp2=='n'){
+			printf("Funcionario não demitido!\n");
+			return;
+		}
+		if(resp2=='s'){
+			for(j=0;j<F;j++){
+				a = strcmp(func[j].cpf,cpf);
+				if (a==0){
+					strcpy(func[j+1].cpf,func[j].cpf);
+					strcpy(func[j+1].nome,func[j].nome);
+					func[j].dt_nasc = func[j+1].dt_nasc;
+					func[j].dt_adm = func[j+1].dt_adm;
+					func[j].cargo = func[j+1].cargo;
+					func[j].dept = func[j+1].dept;
+				}
+			}
+			dep[x-1].quant = dep[x-1].quant - 1;
+			printf("Funcionario demitido com sucesso!\n");
+			break;
+		}
+	}	
 }
 
-
-void consulta(){
+//Objetivo: Mostrar a informaçoes de um funcionario especifico.
+void pesquisar(){
 	char cpf[12];
 	int a,j;
 	printf("Digite o cpf do funcionario: ");
@@ -486,6 +597,13 @@ void consulta(){
 	}
 }
 
+void listarfunc(){
+	int j;
+	printf("LISTA DE FUNCIONARIOS\n");
+	for(j=0;j<10;j++){
+		printf("--------------------\nDepartamento)
+	}
+}
 
 //PARTE DOS MENUS
 
@@ -513,9 +631,10 @@ void menufunc(){
 	   			demitir();
 	   			break;
 	   		case 5:
-	   			consulta();
+	   			pesquisar();
 	   			break;
 	   		case 6:
+	   			listarfunc();
 	   			break;
 	   		case 7:
 	   			break;
