@@ -28,6 +28,7 @@ int prox[F];
 int controle[2][11];
 tDepartamento dep[10];
 
+
 /* Necessario tbm criar uma variavel q conte os departamentos ja cadastrados 
 Duvidas que permanecem: ordem de onde starta as porra, onde inserir a porra desses
 prox e controle, acho tbm q o unico define necessario eh o de funcionario.*/
@@ -35,8 +36,9 @@ prox e controle, acho tbm q o unico define necessario eh o de funcionario.*/
 /* Aparenta-se tbm q primeiro ira ser feito registro dos departamentos para depois
 vir a dos funcionarios. */
 
-/* No momento necessario atribuir essa parte de codigo do departamento como sendo o 
-departamento inteiro em si.*/
+/* No momento, O CODIGO DO DEPARTAMENTO ESTA SENDO IGUAL AO NUMERO CORRESPONDENTE DE 
+DEPARTAMENTO, CODIGO 1 == DEPARTAMENTO 1, NUM SEI SE É PRA FICAR ASSIM, MAS NO MOMENTO
+ESTA.*/
 
 
 /*
@@ -44,8 +46,10 @@ Objetivo: verificar se uma data eh valida.
 Parâmetros: dia, mes, ano.
 Retorno: 1 se for data valida ou 0 se nao. 
 */
+
+//NO FINAL, AJEITAR O ANO.
 int ValidarData(int dia,int mes,int ano){	
-	if((dia >= 1 && dia <= 31) && (mes >= 1 && mes <= 12) && (ano >= 1900 && ano <= 2100)){
+	if((dia >= 1 && dia <= 31) && (mes >= 1 && mes <= 12) && (ano >= 00 && ano <= 99)){
 		if(ano % 4 == 0 && (ano % 400 == 0 || ano % 100 != 0)){ 
 			if(dia == 29 && mes == 2){
 				return 1;
@@ -254,7 +258,7 @@ void cadastrar(){
 		}
 		if(cont2 == 0){
 			printf("Departamento %d nao existe!\n", func[i].dept);
-			printf("Codigo e Nome dos Departamentos q existe: \n");
+			printf("Codigo e Nome dos Departamentos q existem: \n");
 			for(j=0;j<10;j++){
 				printf("Code: %d, Nome: %s\n", dep[j].cod,dep[j].nome);
 			}
@@ -408,8 +412,61 @@ void alterar(){
 
 //Objetivo: Transferir um funcionario para outro departamento.
 void transferir(){
-	printf("O usuario foi transferido\n");
+	int resp,cod,j,cont=0,x,y,a;
+	char cpf[12];
+	
+	while(resp!=2){
+		printf("Qual o codigo do departamento origem?: ");
+		scanf(" %d", &cod);
+		for(j=0;j<10;j++){
+			if(dep[j].cod == cod){
+				cont++;
+				x = j+1;	
+			}			
+		}
+		if(cont==0){
+			printf("Departamento %d nao existe!\n", cod);
+			printf("Codigo e Nome dos Departamentos q existem: \n");
+			for(j=0;j<10;j++){
+				printf("Code: %d, Nome: %s\n", dep[j].cod,dep[j].nome);
+			}
+			printf("---------------\n0 - Para retornar ao Menu Funcionario\n1 - Digitar um novo codigo de departamento\n---------------\n");
+			scanf(" %d", &resp);
+			if(resp==0)
+				return;
+		}
+		else{
+			break;
+		}
+	}
+	resp = 3;
+	cont = 0;
+	while(resp!=2){
+		printf("Qual o cpf do funcionario?: ");
+		scanf(" %s", cpf);
+		for(j=0;j<10;j++){
+			if(func[j].dept==x){
+				a = strcmp(func[j].cpf,cpf);
+				if (a==0){
+					cont++;
+					y = j;
+				}	
+			}
+		}
+		if(cont==0){
+			printf("Departamento %d nao possui funcionario com o cpf %s!\n", x,cpf);
+			printf("---------------\n0 - Para retornar ao Menu Funcionario\n1 - Digitar outro cpf\n---------------\n");
+			scanf(" %d", &resp);
+			if(resp==0)
+				return;
+		}
+		else{
+			printf("SAIU, DESSA DISGRACA\n");
+			break;
+		}
+	}
 }
+
 
 //Objetivo: Demitir um funcionario.
 void demitir(){
@@ -431,41 +488,6 @@ void consulta(){
 
 
 //PARTE DOS MENUS
-
-//Objetivo: acesso as configuraçoes de Departamentos.
-void menudep(){
-	int resp;
-	printf("MENU DEPARTAMENTO\n");
-	printf("===============\n1 - Criar Departamento\n2 - Alterar nome do Departamento\n3 - Consultar Departamento\n4 - Listar Departamentos\n5 - Excluir Departamento\n0 - Sair\n===============\n");
-	scanf("%d", &resp);
-		while(resp != 0){
-			switch(resp){
-				case 0:
-					printf("Programa finalizado\n");
-					break;
-				case 1:
-					criardep();
-					break;
-				case 2:
-					alterardep();
-					break;	
-    			case 3:
-    				consultardep();
-		   			break;
-		   		case 4:
-		   			listardep();
-		   			break;
-		   		case 5:
-		   			excluirdep();
-		   			break;
-				default:
-					printf("Nop,para de tentar achar bug ai,vlw\n");
-					break;
-			};
-			printf("===============\n1 - Criar Departamento\n2 - Alterar nome do Departamento\n3 - Consultar Departamento\n4 - Listar Departamentos\n5 - Excluir Departamento\n0 - Sair\n===============\n");
-			scanf("%d", &resp);
-		}
-}
 
 //Objetivo: acesso as configuraçoes de Funcionarios.
 void menufunc(){
@@ -506,11 +528,46 @@ void menufunc(){
 	}
 }
 
-//Objetivo: acessar os menus departamento e funcionario.
-void menurel(){
+//Objetivo: acesso as configuraçoes de Departamentos.
+void menudep(){
 	int resp;
-	printf("MENU RELATORIO\n");
-	printf("===============\n1 - Departamento\n2 - Funcionario\n0 - Sair\n===============\n");
+	printf("MENU DEPARTAMENTO\n");
+	printf("===============\n1 - Criar Departamento\n2 - Alterar nome do Departamento\n3 - Consultar Departamento\n4 - Listar Departamentos\n5 - Excluir Departamento\n0 - Sair\n===============\n");
+	scanf("%d", &resp);
+		while(resp != 0){
+			switch(resp){
+				case 0:
+					printf("Programa finalizado\n");
+					break;
+				case 1:
+					criardep();
+					break;
+				case 2:
+					alterardep();
+					break;	
+    			case 3:
+    				consultardep();
+		   			break;
+		   		case 4:
+		   			listardep();
+		   			break;
+		   		case 5:
+		   			excluirdep();
+		   			break;
+				default:
+					printf("Nop,para de tentar achar bug ai,vlw\n");
+					break;
+			};
+			printf("===============\n1 - Criar Departamento\n2 - Alterar nome do Departamento\n3 - Consultar Departamento\n4 - Listar Departamentos\n5 - Excluir Departamento\n0 - Sair\n===============\n");
+			scanf("%d", &resp);
+		}
+}
+
+//Objetivo: acessar os menus departamento e funcionario.
+void menuprin(){
+	int resp;
+	printf("MENU PRINCIPAL\n");
+	printf("===============\n1 - Funcionario\n2 - Departamento\n0 - Sair\n===============\n");
 	scanf(" %d", &resp);
 	while(resp != 0){
 		switch(resp){
@@ -518,22 +575,22 @@ void menurel(){
 				printf("Programa finalizado\n");
 				break;
 			case 1:
-				menudep();
+				menufunc();
 				break;
 			case 2:
-				menufunc();
+				menudep();
 				break;
 			default:
 				printf("Nop,para de tentar achar bug ai,vlw\n");
 				break;
 		};
-		printf("MENU RELATORIO\n");
-	   	printf("===============\n1 - Departamento\n2 - Funcionario\n0 - Sair\n===============\n");
+		printf("MENU PRINCIPAL\n");
+	   	printf("===============\n1 - Funcionario\n2 - Departamento\n0 - Sair\n===============\n");
 		scanf(" %d", &resp);
 	}
 }
 
 int main(){
-	menurel();
+	menuprin();
 	return 0;
-};    
+}; 
