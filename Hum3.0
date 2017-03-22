@@ -2,990 +2,116 @@
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h>
-#define F 150
-int i = 0;
-int qd = 0;
+#define L 3
+#define C 3
+#define T 20
 
 typedef struct{
-	int dia,mes,ano;	
-}tdata;
+	char nome[20];
+	int tam;
+}tApp;
 
-typedef struct{
-	char cpf[12];
-	char nome[100];
-	tdata dt_adm;
-	tdata dt_nasc;
-	int cargo;
-	int dept;
-}tFuncionario;
-
-typedef struct{
-	char nome[100];
-	int cod;
-	int quant;
-}tDepartamento;
-
-tFuncionario func[F];
-int prox[F];
-int controle[1][11];
-tDepartamento dep[10];
-
-
-/*
-Objetivo: Verificar se uma data é valida.
-Parâmetros: dia, mes, ano.
-Retorno: 1 se for data valida, 0 se não. 
-*/
-//NO FINAL, AJEITAR O ANO.
-int ValidarData(int dia,int mes,int ano){	
-	if((dia >= 1 && dia <= 31) && (mes >= 1 && mes <= 12) && (ano >= 00 && ano <= 99)){
-		if(ano % 4 == 0 && (ano % 400 == 0 || ano % 100 != 0)){ 
-			if(dia == 29 && mes == 2){
-				return 1;
-			}
-		}
-        if(dia <= 28 && mes == 2){
-        	return 1;
-		}
-		if(dia >= 30 && mes == 2){
-			return 0;
-		}
-        if((dia <= 30) && (mes == 4 || mes == 6 || mes == 9 || mes == 11)){
-            return 1;
-		} 
-        if((dia <=31) && (mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes ==8 || mes == 10 || mes == 12)){
-            return 1;
-		}
-        else{
-        	return 0;
-		}
-    }
-    else{
-    	return 0;
-	}
-}
-
-//PARTE DOS DEPARTAMENTOS
-
-/*
-Objetivo: Criar Departamento.
-Parâmetro: Não apresenta.
-Retorno: Sem nenhum retorno.
-*/
-void criardep(){ 
-	int cod,i,cont=0,resp; 
-
-	while(resp!=0){
-		printf("Digite o código do Departamento: ");
-		scanf(" %d", &cod);
-		for(i=0;i<10;i++){
-		    if(cod == dep[i].cod){
-				cont++;
-			}
-		}
-		if(cont>0){
-			printf("Departamento %d já existe!\n", cod);
-			cont=0;
-			printf("---------------\n0 - Para retornar ao Menu Departamento\n1 - Digitar um novo código\n---------------\n");
-			scanf("%d", &resp);
-			if(resp==0)
-				return;
-		}
-		else{
-			dep[qd].cod = cod;
-			printf("Digite o nome do Departamento: ");
-			scanf(" %s", dep[qd].nome);
-			printf("Departamento criado com sucesso\n");
-			qd++;
-			return;			
-		}	
-	}
-}
-
-
-/*
-Objetivo: Alterar as informações do Departamento.
-Parâmetro: Não apresenta.
-Retorno: Sem nenhum retorno.
-*/
-void alterardep(){ 
-	int cod,i,cont=0,resp,x;
+void carregar_Arquivos(tApp *p){
+	FILE *leitura;
+	int i=0;
 	
-	while(resp != 0){
-		printf("Digite o código do departamento: ");
-		scanf(" %d", &cod);
-		for(i=0;i<10;i++){
-			if(cod == dep[i].cod){
-				cont++;
-				x = i;
-			}
-		}
-		if(cont==0){
-			printf("Departamento %d não existe!\n", cod);
-			printf("---------------\n0 - Para retornar ao Menu Departamento\n1 - Digitar um novo código\n---------------\n");
-			scanf("%d", &resp);
-			if(resp==0)
-				return;
-		}
-		else{
-			printf("Nome atual do Departamento %d: %s\n", cod,dep[x].nome);
-			printf("Digite o novo nome do Departamento: ");
-			scanf(" %s", dep[x].nome);
-			printf("Nome do departamento alterado com sucesso\n");
-			return;
-		}
-	}
-}
-
-
-/*
-Objetivo: Consultar Departamento.
-Parâmetro: Não apresenta.
-Retorno: Sem nenhum retorno.
-*/
-void consultardep(){
-	int cod,cont=0,i,x;
+	leitura = fopen("teste2.txt", "r");
 	
-	printf("Qual o código do departamento? ");
-	scanf(" %d", &cod);
-	for(i=0;i<10;i++){
-		if(cod == dep[i].cod){
-			cont++;
-			x = i;
-		}
-	}
-	if(cont==0){
-		printf("Departamento %d não existe!\n", cod);
-		return;
+	if(leitura == NULL){
+		printf("Não possível abrir o arquivo.\n");
+		exit(0);
 	}
 	else{
-		printf("Nome do Departamento %d: %s\n", cod,dep[x].nome);
-		printf("Quantidade de funcionários dentro do departamento: %d\n", dep[x].quant);
+		while((fscanf(leitura,"%s %d\n", &p[i].nome,&p[i].tam))!= EOF){
+			i++;
+		}
 	}
+	
+	fclose(leitura);
 }
 
-
-/*
-Objetivo: Listar as informações dos Departamentos criados.
-Parâmetro: Não apresenta.
-Retorno: Sem nenhum retorno.
-*/
-void listardep(){
-	int j,cont=0;
+void organizar(tApp *v){
+	int i,j;
+	tApp aux;
 	
-	for(j=0;j<10;j++){
-		if(dep[j].cod==0){
-			cont++;
-			if(cont==10){
-				printf("Não há departamentos cadastrados.\n");
+	for(i=0;i<T;i++){
+		for(j=0;j<T;j++){
+			if(v[i].tam < v[j].tam && v[i].tam != 0){
+				aux = v[i];
+				v[i] = v[j];
+				v[j] = aux;
 			}
-		}
-		else{
-			printf("Departamento %d - Código: %d\n", j+1,dep[j].cod);
-			printf("Departamento %d - Nome: %s\n", j+1,dep[j].nome);
-			printf("Departamento %d - Quantidade de funcionários: %d\n", j+1,dep[j].quant);
-			printf("\n");
-		}
-	}
-}
-
-
-/*
-Objetivo: Excluir Departamentos.
-Parâmetro: Não apresenta.
-Retorno: Sem nenhum retorno.
-*/
-void excluirdep(){
-	int resp,cod,j,cont,cont2,x,y,sentinela;
-	char resp2;
-	
-	while(resp!=2){
-		printf("Digite o código do Departamento: ");
-		scanf(" %d", &cod);
-		for(j=0;j<10;j++){
-			
-			if(dep[j].cod == cod){
-				cont++;
-				x = j;
-			}
-		}
-		if(cont==0){
-			printf("Departamento %d não existe!\n", cod);
-			printf("---------------\n0 - Para retornar ao Menu Departamento\n1 - Digitar um novo código\n---------------\n");
-			scanf("%d", &resp);
-			if(resp==0)
-				return;
-		}
-		else{
-			printf("Departamento %d - Nome: %s\n               - Quantidade de Funcionários: %d\n",x+1,dep[x].nome,dep[x].quant);
-			if(dep[x].quant!=0){
-				printf("Há funcionário(s) lotado(s) no Departamento %d.Não é possível excluir o departamento!\n", dep[x].cod);
-				printf("---------------\n0 - Para retornar ao Menu Departamento\n1 - Digitar um novo código\n---------------\n");
-				scanf("%d", &resp);
-				if(resp==0)
-					return;
-			}
-			break;
-		}
-	}
-	while((resp2!='s') || (resp2!='n')){
-		printf("Deseja realmente excluir o departamento? <s/n>: ");
-		scanf(" %c", &resp2);
-		if(resp2=='n'){
-			printf("Departamento não excluido!\n");
-			return;
-		}
-		if(resp2=='s'){
-			for(j=0;j<10;j++){
-				if(dep[j].cod != 0){
-					y = j;
-				}
-			}
-			sentinela = dep[y].cod;
-			
-			j = 0;
-			while(dep[j].cod != sentinela){
-				if(dep[j].cod == cod){
-					dep[j].cod=dep[j+1].cod;
-					strcpy(dep[j].nome,dep[j+1].nome);
-					dep[j].quant=dep[j+1].quant;
-					
-				/*	if(dep[j].cod != sentinela){
-						dep[j+1].cod=dep[y-1].cod;
-						strcpy(dep[j+1].nome,dep[y-1].nome);
-						dep[j+1].quant=dep[y-1].quant;
-					}*/
-				}
-				j++;
-			}
-			dep[x].cod=0;
-			strcpy(dep[x].nome,"");
-			dep[x].quant=0;
-			printf("Departamento excluido com sucesso!\n");
-			break;
-		}
-	}
-}
-
-
-//PARTE DOS FUNCIONÁRIOS
-
-/*
-Objetivo: Cadastrar um novo funcionário.
-Parâmetro: Não apresenta.
-Retorno: Sem nenhum retorno.
-*/
-void cadastrar(){
-	char cpf[12];
-	int a,b,j,x,y,z,resp=0,cont=1,cont2=0,resp2;
-	
-	while(resp!=2){
-		printf("Digite o CPF: ");
-   		scanf(" %s", cpf);
-		for(j=0;j<F;j++){
-			a = strcmp(cpf,func[j].cpf);
-			if(a==0){
-				cont = 0;
-			}
-		}
-		if(cont==0){
-			printf("CPF %s já cadastrado!\n", cpf);
-			cont = 1;
-			printf("---------------\n0 - Voltar ao Menu Funcionário\n1 - Digitar um novo cpf\n---------------\n");
-			scanf(" %d", &resp);
-			if(resp==0)
-				return;
-		}
-		else{
-			strcpy(func[i].cpf,cpf);
-			resp = 2;
-		}
-	}
-	
-	printf("Digite o nome: ");
-	scanf(" %s", func[i].nome);
-	
-	printf("Digite a data de nascimento: ");
-	scanf("%d %d %d", &func[i].dt_nasc.dia,&func[i].dt_nasc.mes,&func[i].dt_nasc.ano);
-	x = ValidarData(func[i].dt_nasc.dia,func[i].dt_nasc.mes,func[i].dt_nasc.ano);
-	while(x==0){
-		if(x==0){
-			printf("Data Inválida! Digite novamente: ");
-			scanf("%d %d %d", &func[i].dt_nasc.dia,&func[i].dt_nasc.mes,&func[i].dt_nasc.ano);
-			x = ValidarData(func[i].dt_nasc.dia,func[i].dt_nasc.mes,func[i].dt_nasc.ano);
-		}
-		else{
-			break;
-		}
-	}
-	
-	printf("Digite data de admissão na empresa: ");
-	scanf("%d %d %d", &func[i].dt_adm.dia,&func[i].dt_adm.mes,&func[i].dt_adm.ano);
-	y = ValidarData(func[i].dt_adm.dia,func[i].dt_adm.mes,func[i].dt_adm.ano);
-	while(y==0){
-		if(y==0){
-			printf("Data Inválida! Digite novamente: ");
-			scanf("%d %d %d", &func[i].dt_adm.dia,&func[i].dt_adm.mes,&func[i].dt_adm.ano);
-			y = ValidarData(func[i].dt_adm.dia,func[i].dt_adm.mes,func[i].dt_adm.ano);
-		}
-		else{
-			break;
-		}
-	}
-	
-	printf("Digite o cargo: ");
-	scanf(" %d", &func[i].cargo);
-	
-	resp2 = 2;
-	while(resp2!=0){
-		printf("Digite o Departamento: ");
-	   	scanf(" %d", &func[i].dept);
-	   	cont2 = 0;
-	   
-	    for(b=0;b<=10;b++){
-	    	if(dep[b].cod ==func[i].dept){
-	    		cont2++;
-				z=b;
-			}
-		}
-		if(cont2 == 0){
-			printf("Departamento %d não existe!\n", func[i].dept);
-			printf("Código e Nome dos Departamentos que existem: \n");
-			for(j=0;j<10;j++){
-				if(dep[j].cod != 0)
-					printf("Código: %d, Nome: %s\n", dep[j].cod,dep[j].nome);
-			}
-			printf("---------------\n0 - Para retornar ao Menu Funcionário\n1 - Digitar um novo código\n---------------\n");
-			scanf(" %d", &resp2);
-			if(resp2==0)
-				return;
-		}	   	
-		else{
-			dep[z].quant++;
-			break;
-		}	   
-	}
-	printf("Funcionário cadastrado com sucesso!\n");
-	i++;
-}
-
-
-/*
-Objetivo: Alterar informaçoes de um funcionário.
-Parâmetro: Não apresenta.
-Retorno: Sem nenhum retorno.
-*/
-void alterar(){ 
-	char cpf[12],cpf2[12];
-	int j,a,cont=0,x,resp,resp2,resp3,cont2,b,c;
-	
-	while(resp!=2){
-		printf("Digite o CPF do funcionário: ");
-   		scanf(" %s", cpf);
-		for(j=0;j<F;j++){
-			a = strcmp(func[j].cpf,cpf);
-			if(a==0){
-				cont++;
-				x = j;
-			}
-		}
-		if(cont==0){
-			printf("CPF %s não cadastrado!\n", cpf);
-			printf("---------------\n0 - Voltar ao Menu Funcionário\n1 - Digitar um novo CPF\n---------------\n");
-			scanf(" %d", &resp);
-			if(resp==0)
-				return;
-		}
-		else{
-			printf("MENU ALTERAR FUNCIONÁRIO(CPF: %s)\n", cpf);
-			printf("1 - CPF\n2 - Nome\n3 - Data de Nascimento\n4 - Data de Admissão na empresa\n5 - Cargo\n0 - Sair\n");
-			scanf(" %d", &resp2);
-			
-			while(resp2!=0){
-				switch(resp2){
-					case 0:
-						break;
-					case 1:
-						while(resp3!=2){
-				   			printf("Digite o novo cpf: ");
-				   			scanf(" %s", cpf2);
-							for(j=0;j<F;j++){
-								a = strcmp(func[j].cpf,cpf2);
-								if(a==0){
-									cont2=0;
-								}
-							}
-							if(cont2==0){
-								printf("CPF %s já cadastrado!\n", cpf2);
-								printf("---------------\n0 - Voltar ao Menu Alterar Funcionário\n1 - Digitar um novo cpf\n---------------\n");
-								scanf(" %d", &resp3);
-								if(resp3==0)
-									break;
-							}
-							else{
-								strcpy(func[x].cpf,cpf2);
-								printf("CPF alterado com sucesso!\n");			   		
-				   				break;
-							}		   			
-					   	}
-					   	break;
-					case 2:
-				   		printf("Digite o novo nome: ");
-				   		scanf(" %s", func[x].nome);
-				   		printf("Nome alterado com sucesso!\n");
-				   		break;
-					case 3:
-						printf("Digite o novo ano de nascimento: ");
-						scanf("%d %d %d", &func[x].dt_nasc.dia,&func[x].dt_nasc.mes,&func[x].dt_nasc.ano);
-						b = ValidarData(func[x].dt_nasc.dia,func[x].dt_nasc.mes,func[x].dt_nasc.ano);	
-						while(b==0){
-							if(b==0){
-								printf("Data Inválida! Digite novamente: ");
-								scanf("%d %d %d", &func[x].dt_nasc.dia,&func[x].dt_nasc.mes,&func[x].dt_nasc.ano);
-								b = ValidarData(func[x].dt_nasc.dia,func[x].dt_nasc.mes,func[x].dt_nasc.ano);
-							}
-							else{
-								break;
-							}
-						}
-						printf("Data de nascimento alterada com sucesso!\n");
-						break;
-					case 4:
-						printf("Digite o novo ano de admissão: ");
-						scanf("%d %d %d", &func[x].dt_adm.dia,&func[x].dt_adm.mes,&func[x].dt_adm.ano);
-						c = ValidarData(func[x].dt_adm.dia,func[x].dt_adm.mes,func[x].dt_adm.ano);
-						while(c==0){
-							if(c==0){
-								printf("Data Inválida! Digite novamente: ");
-								scanf("%d %d %d", &func[x].dt_adm.dia,&func[x].dt_adm.mes,&func[x].dt_adm.ano);
-								c = ValidarData(func[x].dt_adm.dia,func[x].dt_adm.mes,func[x].dt_adm.ano);
-							}
-							else{
-								break;
-							}
-						}
-						printf("Data de admissão alterada com sucesso!\n");
-						break;
-					case 5:
-				   		printf("Digite o novo cargo: ");
-				   		scanf(" %d", &func[x].cargo);
-				   		printf("Cargo alterado com sucesso!\n");
-				   	   	break;
-					default:
-				   		printf("Opção inválida");
-				   		break;
-				}
-				printf("MENU ALTERAR FUNCIONÁRIO(CPF: %s)\n", cpf);
-				printf("1 - CPF\n2 - Nome\n3 - Data de Nascimento\n4 - Data de Admissão na empresa\n5 - Cargo\n0 - Sair\n");
-				scanf(" %d", &resp2);
-			}
-			break;
-		}
-	}
-}
-
-
-/*
-Objetivo: Transferir um funcionário para outro departamento.
-Parâmetro: Não apresenta.
-Retorno: Sem nenhum retorno.
-*/
-void transferir(){
-	int resp,cod,j,cont=0,x,y,z,a,cod2;
-	char cpf[12];
-	
-	while(resp!=2){
-		printf("Qual o código do departamento origem: ");
-		scanf(" %d", &cod);
-		for(j=0;j<10;j++){
-			if(dep[j].cod == cod){
-				cont++;
-				x = j+1;	
-			}			
-		}
-		if(cont==0){
-			printf("Departamento %d não existe!\n", cod);
-			printf("Código e nome dos Departamentos que existem: \n");
-			for(j=0;j<10;j++){
-				if(dep[j].cod != 0)
-					printf("Código: %d, Nome: %s\n", dep[j].cod,dep[j].nome);
-			}
-			printf("---------------\n0 - Para retornar ao Menu Funcionário\n1 - Digitar um novo código de departamento\n---------------\n");
-			scanf(" %d", &resp);
-			if(resp==0)
-				return;
-		}
-		else{
-			break;
-		}
-	}
-	
-	resp = 3;
-	cont = 0;
-	while(resp!=2){
-		printf("Digite o cpf do funcionário: ");
-		scanf(" %s", cpf);
-		for(j=0;j<10;j++){
-			if(func[j].dept==cod){
-				a = strcmp(func[j].cpf,cpf);
-				if(a==0){
-					cont++;
-					y = j;
-				}	
-			}
-		}
-		if(cont==0){
-			printf("Departamento %d não possui funcionário com o cpf %s!\n", x,cpf);
-			printf("---------------\n0 - Para retornar ao Menu Funcionário\n1 - Digitar outro cpf\n---------------\n");
-			scanf(" %d", &resp);
-			if(resp==0)
-				return;
-		}
-		else{
-			break;
-		}
-	}
-	
-	resp = 3;
-	cont = 0;
-	while(resp!=2){
-		printf("Digite o código do departamento destino: ");
-		scanf(" %d", &cod2);
-		for(j=0;j<10;j++){
-			if(dep[j].cod == cod2){
-				cont++;
-				z = j;
-			}			
-		}
-		if(cont==0){
-			printf("Departamento %d não existe!\n", cod2);
-			printf("Código e Nome dos Departamentos que existem: \n");
-			for(j=0;j<10;j++){
-				if(dep[j].cod != 0)
-					printf("Código: %d, Nome: %s\n", dep[j].cod,dep[j].nome);
-			}
-			printf("---------------\n0 - Para retornar ao Menu Funcionário\n1 - Digitar um novo código de departamento\n---------------\n");
-			scanf(" %d", &resp);
-			if(resp==0)
-				return;
-		}
-		else{
-			func[y].dept = z+1;
-			dep[x-1].quant = dep[x-1].quant - 1;
-			dep[z].quant++;
-			printf("Transferência realizada com sucesso!\n");
-			break;
-		}
-	}
-}
-
-
-/*
-Objetivo: Demitir um funcionário.
-Parâmetro: Não apresenta.
-Retorno: Sem nenhum retorno.
-*/
-void demitir(){
-	int resp,j,cod,cont=0,x,y,a,b;
-	char cpf[12],resp2;
-	
-	while(resp!=2){
-		printf("Digite o código do departamento: ");
-		scanf(" %d", &cod);
-		for(j=0;j<10;j++){
-			if(dep[j].cod == cod){
-				cont++;
-				x = j+1;	
-			}			
-		}
-		if(cont==0){
-			printf("Departamento %d não existe!\n", cod);
-			printf("Código e Nome dos Departamentos que existem: \n");
-			for(j=0;j<10;j++){
-				if(dep[j].cod != 0)
-					printf("Código: %d, Nome: %s\n", dep[j].cod,dep[j].nome);
-			}
-			printf("---------------\n0 - Para retornar ao Menu Funcionário\n1 - Digitar um novo código de departamento\n---------------\n");
-			scanf(" %d", &resp);
-			if(resp==0)
-				return;
-		}
-		else{
-			break;
-		}
-	}
-	
-	resp = 3;
-	cont = 0;
-	while(resp!=2){
-		printf("Digite o CPF: ");
-		scanf(" %s", cpf);
-		for(j=0;j<10;j++){
-			if(func[j].dept==x){
-				a = strcmp(func[j].cpf,cpf);
-				if (a==0){
-					cont++;
-					y = j;
-				}	
-			}
-		}
-		if(cont==0){
-			printf("Departamento %d não possui funcionário com o cpf %s!\n", x,cpf);
-			printf("---------------\n0 - Para retornar ao Menu funcionário\n1 - Digitar outro CPF\n---------------\n");
-			scanf(" %d", &resp);
-			if(resp==0)
-				return;
-		}
-		else{
-			break;
-		}
-	}
-	
-	while((resp2!='s') || (resp2!='n')){
-		printf("Deseja realmente demitir o funcionário? <s/n>: ");
-		scanf(" %c", &resp2);
-		if(resp2=='n'){
-			printf("Funcionário não demitido!\n");
-			return;
-		}
-		if(resp2=='s'){
-			for(j=0;j<F;j++){
-				a = strcmp(func[j].cpf,cpf);
-				if (a==0){
-					strcpy(func[j].cpf,func[j+1].cpf);
-					strcpy(func[j].nome,func[j+1].nome);
-					func[j].dt_nasc = func[j+1].dt_nasc;
-					func[j].dt_adm = func[j+1].dt_adm;
-					func[j].cargo = func[j+1].cargo;
-					func[j].dept = func[j+1].dept;
-					b = strcmp(func[j].cpf,cpf);
-					if(b!=0){
-						strcpy(func[j+1].cpf,func[y].cpf);
-						strcpy(func[j+1].nome,func[y].nome);
-						func[j+1].dt_nasc = func[y].dt_nasc;
-						func[j+1].dt_adm = func[y].dt_adm;
-						func[j+1].cargo = func[y].cargo;
-						func[j+1].dept = func[y].dept;
-					}
-				}
-			}
-			strcpy(func[y].cpf,"");
-			strcpy(func[y].nome,"");
-		   	func[y].dt_nasc.dia = 0;
-			func[y].dt_nasc.mes = 0;
-			func[y].dt_nasc.ano = 0;
-			func[y].dt_adm.dia = 0;
-			func[y].dt_adm.mes = 0;
-			func[y].dt_adm.ano = 0;
-			func[y].cargo = 0;
-			func[y].dept = 0;
-			dep[x-1].quant = dep[x-1].quant - 1;
-			printf("Funcionário demitido com sucesso!\n");
-			break;
 		}
 	}	
 }
 
-
-/*
-Objetivo: Mostrar a informações de um funcionário específico.
-Parâmetro: Não apresenta.
-Retorno: Sem nenhum retorno.
-*/
-void pesquisar(){
-	char cpf[12];
-	int a,j,resp,cont=0,x;
-	
-	while(resp!=2){
-		printf("Digite o CPF do funcionário: ");
-		scanf(" %s", cpf);
-		for(j=0;j<F;j++){
-			a = strcmp(func[j].cpf,cpf);
-			if(a==0){
-				cont++;
-				x = j;
-			}
-		}
-		if(cont==0){
-			printf("CPF %s não cadastrado!\n", cpf);
-			printf("---------------\n0 - Retornar ao Menu Funcionário\n1 - Digitar um novo CPF\n---------------\n");
-			scanf(" %d", &resp);
-			if(resp==0)
-				return;
-		}
-		else{
-			printf("Funcionário %d\n", x+1);
-			printf("CPF: %s\n", func[x].cpf);
-			printf("Nome: %s\n", func[x].nome);
-			printf("Data de Nascimento: %d %d %d\n", func[x].dt_nasc.dia,func[x].dt_nasc.mes,func[x].dt_nasc.ano);
-			printf("Data de Admissão: %d %d %d\n", func[x].dt_adm.dia,func[x].dt_adm.mes,func[x].dt_adm.ano);
-			printf("Cargo: %d\n", func[x].cargo);
-			printf("Departamento: %d\n", func[x].dept);
-			printf("\n");
-			break;
-		}
-	}
-}
-
-
-/*
-Objetivo: Listar todos os departamentos com todos os funcionário que o integram e suas respectivas informações.
-Parâmetro: Não apresenta.
-Retorno: Sem nenhum retorno.
-*/
-void listarfunc(){
-	int j,k,cont=0;
-	
-	printf("LISTA DE FUNCIONARIOS\n");
-	for(j=0;j<10;j++){
-		if(dep[j].cod==0){
-			cont++;
-		}
-		else{
-			if(dep[j].quant!=0){
-				printf("--------------------\nDepartamento %d - Código %d\n--------------------\n", j+1,dep[j].cod);
-				for(k=0;k<F;k++){
-					if(func[k].dept==dep[j].cod){
-						printf("Funcionário %d\n", k+1);
-						printf("CPF: %s\n", func[k].cpf);
-						printf("Nome: %s\n", func[k].nome);
-						printf("Data de Nascimento: %d %d %d\n", func[k].dt_nasc.dia,func[k].dt_nasc.mes,func[k].dt_nasc.ano);
-						printf("Data de Admissão: %d %d %d\n", func[k].dt_adm.dia,func[k].dt_adm.mes,func[k].dt_adm.ano);
-						printf("Cargo: %d\n", func[k].cargo);
-						printf("\n");
-					}
-				}
-			}
-		}
-	}
-}
-
-
-/*
-Objetivo: Listar todos os funcionários com suas informações de um departamento específico.
-Parâmetro: Não apresenta.
-Retorno: Sem nenhum retorno.
-*/
-void listarTdep(){
-	int cod,x,j,cont=0;
-	
-	printf("Digite o codigo do departamento: ");
-	scanf(" %d", &cod);
-	for(j=0;j<10;j++){
-		if(dep[j].cod == cod){
-			cont++;
-			x = j;
-		}			
-	}
-	if(cont==0){
-		printf("Departamento %d não existe!\n", cod);
-		return;
-	}
-	else{
-		printf("---------------\nDepartamento %d\n---------------\n", cod);
-		for(j=0;j<F;j++){
-			if(func[j].dept==cod){
-				printf("Funcionário %d\n", j+1);
-				printf("CPF: %s\n", func[j].cpf);
-				printf("Nome: %s\n", func[j].nome);
-				printf("Data de Nascimento: %d %d %d\n", func[j].dt_nasc.dia,func[j].dt_nasc.mes,func[j].dt_nasc.ano);
-				printf("Data de Admissao: %d %d %d\n", func[j].dt_adm.dia,func[j].dt_adm.mes,func[j].dt_adm.ano);
-				printf("Cargo: %d\n", func[j].cargo);
-				printf("\n");
-			}
-		}
-	}
-}
-
-
-
-
-
-//PARTE DOS ARQUIVOS
-/*
-Objetivo: Salvar as informações de todos os funcionários
-Parâmetro: Não apresenta.
-Retorno: Sem nenhum retorno.
-*/
-
-void salvar_arquivos(){
-	FILE *arquivo_func;
-	arquivo_func=fopen("funcionario.bin","wb");
-	if (arquivo_func == NULL){
-		printf("Erro ao abrir o arquivo dos funcionários");
-		exit(1);} 	
-	else
-	{
-	fwrite(func,sizeof(tFuncionario),F,arquivo_func);
-
-	fclose(arquivo_func);}
-	
-	FILE *arquivo_dep;
-	arquivo_dep =fopen("departamento.bin","wb");
-	if(arquivo_dep == NULL){
-		printf("Erro ao abrir o arquivo dos departamentos");
-		exit(1);
-	}
-	else
-	{
-	fwrite(dep,sizeof(tDepartamento),10,arquivo_dep);
-	fclose(arquivo_dep);}}
-	
-/*
-Objetivo: Carregar as informações de todos os funcionários
-Parâmetro: Não apresenta.
-Retorno: Sem nenhum retorno.
-*/
-void carregar_arquivos(){
-	FILE *arquivo_leitura_func;
- 	 arquivo_leitura_func = fopen("funcionario.bin","rb");
- 	 
-	if(arquivo_leitura_func== NULL){
-		return;
-		}
-	else
-	{
-	   	fread(func,sizeof(tFuncionario),F,arquivo_leitura_func);
-	}
-	
-	fclose(arquivo_leitura_func);
-
-	FILE *arquivo_leitura_dep;
-	arquivo_leitura_dep = fopen("departamento.bin","rb");
-	
-	if(arquivo_leitura_dep== NULL){
-		return;
-		}
-	else
-	{
-		fread(dep,sizeof(tDepartamento),10,arquivo_leitura_dep);
-	}
-	fclose(arquivo_leitura_dep);
-}
-
-//PARTE DOS MENUS
-
-/*
-Objetivo: acessar as configurações de Funcionários.
-Parâmetro: Não apresenta.
-Retorno: Sem nenhum retorno.
-*/
-void menufunc(){
-	int resp;
-	printf("MENU FUNCIONARIO\n");
-	printf("===============\n1 - Cadastrar funcionário\n2 - Alterar dados do funcionário\n3 - Transferir funcionário de departamento\n4 - Demitir funcionário\n5 - Pesquisar funcionário\n6 - Listar todos os funcionários\n7 - Listar todos de um Departamento\n0 - Sair\n===============\n");
-	scanf("%d", &resp);
+void store(tApp *v){
+	int resp,i;
+	printf("---------------\n1 - Apps Disponíveis\n2 - Consultar\n0 - Voltar\n---------------\n");
+	scanf(" %d", &resp);
 	while(resp != 0){
 		switch(resp){
 			case 0:
-				printf("Programa finalizado\n");
-				break;
+				return;
 			case 1:
-				cadastrar();
+				for(i=0;i<T;i++){
+					if(v[i].tam != 0){
+						printf("%d - %s\n", i,v[i].nome);
+					}
+				}
 				break;
 			case 2:
-				alterar();
-				break;	
-   			case 3:
-	   			transferir();
-	   			break;
-	   		case 4:
-	   			demitir();
-	   			break;
-	   		case 5:
-	   			pesquisar();
-	   			break;
-	   		case 6:
-	   			listarfunc();
-	   			break;
-	   		case 7:
-	   			listarTdep();
-	   			break;
+				for(i=0;i<T;i++){
+					if(v[i].tam != 0){
+						printf("%s - Tamanho: %d\n", v[i].nome,v[i].tam);
+					}
+				}
 			default:
-				printf("Opção inválida!");
+				printf("Opção inválida!\n");
 				break;
-		};
-		printf("===============\n1 - Cadastrar funcionário\n2 - Alterar dados do funcionário\n3 - Transferir funcionário de departamento\n4 - Demitir funcionário\n5 - Pesquisar funcionário\n6 - Listar todos os funcionários\n7 - Listar todos de um Departamento\n0 - Sair\n===============\n");
-		scanf("%d", &resp);
+		}
+		printf("---------------\n1 - Apps Disponíveis\n2 - Consultar\n0 - Voltar\n---------------\n");
+		scanf(" %d", &resp);
 	}
 }
 
-
-/*
-Objetivo: acessar as configurações de Departamentos.
-Parâmetro: Não apresenta.
-Retorno: Sem nenhum retorno.
-*/
-void menudep(){
+void menuprin(tApp *s){
 	int resp;
-	printf("MENU DEPARTAMENTO\n");
-	printf("===============\n1 - Criar Departamento\n2 - Alterar nome do Departamento\n3 - Consultar Departamento\n4 - Listar Departamentos\n5 - Excluir Departamento\n0 - Sair\n===============\n");
-	scanf("%d", &resp);
-		while(resp != 0){
-			switch(resp){
-				case 0:
-					printf("Programa finalizado\n");
-					break;
-				case 1:
-					criardep();
-					break;
-				case 2:
-					alterardep();
-					break;	
-    			case 3:
-    				consultardep();
-		   			break;
-		   		case 4:
-		   			listardep();
-		   			break;
-		   		case 5:
-		   			excluirdep();
-		   			break;
-				default:
-					printf("Opção inválida!");
-					break;
-			};
-			printf("===============\n1 - Criar Departamento\n2 - Alterar nome do Departamento\n3 - Consultar Departamento\n4 - Listar Departamentos\n5 - Excluir Departamento\n0 - Sair\n===============\n");
-			scanf("%d", &resp);
-		}
-}
-
-
-/*
-Objetivo: acessar os menus Departamento e Funcionário.
-Parâmetro: Não apresenta.
-Retorno: Sem nenhum retorno.
-*/
-void menuprin(){
-	int resp;
-	printf("MENU PRINCIPAL\n");
-	printf("===============\n1 - Funcionário\n2 - Departamento\n0 - Sair\n===============\n");
+	printf("---------------\n1 - Store\n2 - Apps Instalados\n3 - Apps em Execução\n---------------\n");
 	scanf(" %d", &resp);
-	while(resp != -1){
+	while(resp != 0){
 		switch(resp){
-			case 0:
-				salvar_arquivos();
-				printf("Programa finalizado\n");
-				exit(1);
 			case 1:
-				menufunc();
+				store(s);
 				break;
 			case 2:
-				menudep();
+				//instalados();
+				break;
+			case 3:
+				//execucao();
 				break;
 			default:
-				printf("Opção inválida!");
+				printf("Opção inválida!\n");
 				break;
 		};
-		printf("MENU PRINCIPAL\n");
-	   	printf("===============\n1 - Funcionário\n2 - Departamento\n0 - Sair\n===============\n");
+		printf("---------------\n1 - Store\n2 - Apps Instalados\n3 - Apps em Execução\n---------------\n");
 		scanf(" %d", &resp);
 	}
 }
 
 int main(){
+	int i;
 	setlocale(LC_ALL,"Portuguese");
-	carregar_arquivos();
-	menuprin();
+	tApp apps_store[T];
+	
+	for(i=0;i<T;i++){
+		apps_store[i].tam = 0;
+		strcpy(apps_store[i].nome,"");
+	}
+	
+	carregar_Arquivos(&apps_store[0]);
+	organizar(&apps_store[0]);
+	
+	menuprin(&apps_store[0]);
 	return 0;
-}; 
+}
