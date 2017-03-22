@@ -46,7 +46,7 @@ void organizar(tApp *v){
 }
 
 void store(tApp *v){
-	int resp,i;
+	int resp,i,num;
 	printf("---------------\n1 - Apps Disponíveis\n2 - Consultar\n0 - Voltar\n---------------\n");
 	scanf(" %d", &resp);
 	while(resp != 0){
@@ -56,9 +56,12 @@ void store(tApp *v){
 			case 1:
 				for(i=0;i<T;i++){
 					if(v[i].tam != 0){
-						printf("%d - %s\n", i,v[i].nome);
+						printf("%d - %s\n", i+1,v[i].nome);
 					}
 				}
+				printf("Digite o numero do App que deseja instalar: ");
+				scanf("%d", &num);
+				printf("App Instalado com sucesso\n");
 				break;
 			case 2:
 				for(i=0;i<T;i++){
@@ -102,11 +105,15 @@ void menuprin(tApp *s){
 int main(){
 	int i;
 	setlocale(LC_ALL,"Portuguese");
-	tApp apps_store[T];
+	tApp apps_store[T],apps_instalados[T],apps_executando;
 	
 	for(i=0;i<T;i++){
 		apps_store[i].tam = 0;
+		apps_instalados[i].tam = 0;
+		apps_executando[i].tam = 0;
 		strcpy(apps_store[i].nome,"");
+		strcpy(apps_instalados[i].nome,"");
+		strcpy(apps_executando[i].nome,""); 
 	}
 	
 	carregar_Arquivos(&apps_store[0]);
