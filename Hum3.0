@@ -45,8 +45,28 @@ void organizar(tApp *v){
 	}	
 }
 
-void store(tApp *v){
-	int resp,i,num;
+void consultar(tApp *v){
+	int i;
+	
+	for(i=0;i<T;i++){
+		if(v[i].tam != 0){
+			printf("%s - Tamanho: %d\n", v[i].nome,v[i].tam);
+		}
+	}
+}
+
+void copiarElemento(tApp *orig, tApp *copy, int indic_orig, int indic_copy){
+	strcpy(copy[indic_copy].nome,orig[indic_orig].nome);
+	copy[indic_copy].tam = orig[indic_orig].tam;
+}
+
+
+
+void store(tApp *s,tApp *ins, int *cont_tam){
+	int resp,i,j=0,num,cont=0,tam_total=150;
+	char resp2;
+	*cont_tam = 0;
+	
 	printf("---------------\n1 - Apps Disponíveis\n2 - Consultar\n0 - Voltar\n---------------\n");
 	scanf(" %d", &resp);
 	while(resp != 0){
@@ -55,49 +75,75 @@ void store(tApp *v){
 				return;
 			case 1:
 				for(i=0;i<T;i++){
-					if(v[i].tam != 0){
-						printf("%d - %s\n", i+1,v[i].nome);
+					if(s[i].tam != 0){
+						printf("%d - %s\n", i+1,s[i].nome);
 					}
 				}
-				printf("Digite o numero do App que deseja instalar: ");
-				scanf("%d", &num);
-				printf("App Instalado com sucesso\n");
+				while((resp2 != 'n') ||(resp2 != 'N')){
+					printf("Digite o número do App que deseja instalar: ");
+				    scanf("%d", &num);
+				    for(i=0;i<T;i++){
+						if(s[num-1].tam == ins[i].tam)
+							cont = 1;
+					}
+
+					if(cont == 1){
+						printf("Aplicativo já Instalado.\n");
+						cont = 0;
+					}
+		   		   	else{
+		   		   		*cont_tam += s[num-1].tam;
+		   		   		printf("Cont_Tam: %d\n", *cont_tam);
+						if(*cont_tam>tam_total){
+							printf("Memória cheia. Exclua algum app para instalar outro.\n");
+							return; 
+						}
+						printf("App %s Instalado com sucesso.\n",s[num-1].nome);
+						copiarElemento(s,ins,num-1,j);
+						j++;
+					}
+					printf("Deseja instalar outro App? <s,n> ");
+					scanf(" %c", &resp2);
+				}	
+				organizar(ins);
 				break;
 			case 2:
-				for(i=0;i<T;i++){
-					if(v[i].tam != 0){
-						printf("%s - Tamanho: %d\n", v[i].nome,v[i].tam);
-					}
-				}
+				consultar(s);
+				break;
 			default:
 				printf("Opção inválida!\n");
 				break;
 		}
 		printf("---------------\n1 - Apps Disponíveis\n2 - Consultar\n0 - Voltar\n---------------\n");
+		for(i=0;i<T;i++){
+			if(ins[i].tam != 0){
+				printf("%s %d\n", ins[i].nome,ins[i].tam);
+			}
+		}
 		scanf(" %d", &resp);
 	}
 }
 
-void menuprin(tApp *s){
-	int resp;
-	printf("---------------\n1 - Store\n2 - Apps Instalados\n3 - Apps em Execução\n---------------\n");
+void menuprin(tApp *s,tApp *ins){
+	int resp,cont_tam;
+	printf("---------------\n1 - StoreED\n2 - Meus AppsED\n3 - AppRumED\n---------------\n");
 	scanf(" %d", &resp);
 	while(resp != 0){
 		switch(resp){
 			case 1:
-				store(s);
+				store(s,ins,&cont_tam);
 				break;
 			case 2:
-				//instalados();
+				//meusApps();
 				break;
 			case 3:
-				//execucao();
+				//rum();
 				break;
 			default:
 				printf("Opção inválida!\n");
 				break;
 		};
-		printf("---------------\n1 - Store\n2 - Apps Instalados\n3 - Apps em Execução\n---------------\n");
+		printf("---------------\n1 - StoreED\n2 - Meus AppsED\n3 - AppRumED\n---------------\n");
 		scanf(" %d", &resp);
 	}
 }
@@ -105,7 +151,7 @@ void menuprin(tApp *s){
 int main(){
 	int i;
 	setlocale(LC_ALL,"Portuguese");
-	tApp apps_store[T],apps_instalados[T],apps_executando;
+	tApp apps_store[T],apps_instalados[T],apps_executando[T];
 	
 	for(i=0;i<T;i++){
 		apps_store[i].tam = 0;
@@ -119,6 +165,6 @@ int main(){
 	carregar_Arquivos(&apps_store[0]);
 	organizar(&apps_store[0]);
 	
-	menuprin(&apps_store[0]);
+	menuprin(&apps_store[0],&apps_instalados[0]);
 	return 0;
 }
