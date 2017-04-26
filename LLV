@@ -1,0 +1,191 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define T 20
+
+typedef struct{
+	char nome[15];
+	int tam;
+}tApp;
+
+typedef struct{
+	tApp info[T];
+	int IL,FL,IA,FA;
+}LLV;
+
+
+void inicializar(LLV *l){
+	l->IL = 1;
+	l->FL = -1;
+	l->IA = 0;
+	l->FA = T; 
+}
+
+void carregar_Arquivos(LLV *l){
+	FILE *leitura;
+	int i=0;
+	
+	leitura = fopen("MobileED.txt", "r");
+	
+	if(leitura == NULL){
+		printf("Erro ao abrir o arquivo.\n");
+		exit(0);
+	}
+	else{
+		while((fscanf(leitura,"%s %d\n", &l->info[i].nome,&l->info[i].tam))!= EOF){
+			i++;
+		}
+	}
+	
+	fclose(leitura);
+}
+
+void organizar(LLV *aux){
+	int i,j;
+	LLV aux2;
+	
+	for(i=0;i<T;i++){
+		for(j=0;j<T;j++){
+			if(aux->info[i].tam < aux->info[j].tam && aux->info[i].tam != 0){
+				aux2.info[0] = aux->info[i];
+				aux->info[i] = aux->info[j];
+				aux->info[j] = aux2.info[0];
+			}
+		}
+	}		
+}
+
+/*
+void inserir(LLV *novo, LLV *old, int indic_orig) {
+	int i,cont=1,cont2=1,j,k;
+	
+	for(k=0;k<(novo->FL);k++){ // MEIO DA LISTA
+		if(novo->info[k].tam > old->info[indic_orig].tam){
+			if((novo->IL == novo->IA) && (novo->FL == novo->FA)){
+				printf("Lista Cheia\n");
+				return;
+			}	
+			else{
+				for(i=0;novo->FL;i++){
+					if(novo->info[i].tam > old->info[indic_orig].tam){
+						break;
+					}
+				}
+				if((novo->FL - i) > (i - novo->IL)){
+					for(j = novo->FL;j>i;j--){
+						novo->info[j+1] = novo->info[i];
+					}
+					novo->FL++;
+					printf("ENTREI NA PARTE DE QUANDO ALGUEM MAIOR VEM NA FRENTE\n");
+					novo->info[i] = old->info[indic_orig];
+				}
+				else{
+					for(j = novo->IL;j<i;j++){
+						novo->info[j-1] = novo->info[j];
+					}
+					novo->IL--;
+				}
+				return;
+			}
+		}
+	}
+	//INICIO DA LISTA
+	if(novo->FL == 0){
+		if(!(novo->IL == novo->IA) && (novo->FL == novo->FA)){
+			printf("Lista Cheia\n");
+			return;
+		}
+		else{
+			if(novo->IL > novo->IA){
+				novo->IL--;
+				novo->info[novo->IL] = old->info[novo->IL];
+				printf("Entrei na parte do IL-- > %d vezes\n\n",cont);
+				cont++;
+				(novo->FL)++;
+			}
+			else{
+				for(i = novo->FL;i >= novo->IL; i--){
+					novo->info[i+1] = novo->info[i];
+				}
+				novo->FL++;
+			}	    	
+		}
+	}
+	else{ // FIM DA LISTA
+		if(!(novo->IL == novo->IA) && (novo->FL == novo->FA)){
+			printf("Lista Cheia\n");
+			return;
+		}
+		else{
+			if(novo->FL != novo->FA){
+				novo->FL++;
+			}
+			else{
+				for(i = novo->IL; i <= novo->FL; i++){
+					novo->info[i-1] = novo->info[i];
+				}
+				novo->IL--;
+			}
+			novo->info[novo->FL] = old->info[indic_orig];
+			printf("Entrei na parte do FL++ > %d vezes\n\n",cont2);
+			cont2++;
+		}
+	}	
+}
+*/
+
+int main(){
+	int i,quant_elem=0,resp,resp2,cont=0;
+	LLV s,aux;
+	
+	for(i=0;i<T;i++){
+		s.info[i].tam = 0;
+		aux.info[i].tam = 0;
+		strcpy(s.info[i].nome,"");
+		strcpy(aux.info[i].nome,""); 
+	}
+	
+	inicializar(&s);	
+	carregar_Arquivos(&aux);
+	//organizar(&aux);
+	
+	for(i=0;i<T;i++){
+		if(aux.info[i].tam != 0)
+			printf("%d - %s %d\n",i+1,aux.info[i].nome,aux.info[i].tam);
+	}
+	
+	printf("\n\n");
+	
+	while(resp != 0){		
+		//inserir(&s,&aux,num-1);
+		
+		printf("Repetir <1 - Sim / 0 - Sair>: ");
+		scanf("%d", &resp);
+		if(resp != 0){
+			cont++;
+			printf("Adicionado %d\n\n", cont);
+			printf("IL: %d\n", s.IL);
+			printf("FL: %d\n", s.FL);
+			printf("IA: %d\n", s.IA);
+			printf("FA: %d\n\n", s.FA);
+			printf("QUANTIDADE DE ELEMENTOS DENTRO DE STORE: %d\n\n", quant_elem);
+		}
+		
+		printf("Ver a variavel STORE <1-Sim>: ");
+		scanf("%d", &resp2);
+		if(resp2 == 1){
+			for(i=0;i<T;i++){
+				printf("%s %d\n", s.info[i].nome,s.info[i].tam);
+			}
+		}
+	}
+
+	printf("\n\n");
+	
+	printf("IL: %d\n", s.IL);
+	printf("FL: %d\n", s.FL);
+	printf("IA: %d\n", s.IA);
+	printf("FA: %d\n", s.FA);
+	
+	return 0;
+}
