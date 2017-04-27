@@ -21,7 +21,7 @@ void inicializar(LLV *l){
 	l->FA = T; 
 }
 
-void carregar_Arquivos(LLV *l){
+void carregar_Arquivos(tApp *p){
 	FILE *leitura;
 	int i=0;
 	
@@ -32,7 +32,7 @@ void carregar_Arquivos(LLV *l){
 		exit(0);
 	}
 	else{
-		while((fscanf(leitura,"%s %d\n", &l->info[i].nome,&l->info[i].tam))!= EOF){
+		while((fscanf(leitura,"%s %d\n", &p[i].nome,&p[i].tam))!= EOF){
 			i++;
 		}
 	}
@@ -40,34 +40,35 @@ void carregar_Arquivos(LLV *l){
 	fclose(leitura);
 }
 
-void organizar(LLV *aux){
+void organizar(tApp *aux){
 	int i,j;
-	LLV aux2;
+	tApp aux2;
 	
 	for(i=0;i<T;i++){
 		for(j=0;j<T;j++){
-			if(aux->info[i].tam < aux->info[j].tam && aux->info[i].tam != 0){
-				aux2.info[0] = aux->info[i];
-				aux->info[i] = aux->info[j];
-				aux->info[j] = aux2.info[0];
+			if(aux[i].tam < aux[j].tam && aux[i].tam != 0){
+				aux2 = aux[i];
+				aux[i] = aux[j];
+				aux[j] = aux2;
 			}
 		}
 	}		
 }
 
-/*
-void inserir(LLV *novo, LLV *old, int indic_orig) {
+
+void inserir(LLV *novo, tApp *old, int indic_orig) {
 	int i,cont=1,cont2=1,j,k;
-	
+	/*
+
 	for(k=0;k<(novo->FL);k++){ // MEIO DA LISTA
-		if(novo->info[k].tam > old->info[indic_orig].tam){
+		if(novo->info[k].tam > old[indic_orig].tam){
 			if((novo->IL == novo->IA) && (novo->FL == novo->FA)){
 				printf("Lista Cheia\n");
 				return;
 			}	
 			else{
 				for(i=0;novo->FL;i++){
-					if(novo->info[i].tam > old->info[indic_orig].tam){
+					if(novo->info[i].tam > old[indic_orig].tam){
 						break;
 					}
 				}
@@ -77,7 +78,7 @@ void inserir(LLV *novo, LLV *old, int indic_orig) {
 					}
 					novo->FL++;
 					printf("ENTREI NA PARTE DE QUANDO ALGUEM MAIOR VEM NA FRENTE\n");
-					novo->info[i] = old->info[indic_orig];
+					novo->info[i] = old[indic_orig];
 				}
 				else{
 					for(j = novo->IL;j<i;j++){
@@ -89,6 +90,7 @@ void inserir(LLV *novo, LLV *old, int indic_orig) {
 			}
 		}
 	}
+	*/
 	//INICIO DA LISTA
 	if(novo->FL == 0){
 		if(!(novo->IL == novo->IA) && (novo->FL == novo->FA)){
@@ -98,10 +100,10 @@ void inserir(LLV *novo, LLV *old, int indic_orig) {
 		else{
 			if(novo->IL > novo->IA){
 				novo->IL--;
-				novo->info[novo->IL] = old->info[novo->IL];
+				novo->info[novo->IL] = old[novo->IL];
 				printf("Entrei na parte do IL-- > %d vezes\n\n",cont);
 				cont++;
-				(novo->FL)++;
+				novo->FL++;
 			}
 			else{
 				for(i = novo->FL;i >= novo->IL; i--){
@@ -111,6 +113,7 @@ void inserir(LLV *novo, LLV *old, int indic_orig) {
 			}	    	
 		}
 	}
+	/*
 	else{ // FIM DA LISTA
 		if(!(novo->IL == novo->IA) && (novo->FL == novo->FA)){
 			printf("Lista Cheia\n");
@@ -126,49 +129,53 @@ void inserir(LLV *novo, LLV *old, int indic_orig) {
 				}
 				novo->IL--;
 			}
-			novo->info[novo->FL] = old->info[indic_orig];
+			novo->info[novo->FL] = old[indic_orig];
 			printf("Entrei na parte do FL++ > %d vezes\n\n",cont2);
 			cont2++;
 		}
-	}	
+	}
+	*/
 }
-*/
+
 
 int main(){
-	int i,quant_elem=0,resp,resp2,cont=0;
-	LLV s,aux;
+	int i,quant_elem=0,resp2,cont=0;
+	int n = 1;
+	LLV s;
+	tApp aux[T];
 	
 	for(i=0;i<T;i++){
 		s.info[i].tam = 0;
-		aux.info[i].tam = 0;
+		aux[i].tam = 0;
 		strcpy(s.info[i].nome,"");
-		strcpy(aux.info[i].nome,""); 
+		strcpy(aux[i].nome,""); 
 	}
 	
 	inicializar(&s);	
-	carregar_Arquivos(&aux);
-	//organizar(&aux);
+	carregar_Arquivos(&aux[0]);
+	organizar(&aux[0]);
 	
 	for(i=0;i<T;i++){
-		if(aux.info[i].tam != 0)
-			printf("%d - %s %d\n",i+1,aux.info[i].nome,aux.info[i].tam);
+		if(aux[i].tam != 0)
+			printf("%d - %s %d\n",i+1,aux[i].nome,aux[i].tam);
 	}
 	
 	printf("\n\n");
 	
-	while(resp != 0){		
-		//inserir(&s,&aux,num-1);
+	while(n != 0){
+		printf("Digite o numero do App <0-Sair>: ");
+		scanf(" %d", n);
+				
+		inserir(&s,&aux,n-1);
 		
-		printf("Repetir <1 - Sim / 0 - Sair>: ");
-		scanf("%d", &resp);
-		if(resp != 0){
+		if(n != 0){
 			cont++;
 			printf("Adicionado %d\n\n", cont);
 			printf("IL: %d\n", s.IL);
 			printf("FL: %d\n", s.FL);
 			printf("IA: %d\n", s.IA);
 			printf("FA: %d\n\n", s.FA);
-			printf("QUANTIDADE DE ELEMENTOS DENTRO DE STORE: %d\n\n", quant_elem);
+			printf("QUANTIDADE DE ELEMENTOS DENTRO DE STORE: %d\n\n", s.FL);
 		}
 		
 		printf("Ver a variavel STORE <1-Sim>: ");
