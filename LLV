@@ -10,15 +10,15 @@ typedef struct{
 
 typedef struct{
 	tApp info[T];
-	int IL,FL,IA,FA;
+	int IL,IA,FL,FA;
 }LLV;
 
-
-void inicializar(LLV *l){
-	l->IL = 1;
-	l->FL = -1;
-	l->IA = 0;
-	l->FA = T; 
+void inicializarLLV(LLV *L){
+	L->IL = 1;
+	L->FL = -1; 
+	L->IA = 0;
+	L->FA = T;
+	printf("Tudo OK em inicializarLLV\n\n");
 }
 
 void carregar_Arquivos(tApp *p){
@@ -36,7 +36,7 @@ void carregar_Arquivos(tApp *p){
 			i++;
 		}
 	}
-	
+	printf("Tudo OK em carregar_Arquivos\n\n");
 	fclose(leitura);
 }
 
@@ -52,97 +52,46 @@ void organizar(tApp *aux){
 				aux[j] = aux2;
 			}
 		}
-	}		
+	}
+	printf("Tudo OK em 'organizar'\n\n");
 }
 
-
-void inserir(LLV *novo, tApp *old, int indic_orig) {
-	int i,cont=1,cont2=1,j,k;
-	/*
-
-	for(k=0;k<(novo->FL);k++){ // MEIO DA LISTA
-		if(novo->info[k].tam > old[indic_orig].tam){
-			if((novo->IL == novo->IA) && (novo->FL == novo->FA)){
-				printf("Lista Cheia\n");
-				return;
-			}	
-			else{
-				for(i=0;novo->FL;i++){
-					if(novo->info[i].tam > old[indic_orig].tam){
-						break;
-					}
-				}
-				if((novo->FL - i) > (i - novo->IL)){
-					for(j = novo->FL;j>i;j--){
-						novo->info[j+1] = novo->info[i];
-					}
-					novo->FL++;
-					printf("ENTREI NA PARTE DE QUANDO ALGUEM MAIOR VEM NA FRENTE\n");
-					novo->info[i] = old[indic_orig];
-				}
-				else{
-					for(j = novo->IL;j<i;j++){
-						novo->info[j-1] = novo->info[j];
-					}
-					novo->IL--;
-				}
-				return;
-			}
-		}
+void inserirLLV(LLV *L, tApp *old, int indic_orig){
+	int i;
+	
+	if((L->IL == L->IA) && (L->FL == L->FA)){
+		printf("Lista Cheia\n");
+		return;
 	}
-	*/
-	//INICIO DA LISTA
-	if(novo->FL == 0){
-		if(!(novo->IL == novo->IA) && (novo->FL == novo->FA)){
-			printf("Lista Cheia\n");
-			return;
+	else{
+		if(L->IL > L->IA){
+			L->IL--;
+			L->info[L->IL] = old[indic_orig];
+			printf("Tudo OK em InserirLLV INICIO\n\n");
 		}
 		else{
-			if(novo->IL > novo->IA){
-				novo->IL--;
-				novo->info[novo->IL] = old[novo->IL];
-				printf("Entrei na parte do IL-- > %d vezes\n\n",cont);
-				cont++;
-				novo->FL++;
+			for(i=L->FL;i >= novo->IL; i--){
+				novo->info[i+1] = novo->info[i];
 			}
-			else{
-				for(i = novo->FL;i >= novo->IL; i--){
-					novo->info[i+1] = novo->info[i];
-				}
-				novo->FL++;
-			}	    	
+			novo->FL++;
 		}
 	}
-	/*
-	else{ // FIM DA LISTA
-		if(!(novo->IL == novo->IA) && (novo->FL == novo->FA)){
-			printf("Lista Cheia\n");
-			return;
-		}
-		else{
-			if(novo->FL != novo->FA){
-				novo->FL++;
-			}
-			else{
-				for(i = novo->IL; i <= novo->FL; i++){
-					novo->info[i-1] = novo->info[i];
-				}
-				novo->IL--;
-			}
-			novo->info[novo->FL] = old[indic_orig];
-			printf("Entrei na parte do FL++ > %d vezes\n\n",cont2);
-			cont2++;
+	
+	if((L->IL == L->IA) && (L->FL == L->FA)){
+		printf("Lista Cheia\n");
+		return;
+	}
+	else{
+		if(L->FL != L->FA){
+			
 		}
 	}
-	*/
 }
-
 
 int main(){
-	int i,quant_elem=0,resp2,cont=0;
-	int n = 1;
-	LLV s;
+	int i,n;
 	tApp aux[T];
+	LLV s;
 	
 	for(i=0;i<T;i++){
 		s.info[i].tam = 0;
@@ -151,43 +100,31 @@ int main(){
 		strcpy(aux[i].nome,""); 
 	}
 	
-	inicializar(&s);	
+	inicializarLLV(&s);
 	carregar_Arquivos(&aux[0]);
 	organizar(&aux[0]);
 	
 	for(i=0;i<T;i++){
-		if(aux[i].tam != 0)
-			printf("%d - %s %d\n",i+1,aux[i].nome,aux[i].tam);
+		if(aux[i].tam != 0){
+			printf("%d - %s %d\n", i+1,aux[i].nome,aux[i].tam);
+		}
 	}
 	
-	printf("\n\n");
+	printf("\n");
 	
 	while(n != 0){
 		printf("Digite o numero do App <0-Sair>: ");
-		scanf(" %d", n);
-				
-		inserir(&s,&aux,n-1);
-		
-		if(n != 0){
-			cont++;
-			printf("Adicionado %d\n\n", cont);
-			printf("IL: %d\n", s.IL);
-			printf("FL: %d\n", s.FL);
-			printf("IA: %d\n", s.IA);
-			printf("FA: %d\n\n", s.FA);
-			printf("QUANTIDADE DE ELEMENTOS DENTRO DE STORE: %d\n\n", s.FL);
-		}
-		
-		printf("Ver a variavel STORE <1-Sim>: ");
-		scanf("%d", &resp2);
-		if(resp2 == 1){
-			for(i=0;i<T;i++){
-				printf("%s %d\n", s.info[i].nome,s.info[i].tam);
-			}
+		scanf(" %d", &n);
+		inserirLLV(&s,&aux,n-1);
+	}
+	
+	for(i=0;i<T;i++){
+		if(s.info[i].tam != 0){
+			printf("%s %d\n",s.info[i].nome,s.info[i].tam);
 		}
 	}
-
-	printf("\n\n");
+			
+	printf("\nTudo OK no MAIN\n");
 	
 	printf("IL: %d\n", s.IL);
 	printf("FL: %d\n", s.FL);
