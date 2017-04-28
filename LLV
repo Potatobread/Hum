@@ -57,35 +57,77 @@ void organizar(tApp *aux){
 }
 
 void inserirLLV(LLV *L, tApp *old, int indic_orig){
-	int i;
+	int i,j,local,controle = 0;
 	
-	if((L->IL == L->IA) && (L->FL == L->FA)){
-		printf("Lista Cheia\n");
-		return;
+	if((old[indic_orig].tam < L->info[0].tam)||(L->IL != L->IA)){
+		local = 1;
 	}
-	else{
-		if(L->IL > L->IA){
-			L->IL--;
-			L->info[L->IL] = old[indic_orig];
-			printf("Tudo OK em InserirLLV INICIO\n\n");
+	if(L->FL != L->FA){
+		
+	}
+	
+	switch(local){
+		case 1:
+			if(!(L->IL == L->IA && L->FL == L->FA)){
+				if(L->IL > L->IA){
+					L->IL--;
+					L->info[L->IL] = old[indic_orig];
+					printf("Tudo OK em InserirLLV INICIO\n\n");
+				}
+				else{
+					for(j=L->FL;j==L->IL;j--){
+						L->info[j+1] = L->info[j];
+					}
+					L->info[0] = old[indic_orig];
+					L->FL++;
+					printf("Entrou na parte do INSERIR NO INICIO DEPOIS DE INICIALIZADO\n\n");
+					controle = 1;
+				}
+			}
+			
+			if(controle == 0){
+				if(!(L->IL == L->IA && L->FL == L->FA)){
+					if(L->FL != L->FA){
+						L->FL++;
+					}
+					else{
+						for(i=L->IL;i<=L->FL;i++){
+							L->info[i-1] = L->info[i];
+						}
+						L->IL--;
+					}
+					L->info[L->FL] = old[indic_orig];
+					printf("Tudo OK em InserirLLV FIM\n\n");
+				}
+			}	
+			break;
+		default:
+			break;
+	}		
+	
+	/*
+	else{ // FIM DA LISTA
+		if(!(novo->IL == novo->IA) && (novo->FL == novo->FA)){
+			printf("Lista Cheia\n");
+			return;
 		}
 		else{
-			for(i=L->FL;i >= novo->IL; i--){
-				novo->info[i+1] = novo->info[i];
+			if(novo->FL != novo->FA){
+				novo->FL++;
 			}
-			novo->FL++;
+			else{
+				for(i = novo->IL; i <= novo->FL; i++){
+					novo->info[i-1] = novo->info[i];
+				}
+				novo->IL--;
+			}
+			novo->info[novo->FL] = old[indic_orig];
+			printf("Entrei na parte do FL++ > %d vezes\n\n",cont2);
+			cont2++;
 		}
 	}
-	
-	if((L->IL == L->IA) && (L->FL == L->FA)){
-		printf("Lista Cheia\n");
-		return;
-	}
-	else{
-		if(L->FL != L->FA){
-			
-		}
-	}
+	*/
+		
 }
 
 int main(){
@@ -112,10 +154,10 @@ int main(){
 	
 	printf("\n");
 	
-	while(n != 0){
-		printf("Digite o numero do App <0-Sair>: ");
+	while(n != 100){
+		printf("Digite o numero do App <100-Sair>: ");
 		scanf(" %d", &n);
-		inserirLLV(&s,&aux,n-1);
+		inserirLLV(&s,&aux[0],n-1);
 	}
 	
 	for(i=0;i<T;i++){
