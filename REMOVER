@@ -1,0 +1,62 @@
+#include <stdio.h>
+
+void remover(char vetor[], int local, int pos, bool vet[]) {
+	int i,ind;
+	if(local == 3){ // MEIO
+    	for(i=0;i<L->FL;i++){
+        	if(L->info[i].tam == L->info[remover].tam){
+            	break;
+        	}
+		}
+		if((L->FL-i) > (i-L->IL)){
+			for(j=L->FL;j>=i;j--){
+				L->info[j+1] = L->info[j];
+			}
+			L->info[L->FL].tam = 0
+			strcpy(L.info[L->FL].nome,"");
+			L->FL++;
+			printf("MEIO QUANDO TEM MAIS GENTE PRA DIREITA\n");
+		}
+		else{
+			for(j=L->IL;j<i;j++){
+				L->info[j-1] = L->info[j];
+			}
+			L->IL--;
+			printf("MEIO QUANDO TEM MAIS GENTE PRA ESQUERDA\n");
+		}
+		return;
+		
+		
+		
+		
+		if((FL - i) > (i - IL)){
+			for(i = FL; i >= ind; i--){
+				v[i+1] = v[i];
+			}
+			FL++;
+		}
+		else{
+			for(i = IL; i <= ind; i++){
+				v[i-1] = v[i];
+			}
+			IL--;
+		}
+	}	   
+}
+
+void removerElemento(tApp *v, int remover, int *quant_elem){
+    int i,j;
+    
+    
+    if((L->FL-i) > (i-L->IL)){
+		
+	}
+    
+    for(j=i+1;j<L->FL;j++){
+		v[j-1] = v[j];
+	}
+       
+	v[*quant_elem-1].tam = 0;
+	strcpy(v[*quant_elem-1].nome,"");    
+    (*quant_elem)--;
+}
