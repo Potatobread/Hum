@@ -57,8 +57,9 @@ void organizar(tApp *aux){
 }
 
 void inserirLLV(LLV *L, tApp *old, int indic_orig){
-	int i,j,k,local,controle=0;
+	int i,j,k,local,controle=0,quant_elem;
 	
+	quant_elem = L->FL;
 	if((old[indic_orig].tam < L->info[0].tam)||(L->IL != L->IA)){
 		local = 1;
 	}
@@ -108,16 +109,16 @@ void inserirLLV(LLV *L, tApp *old, int indic_orig){
 			}	
 			break;
 		case 2:
-			for(k=0;k<L->FL;k++){ // MEIO DA LISTA
+			for(k=0;k<=quant_elem;k++){ // MEIO DA LISTA
 				if(L->info[k].tam > old[indic_orig].tam){
 					if(!(L->IL == L->IA && L->FL == L->FA)){
-						for(i=0;L->FL;i++){
+						for(i=0;i<=quant_elem;i++){
 							if(L->info[i].tam > old[indic_orig].tam){
 								break;
 							}
 						}
 						if((L->FL-i) > (i-L->IL)){
-							for(j=L->FL;j>=i;j--){
+							for(j=quant_elem;j>=i;j--){
 								L->info[j+1] = L->info[j];
 							}
 							L->FL++;
@@ -170,7 +171,7 @@ int main(){
 	
 	inicializarLLV(&s);
 	carregar_Arquivos(&aux[0]);
-	organizar(&aux[0]);
+	//organizar(&aux[0]);
 	
 	for(i=0;i<T;i++){
 		if(aux[i].tam != 0){
