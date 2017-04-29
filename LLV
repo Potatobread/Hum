@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #define T 20
 
 typedef struct{
@@ -57,7 +58,7 @@ void organizar(tApp *aux){
 }
 
 void inserirLLV(LLV *L, tApp *old, int indic_orig){
-	int i,j,k,local,controle=0,ind;
+	int i,j,k,local,controle=0,ind,a,b;
 	
 	if((old[indic_orig].tam < L->info[0].tam)||(L->IL != L->IA)){
 		local = 1;
@@ -74,7 +75,7 @@ void inserirLLV(LLV *L, tApp *old, int indic_orig){
 	switch(local){
 		case 1:
 			if(!(L->IL == L->IA && L->FL == L->FA)){
-				if(L->IL == -1){
+				if(L->IL == L->FL){
 					L->IL = L->IA;
 					L->info[L->IL] = old[indic_orig];
 					printf("Tudo OK em InserirLLV INICIO\n\n");
@@ -126,9 +127,11 @@ void inserirLLV(LLV *L, tApp *old, int indic_orig){
 							printf("MEIO QUANDO TEM MAIS GENTE PRA DIREITA\n");
 							L->info[ind] = old[indic_orig];
 						}
-						if((L->FL-ind) < (ind-L->IL)){
+						a = abs(L->FL-ind);
+						b = abs(ind-L->IL);
+						if(b > a){
 							for(j=L->IL;j<=ind;j++){
-								L->info[j-1] = L->info[j];
+								L->info[j+1] = L->info[j+2];
 							}
 							L->IL--;
 							L->info[ind] = old[indic_orig];
