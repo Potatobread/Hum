@@ -57,15 +57,20 @@ void organizar(tApp *aux){
 }
 
 void inserirLLV(LLV *L, tApp *old, int indic_orig){
-	int i,j,local,controle = 0;
+	int i,j,k,local,controle=0;
 	
 	if((old[indic_orig].tam < L->info[0].tam)||(L->IL != L->IA)){
 		local = 1;
 	}
-	if(L->FL != L->FA){
-		
+	else{
+		for(i=0;i<T;i++){
+			if(L->info[i].tam > old[indic_orig].tam){
+				local = 2;
+				break;
+			}
+			local = 3;
+		}
 	}
-	
 	switch(local){
 		case 1:
 			if(!(L->IL == L->IA && L->FL == L->FA)){
@@ -75,11 +80,12 @@ void inserirLLV(LLV *L, tApp *old, int indic_orig){
 					printf("Tudo OK em InserirLLV INICIO\n\n");
 				}
 				else{
-					for(j=L->FL;j==L->IL;j--){
+					L->FL++;
+					for(j=L->FL;j>=L->IL;j--){
 						L->info[j+1] = L->info[j];
+						printf("L->FL DENTRO DO FOR: %d\n", L->FL);
 					}
 					L->info[0] = old[indic_orig];
-					L->FL++;
 					printf("Entrou na parte do INSERIR NO INICIO DEPOIS DE INICIALIZADO\n\n");
 					controle = 1;
 				}
@@ -101,33 +107,53 @@ void inserirLLV(LLV *L, tApp *old, int indic_orig){
 				}
 			}	
 			break;
+		case 2:
+			for(k=0;k<L->FL;k++){ // MEIO DA LISTA
+				if(L->info[k].tam > old[indic_orig].tam){
+					if(!(L->IL == L->IA && L->FL == L->FA)){
+						for(i=0;L->FL;i++){
+							if(L->info[i].tam > old[indic_orig].tam){
+								break;
+							}
+						}
+						if((L->FL-i) > (i-L->IL)){
+							for(j=L->FL;j>=i;j--){
+								L->info[j+1] = L->info[j];
+							}
+							L->FL++;
+							printf("MEIO QUANDO TEM MAIS GENTE PRA DIREITA\n");
+							L->info[i] = old[indic_orig];
+						}
+						else{
+							for(j = L->IL;j<i;j++){
+								L->info[j-1] = L->info[j];
+							}
+							L->IL--;
+						}
+						return;
+					}
+				}
+			}
+			break;
+		case 3:
+			if(!(L->IL == L->IA && L->FL == L->FA)){
+				if(L->FL != L->FA){
+					L->FL++;
+				}
+				else{
+					for(i = L->IL; i<=L->FL;i++){
+						L->info[i-1] = L->info[i];
+					}
+					L->IL--;
+					L->info[L->FL] = old[indic_orig];
+				}
+				L->info[L->FL] = old[indic_orig];
+				printf("TUDO OK NA PARTE DE INSERIR NO FIM\n\n");
+				break;
+			}
 		default:
 			break;
-	}		
-	
-	/*
-	else{ // FIM DA LISTA
-		if(!(novo->IL == novo->IA) && (novo->FL == novo->FA)){
-			printf("Lista Cheia\n");
-			return;
-		}
-		else{
-			if(novo->FL != novo->FA){
-				novo->FL++;
-			}
-			else{
-				for(i = novo->IL; i <= novo->FL; i++){
-					novo->info[i-1] = novo->info[i];
-				}
-				novo->IL--;
-			}
-			novo->info[novo->FL] = old[indic_orig];
-			printf("Entrei na parte do FL++ > %d vezes\n\n",cont2);
-			cont2++;
-		}
-	}
-	*/
-		
+	}	
 }
 
 int main(){
@@ -158,6 +184,12 @@ int main(){
 		printf("Digite o numero do App <100-Sair>: ");
 		scanf(" %d", &n);
 		inserirLLV(&s,&aux[0],n-1);
+		for(i=0;i<T;i++){
+			if(s.info[i].tam != 0){
+				printf("%s %d\n",s.info[i].nome,s.info[i].tam);
+			}
+		}
+		printf("\n");
 	}
 	
 	for(i=0;i<T;i++){
