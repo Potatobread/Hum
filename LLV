@@ -60,7 +60,7 @@ void organizar(tApp *aux){
 void inserirLLV(LLV *L, tApp *old, int indic_orig){
 	int i,j,k,local,controle=0,ind,a,b;
 	
-	if((old[indic_orig].tam < L->info[0].tam)||(L->IL != L->IA)){
+	if((old[indic_orig].tam < L->info[0].tam)||(L->IL != L->IA && L->FL == L->IL)){
 		local = 1;
 	}
 	else{
@@ -75,13 +75,13 @@ void inserirLLV(LLV *L, tApp *old, int indic_orig){
 	switch(local){
 		case 1:
 			if(!(L->IL == L->IA && L->FL == L->FA)){
-				if(L->IL == L->FL){
+				if(L->FL == -1){
 					L->IL = L->IA;
 					L->info[L->IL] = old[indic_orig];
 					printf("Tudo OK em InserirLLV INICIO\n\n");
 				}
 				else{
-					if(L->IL != L->IA){
+					if(L->IL > L->IA){
 						L->IL--;
 						L->info[L->IL] = old[indic_orig];
 					}
@@ -130,8 +130,8 @@ void inserirLLV(LLV *L, tApp *old, int indic_orig){
 						a = abs(L->FL-ind);
 						b = abs(ind-L->IL);
 						if(b > a){
-							for(j=L->IL;j<=ind;j++){
-								L->info[j+1] = L->info[j+2];
+							for(j=ind;j<=L->FL;j++){
+								L->info[j+1] = L->info[j];
 							}
 							L->IL--;
 							L->info[ind] = old[indic_orig];
@@ -163,62 +163,67 @@ void inserirLLV(LLV *L, tApp *old, int indic_orig){
 	}	
 }
 
-/*
 void removerLLV(LLV *L, int remover){
-	int i,j,k,local,controle=0;
+	int i,j,local;
 	
-	if(local == 1){ // INICIO
-		(!(L->IL == 1)){
-			L->IL++;
-		}
+	if(remover == 0){
+		local = 1;
 	}
-	if(local == 2){ // FIM
-		(!(L->IL == 1)){
-			L->FL--;
-			L->info[L->FL].tam = 0
-			strcpy(L.info[L->FL].nome,"");
-		} 
+	else if(remover == L->FL){
+		local = 2; 
 	}
-	if(local == 3){ // MEIO
-		for(i=0;i<FL;i++){
-			if(v[k]==v[i]){
-				ind = i;
-				break;
+	else{
+		local = 3;
+	}
+	
+	switch(local){
+		case 1:
+			if(!(L->IL == -1)){
+				L->IL++;
+				printf("Tudo OK em Remover INICIO\n\n");
 			}
-		}
-		if((FL - i) > (i - IL)){
-			for(i = FL; i >= ind; i--){
-				v[i+1] = v[i];
+			break;
+		case 2:
+			if(!(L->IL == -1)){
+				L->FL--;
+				L->info[L->FL].tam = 0;
+				strcpy(L->info[L->FL].nome,"");
+				printf("Tudo OK em Remover FIM\n\n");
 			}
-			FL++;
-		}
-		else{
-			for(i = IL; i <= ind; i++){
-				v[i-1] = v[i];
-			}
-			IL--;
-		}
-	}	   
-    } else {
-        if((pos <= 0) || (pos > (FL - IL + 1)))
-            return false;
-        else {
-            for(i = IL + pos - 1; i <= FL - 1; i++)
-                vetor[i] = vetor[i + 1];
-            FL = FL - 1;
-            vet[3] = true;
-            if(FL == IL - 1) {
-                FL = IL = -1;
-                vet[2] = true;
-            }
-            return true;
-        }
-    }
-    */
-
+			break;
+		case 3:
+			for(i=0;i<L->FL;i++){
+				if(L->info[i].tam == L->info[remover].tam){
+					if(!(L->IL == -1)){
+						if((L->FL-i) >= (i-L->IL)){
+							for(j=L->FL;-j>=i;j--){
+								L->info[j+1] = L->info[j];
+							}
+							L->info[L->FL].tam = 0;
+							strcpy(L->info[L->FL].nome,"");
+			   				L->FL++;
+							printf("MEIO QUANDO TEM MAIS GENTE PRA DIREITA\n");
+						}else{
+							for(j=i;j<=L->FL;j++){
+								L->info[j+1] = L->info[j];
+							}
+							L->IL--;
+							L->info[L->FL].tam = 0;
+							strcpy(L->info[L->FL].nome,"");
+							printf("MEIO QUANDO TEM MAIS GENTE PRA ESQUERDA\n");
+						}
+						return;
+					}
+				}
+			}	
+			break;
+		default:
+		   	break;
+	}
+}
 
 int main(){
-	int i,n;
+	int i,n,rem;
 	tApp aux[T];
 	LLV s;
 	
@@ -244,6 +249,9 @@ int main(){
 	while(n != 100){
 		printf("Digite o numero do App <100-Sair>: ");
 		scanf(" %d", &n);
+		if(n == 100){
+			break;
+		}
 		inserirLLV(&s,&aux[0],n-1);
 		for(i=0;i<T;i++){
 			if(s.info[i].tam != 0){
@@ -251,6 +259,32 @@ int main(){
 			}
 		}
 		printf("\n");
+		printf("L->IL: %d\n",s.IL);
+		printf("L->FL: %d\n\n",s.FL);
+	}
+	
+	rem = 0;
+	while(rem != 100){
+		for(i=s.IL;i<T;i++){
+			if(s.info[i].tam != 0){
+				printf("%d - %s %d\n",i+1,s.info[i].nome,s.info[i].tam);
+			}
+		}
+		printf("\n");
+		printf("Digite o App a EXCLUIR: ");
+		scanf(" %d", &rem);
+		if(rem == 100){
+			break;
+		}
+		removerLLV(&s,rem-1);
+		for(i=s.IL;i<T;i++){
+			if(s.info[i].tam != 0){
+				printf("%s %d\n",s.info[i].nome,s.info[i].tam);
+			}
+		}
+		printf("\n");
+		printf("L->IL: %d\n",s.IL);
+		printf("L->FL: %d\n\n",s.FL);
 	}
 	
 	for(i=0;i<T;i++){
