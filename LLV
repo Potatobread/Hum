@@ -14,7 +14,7 @@ typedef struct{
 }LLV;
 
 void inicializarLLV(LLV *L){
-	L->IL = 1;
+	L->IL = -1;
 	L->FL = -1; 
 	L->IA = 0;
 	L->FA = T;
@@ -57,9 +57,8 @@ void organizar(tApp *aux){
 }
 
 void inserirLLV(LLV *L, tApp *old, int indic_orig){
-	int i,j,k,local,controle=0,quant_elem;
+	int i,j,k,local,controle=0,ind;
 	
-	quant_elem = L->FL;
 	if((old[indic_orig].tam < L->info[0].tam)||(L->IL != L->IA)){
 		local = 1;
 	}
@@ -75,20 +74,26 @@ void inserirLLV(LLV *L, tApp *old, int indic_orig){
 	switch(local){
 		case 1:
 			if(!(L->IL == L->IA && L->FL == L->FA)){
-				if(L->IL > L->IA){
-					L->IL--;
+				if(L->IL == -1){
+					L->IL = L->IA;
 					L->info[L->IL] = old[indic_orig];
 					printf("Tudo OK em InserirLLV INICIO\n\n");
 				}
 				else{
-					L->FL++;
-					for(j=L->FL;j>=L->IL;j--){
-						L->info[j+1] = L->info[j];
-						printf("L->FL DENTRO DO FOR: %d\n", L->FL);
+					if(L->IL != L->IA){
+						L->IL--;
+						L->info[L->IL] = old[indic_orig];
 					}
-					L->info[0] = old[indic_orig];
-					printf("Entrou na parte do INSERIR NO INICIO DEPOIS DE INICIALIZADO\n\n");
-					controle = 1;
+					else{
+						L->FL++;
+						for(j=L->FL;j>=L->IL;j--){
+							L->info[j+1] = L->info[j];
+							printf("L->FL DENTRO DO FOR: %d\n", L->FL);
+						}
+						L->info[0] = old[indic_orig];
+						printf("Entrou na parte do INSERIR NO INICIO DEPOIS DE INICIALIZADO\n\n");
+						controle = 1;
+					}
 				}
 			}
 			
@@ -109,27 +114,25 @@ void inserirLLV(LLV *L, tApp *old, int indic_orig){
 			}	
 			break;
 		case 2:
-			for(k=0;k<=quant_elem;k++){ // MEIO DA LISTA
+			for(k=0;k<=L->FL;k++){ // MEIO DA LISTA
 				if(L->info[k].tam > old[indic_orig].tam){
 					if(!(L->IL == L->IA && L->FL == L->FA)){
-						for(i=0;i<=quant_elem;i++){
-							if(L->info[i].tam > old[indic_orig].tam){
-								break;
-							}
-						}
-						if((L->FL-i) > (i-L->IL)){
-							for(j=quant_elem;j>=i;j--){
+						ind = k;
+						if((L->FL-ind) >= (ind-L->IL)){
+							for(j=L->FL;j>=ind;j--){
 								L->info[j+1] = L->info[j];
 							}
 							L->FL++;
 							printf("MEIO QUANDO TEM MAIS GENTE PRA DIREITA\n");
-							L->info[i] = old[indic_orig];
+							L->info[ind] = old[indic_orig];
 						}
-						else{
-							for(j = L->IL;j<i;j++){
+						if((L->FL-ind) < (ind-L->IL)){
+							for(j=L->IL;j<=ind;j++){
 								L->info[j-1] = L->info[j];
 							}
 							L->IL--;
+							L->info[ind] = old[indic_orig];
+							printf("MEIO QUANDO TEM MAIS GENTE PRA ESQUERDA\n");
 						}
 						return;
 					}
@@ -157,6 +160,60 @@ void inserirLLV(LLV *L, tApp *old, int indic_orig){
 	}	
 }
 
+/*
+void removerLLV(LLV *L, int remover){
+	int i,j,k,local,controle=0;
+	
+	if(local == 1){ // INICIO
+		(!(L->IL == 1)){
+			L->IL++;
+		}
+	}
+	if(local == 2){ // FIM
+		(!(L->IL == 1)){
+			L->FL--;
+			L->info[L->FL].tam = 0
+			strcpy(L.info[L->FL].nome,"");
+		} 
+	}
+	if(local == 3){ // MEIO
+		for(i=0;i<FL;i++){
+			if(v[k]==v[i]){
+				ind = i;
+				break;
+			}
+		}
+		if((FL - i) > (i - IL)){
+			for(i = FL; i >= ind; i--){
+				v[i+1] = v[i];
+			}
+			FL++;
+		}
+		else{
+			for(i = IL; i <= ind; i++){
+				v[i-1] = v[i];
+			}
+			IL--;
+		}
+	}	   
+    } else {
+        if((pos <= 0) || (pos > (FL - IL + 1)))
+            return false;
+        else {
+            for(i = IL + pos - 1; i <= FL - 1; i++)
+                vetor[i] = vetor[i + 1];
+            FL = FL - 1;
+            vet[3] = true;
+            if(FL == IL - 1) {
+                FL = IL = -1;
+                vet[2] = true;
+            }
+            return true;
+        }
+    }
+    */
+
+
 int main(){
 	int i,n;
 	tApp aux[T];
@@ -171,7 +228,7 @@ int main(){
 	
 	inicializarLLV(&s);
 	carregar_Arquivos(&aux[0]);
-	//organizar(&aux[0]);
+	organizar(&aux[0]);
 	
 	for(i=0;i<T;i++){
 		if(aux[i].tam != 0){
