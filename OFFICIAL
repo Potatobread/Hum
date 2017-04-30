@@ -243,7 +243,7 @@ void inserirLLV(LLV *v, LLV *old, int indic_orig, int *quant_elem){
 			}	
 			break;
 		case 2:
-			for(k=0;k<(*quant_elem);k++){ // MEIO DA LISTA
+			for(k=0;k<(*quant_elem);k++){
 				if(v->info[k].tam > old->info[indic_orig].tam){
 					if(!(v->IL == v->IA && v->FL == v->FA)){
 						ind = k;
@@ -252,10 +252,8 @@ void inserirLLV(LLV *v, LLV *old, int indic_orig, int *quant_elem){
 								v->info[j+1] = v->info[j];
 							}
 							v->FL++;
-							printf("MEIO QUANDO TEM MAIS GENTE PRA DIREITA\n");
 							v->info[ind] = old->info[indic_orig];
 							(*quant_elem)++;
-							printf("QUANTIDADE DE ELEMENTOS: %d\n", *quant_elem);
 						}
 						else{
 							for(j=v->IL;j<=ind;j++){
@@ -263,9 +261,7 @@ void inserirLLV(LLV *v, LLV *old, int indic_orig, int *quant_elem){
 							}
 							v->IL--;
 							v->info[ind] = old->info[indic_orig];
-							printf("MEIO QUANDO TEM MAIS GENTE PRA ESQUERDA\n");
 							(*quant_elem)++;
-							printf("QUANTIDADE DE ELEMENTOS: %d\n", *quant_elem);
 						}
 						return;	
 					}
@@ -285,9 +281,7 @@ void inserirLLV(LLV *v, LLV *old, int indic_orig, int *quant_elem){
 					v->info[v->FL] = old->info[indic_orig];
 				}
 				v->info[v->FL] = old->info[indic_orig];
-				printf("TUDO OK NA PARTE DE INSERIR NO FIM\n\n");
 				(*quant_elem)++;
-				printf("QUANTIDADE DE ELEMENTOS: %d\n", *quant_elem);
 				break;
 			}
 		default:
@@ -317,16 +311,7 @@ void removerLLV(LLV *v, int remover, int *quant_elem){
 				v->info[v->IL].tam = 0;
 				strcpy(v->info[v->IL].nome,"");
 				v->IL++;
-				/*
-				for(i=1;i<=L->FL;i++){
-					L->info[i-1] = L->info[i];
-				}
-				*/
-				//L->info[L->FL].tam = 0;
-				//strcpy(L->info[L->FL].nome,"");
-				printf("Tudo OK em Remover INICIO\n\n");
 				(*quant_elem)--;
-				printf("QUANTIDADE DE ELEMENTOS: %d\n", *quant_elem);
 			}
 			break;
 		case 2:
@@ -334,9 +319,7 @@ void removerLLV(LLV *v, int remover, int *quant_elem){
 				v->info[v->FL].tam = 0;
 				strcpy(v->info[v->FL].nome,"");
 				v->FL--;
-				printf("Tudo OK em Remover FIM\n\n");
 				(*quant_elem)--;
-				printf("QUANTIDADE DE ELEMENTOS: %d\n", *quant_elem);
 			}
 			break;
 		case 3:
@@ -349,9 +332,7 @@ void removerLLV(LLV *v, int remover, int *quant_elem){
 						v->info[v->FL].tam = 0;
 						strcpy(v->info[v->FL].nome,"");
 			   			v->FL--;
-						printf("EXCLUIR MEIO 9y0\n");
 						(*quant_elem)--;
-						printf("QUANTIDADE DE ELEMENTOS: %d\n", *quant_elem);
 						return;
 					}
 				}
@@ -482,6 +463,8 @@ void meusApps(LLV *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum, 
 						*cont_rum += (ins->info[num-1].tam/2);
 						if(*cont_rum > tam_total){
 							printf("Memória Insuficiente.\n");
+							sleep(2);
+							system("cls");
 							return;
 						}
 						printf("App %s em Execução.\n", ins->info[num-1].nome);
@@ -568,14 +551,18 @@ void meusApps(LLV *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum, 
 	
 void executando(LLV *rum, int *cont_rum, int *quant_rum){
 	system("cls");
-	int resp,remover,indic;
+	int remover,indic;
 			
 	consultarRum(rum,&indic);
-	while(resp != 0){
+	while(remover != 0){
 		printf("\n");
 		printf("Memória RAM: Atual: %d mb | MAX: 50 mb.\n\n", *cont_rum);
-		printf("Número do App a parar: ");
+		printf("Número do App a parar <0 - Sair>: ");
 		scanf(" %d", &remover);
+		if(remover == 0){
+			system("cls");
+			return;
+		}
 		if(remover > indic){
 			printf("Opção Inválida\n");
 			return;
@@ -584,10 +571,9 @@ void executando(LLV *rum, int *cont_rum, int *quant_rum){
 		removerLLV(rum,remover-1,quant_rum);
 		printf("\n");
         printf("Memória RAM: Atual: %d mb | MAX: 50 mb.\n\n", *cont_rum);
-		printf("Sair - 0\n");
-		scanf(" %d", &resp);
-		system("cls");
-		consultarRum(rum,&indic);
+        sleep(2);
+        system("cls");
+        consultarRum(rum,&indic);
 	}
 	system("cls");
 }
@@ -598,7 +584,6 @@ void menuprin(LLV *s,LLV *ins,LLV *rum, int *cont_tam, int *cont_rum){
 	int resp,quant_inst=0,quant_rum=0;
 	int i,j,a,k=0;
 	display m[L][C];
-	
 
 	for(j=0;j<L;j++){
 		for(i=0;i<C;i++){
@@ -631,7 +616,9 @@ void menuprin(LLV *s,LLV *ins,LLV *rum, int *cont_tam, int *cont_rum){
 	}
 	printf("==========================================\n");
 	printf("[1.StoreED]  [2.MeusAppsED]  [3.AppRumED]\n");
+	printf("==========================================\n");
 	scanf(" %d", &resp);
+	
 	while(resp != 0){
 		switch(resp){
 			case 1:
@@ -645,6 +632,8 @@ void menuprin(LLV *s,LLV *ins,LLV *rum, int *cont_tam, int *cont_rum){
 				break;
 			default:
 				printf("Opção inválida!\n");
+				sleep(1);
+        		system("cls");
 				break;
 		};
 		
@@ -656,7 +645,7 @@ void menuprin(LLV *s,LLV *ins,LLV *rum, int *cont_tam, int *cont_rum){
 		}	   	
 		for(j=0;j<L;j++){
 			for(i=0;i<C;i++){
-				if(k < quant_inst){
+				if(k <= quant_inst){
 					strcpy(m[j][i].nome,ins->info[k].nome);				
 					k++;
 				}
@@ -694,6 +683,7 @@ void menuprin(LLV *s,LLV *ins,LLV *rum, int *cont_tam, int *cont_rum){
 		
 		printf("==========================================\n");
 		printf("[1.StoreED]  [2.MeusAppsED]  [3.AppRumED]\n");
+		printf("==========================================\n");
 		scanf(" %d", &resp);
 	}
 }
