@@ -58,7 +58,7 @@ void organizar(tApp *aux){
 }
 
 void inserirLLV(LLV *L, tApp *old, int indic_orig, int *quant_elem){
-	int i,j,k,local,controle=0,ind,a,b;
+	int i,j,k,local,controle=0,ind;
 	
 	if((old[indic_orig].tam < L->info[0].tam)||(L->IL != L->IA && L->FL == L->IL)){
 		local = 1;
@@ -123,29 +123,27 @@ void inserirLLV(LLV *L, tApp *old, int indic_orig, int *quant_elem){
 				if(L->info[k].tam > old[indic_orig].tam){
 					if(!(L->IL == L->IA && L->FL == L->FA)){
 						ind = k;
-						if((L->FL-ind) >= (ind-L->IL)){
+						if(L->FL != L->FA){
 							for(j=L->FL;j>=ind;j--){
 								L->info[j+1] = L->info[j];
 							}
 							L->FL++;
-							printf("MEIO QUANDO TEM MAIS GENTE PRA ESQUERDA\n");
-							L->info[ind] = old[indic_orig];
-							(*quant_elem)++;
-							printf("QUANTIDADE DE ELEMENTOS: %d\n", *quant_elem);
-						}
-						a = abs(L->FL-ind);
-						b = abs(ind-L->IL);
-						if(b > a){
-							for(j=L->FL;j>=ind;j--){
-								L->info[j+1] = L->info[j];
-							}
-							L->FL++;
-							L->info[ind] = old[indic_orig];
 							printf("MEIO QUANDO TEM MAIS GENTE PRA DIREITA\n");
+							L->info[ind] = old[indic_orig];
 							(*quant_elem)++;
 							printf("QUANTIDADE DE ELEMENTOS: %d\n", *quant_elem);
 						}
-						return;
+						else{
+							for(j=L->IL;j<=ind;j++){
+								L->info[j-1] = L->info[j];
+							}
+							L->IL--;
+							L->info[ind] = old[indic_orig];
+							printf("MEIO QUANDO TEM MAIS GENTE PRA ESQUERDA\n");
+							(*quant_elem)++;
+							printf("QUANTIDADE DE ELEMENTOS: %d\n", *quant_elem);
+						}
+						return;	
 					}
 				}
 			}
