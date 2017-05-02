@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define T 20
+
+typedef struct{
+	char nome[20];
+	int tam;
+}tApp;
+
+typedef struct{
+	tApp info;
+	int prox;
+}No;
+
+typedef struct{
+	int disp;
+	int IL;
+	No v[T];
+}LLSE;
+
+void carregar_Arquivos(tApp *p){
+	FILE *leitura;
+	int i=0;
+	
+	leitura = fopen("MobileED.txt", "r");
+	
+	if(leitura == NULL){
+		printf("Erro ao abrir o arquivo.\n");
+		exit(0);
+	}
+	else{
+		while((fscanf(leitura,"%s %d\n", &p[i].nome,&p[i].tam))!= EOF){
+			i++;
+		}
+	}
+	
+	fclose(leitura);
+}
+
+void inicializarLLSE(LLSE *lis){
+	int i;
+	
+	for(i=1;i<T;i++){
+		lis->v[i].prox = i+1;
+	}
+	lis->disp = 1;
+	lis->v[T].prox = 0;	
+}
+
+void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
+	int i,local,ind;
+	
+	if(!(lis->disp == -1)){
+		ind = lis->disp;
+		lis->v[ind].info = old[indic_orig];
+		lis->IL = ind;
+		lis->disp = lis->v[lis->disp].prox;
+		if(*quant_elem != 0){
+			lis->v[ind].prox = lis->IL;
+			(*quant_elem)++;	
+		}				
+		else{
+			lis->v[ind].prox = -1;
+			(*quant_elem)++;
+		}
+	}			
+			break;
+		case 2:
+			if(!(lis->disp == -1)){
+				ind = lis->v[1].prox;
+				while(lis->v[ind].prox != -1){
+					ind = lis->v[ind].prox;
+				}
+				lis->v[lis->disp].prox = lis->v[ind].prox;
+				lis->v[ind].prox = lis->disp;
+				lis->v[ind].info = old[indic_orig];
+				(*quant_elem)++;
+			}
+			break;
+		case 3:
+			break;
+		default:
+			break;
+	}	
+	
+}
+
+int main(){
+	int i,num,b=0;
+	tApp aux[T];
+	LLSE s;
+	
+	for(i=0;i<=T;i++){
+		aux[i].tam = 0;
+		s.v[i].info.tam = 0;
+		strcpy(aux[i].nome,"");  
+		strcpy(s.v[i].info.nome,"");
+	}
+	
+	carregar_Arquivos(&aux[0]);
+	inicializarLLSE(&s);
+	
+	for(i=0;i<T;i++){
+		if(aux[i].tam != 0){
+			printf("%d - %s %d\n", i+1,aux[i].nome,aux[i].tam);
+		}
+	}
+	printf("\n");
+	s.v[T].info.tam = 0;  
+	strcpy(s.v[T].info.nome,"");
+	for(i=1;i<=T;i++){
+		//if(s.v[i].info.tam != 0){
+			printf("%d - %s %d  PROX: %d\n", i,s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox);				
+		//}
+	}
+	while(num != 100){
+		printf("Digite o NUMERO: ");
+		scanf(" %d", &num);
+		inserirLLSE(&s,&aux[0],num-1,&b);
+		printf("\n");
+		for(i=1;i<=T;i++){
+			if(s.v[i].info.tam != 0){
+				printf("%d - %s %d  PROX: %d\n", i,s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox);				
+			}
+		}
+		printf("\n");
+		for(i=0;i<T;i++){
+			if(aux[i].tam != 0){
+				printf("%d - %s %d\n", i+1,aux[i].nome,aux[i].tam);
+			}
+		}
+	}
+	printf("\n");
+	
+	return 0;
+}
