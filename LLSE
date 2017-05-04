@@ -49,7 +49,7 @@ void inicializarLLSE(LLSE *lis){
 }
 
 void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
-	int i,local,ind;
+	int i,local,ind,novo;
 	
 	if((old[indic_orig].tam < lis->v[0].info.tam)||(lis->disp == 1)){
 		local = 1;
@@ -76,13 +76,15 @@ void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
 			break;
 		case 2:
 			if(!(lis->disp == -1)){
-				ind = lis->v[1].prox;
+				ind = lis->IL;
 				while(lis->v[ind].prox != -1){
 					ind = lis->v[ind].prox;
 				}
-				lis->v[lis->disp].prox = lis->v[ind].prox;
-				lis->v[ind].prox = lis->disp;
-				lis->v[ind].info = old[indic_orig];
+				novo = lis->disp;
+				lis->disp = lis->v[novo].prox;
+				lis->v[novo].prox = lis->v[ind].prox;
+				lis->v[ind].prox = novo;
+				lis->v[novo].info = old[indic_orig];
 				(*quant_elem)++;
 			}
 			break;
