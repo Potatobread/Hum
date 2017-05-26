@@ -51,20 +51,29 @@ void inicializarLLSE(LLSE *lis){
 void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
 	int i,k,local,ind,novo,cont,find;
 	
-	if((old[indic_orig].tam < lis->v[0].info.tam)||(lis->disp == 1)){
+	if((lis->v[lis->IL].info.tam > old[indic_orig].tam)||(lis->disp == 1)){
 		local = 1;
 	}
 	else{
 		i = lis->IL;
-		while(lis->v[i].prox != -1){
-			if(lis->v[i].info.tam > old[indic_orig].tam){
-				local = 3;
-				break;
-			}
-			i = lis->v[i].prox;
+		if(lis->v[i].prox == -1){
 			local = 2;
 		}
+		else{
+			while(lis->v[i].prox != -1){
+				if(lis->v[i].info.tam > old[indic_orig].tam){
+					printf("i: %d   LOCAL 3\n", i);
+					local = 3;
+					break;
+				}
+				i = lis->v[i].prox;
+				printf("i: %d     LOCAL 2\n", i);
+				local = 2;
+				}
+			}
+		}
 	}
+	
 	switch(local){
 		case 1:
 			if(!(lis->disp == -1)){
@@ -126,7 +135,7 @@ void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
 }
 
 int main(){
-	int i,num,b=0;
+	int i,num,b=0,numerador;
 	tApp aux[T];
 	LLSE s;
 	
@@ -158,17 +167,35 @@ int main(){
 		scanf(" %d", &num);
 		inserirLLSE(&s,&aux[0],num-1,&b);
 		printf("\n");
+		
 		for(i=1;i<=T;i++){
 			if(s.v[i].info.tam != 0){
-				printf("%d - %s %d  PROX: %d\n", i,s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox);				
+				printf("%d - %s: %d  PROX: %d\n", i,s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox);				
 			}
 		}
+		/*
+		i = s.IL;
+		numerador = 0;
+		if(s.v[i].prox == -1){
+			numerador += 1;
+			printf("%d - %s: %d  PROX: %d\n", numerador, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox);
+		}
+		else{
+			while(s.v[i].prox != -1){
+				numerador += 1;
+				printf("%d - %s: %d  PROX: %d\n", numerador, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox);
+				i = s.v[i].prox;
+			}
+		}
+		*/
 		printf("\n");
 		for(i=0;i<T;i++){
 			if(aux[i].tam != 0){
 				printf("%d - %s %d\n", i+1,aux[i].nome,aux[i].tam);
 			}
 		}
+		printf("\nIL: %d\n", s.IL);
+		printf("Disp: %d\n", s.disp);
 	}
 	printf("\n");
 	
