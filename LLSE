@@ -174,26 +174,25 @@ int main(){
 		inserirLLSE(&s,&aux[0],num-1,&b);
 		printf("\n");
 		
-		for(i=1;i<=T;i++){
-			if(s.v[i].info.tam != 0){
-				printf("%d - %s: %d  PROX: %d\n", i,s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox);				
-			}
-		}
-		/*
 		i = s.IL;
 		numerador = 0;
 		if(s.v[i].prox == -1){
-			numerador += 1;
-			printf("%d - %s: %d  PROX: %d\n", numerador, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox);
+			numerador++;
+			printf("%d - %s: %d  PROX: %d    i: %d\n", numerador, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
 		}
 		else{
+			numerador = 0;
 			while(s.v[i].prox != -1){
-				numerador += 1;
-				printf("%d - %s: %d  PROX: %d\n", numerador, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox);
+				numerador++;
+				printf("%d - %s: %d  PROX: %d    i: %d\n", numerador, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
 				i = s.v[i].prox;
+				if(s.v[i].prox == -1){
+					numerador++;
+					printf("%d - %s: %d  PROX: %d    i: %d\n", numerador, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+				}
 			}
 		}
-		*/
+		
 		printf("\n");
 		for(i=0;i<T;i++){
 			if(aux[i].tam != 0){
