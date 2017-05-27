@@ -140,6 +140,67 @@ void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
 	}	
 }
 
+
+void removerLLSE(LLSE *lis, int *remover, int *quant_elem){
+	int i,ind,local;
+	
+	if(remover == lis->IL){
+		local = 1;
+	}
+	else{
+		i = lis->IL;
+		while(lis->v[i].prox != -1){
+			i = lis->v[i].prox;
+			if(lis->v[i].prox == -1){
+				local = 2;
+			}
+			else{
+				local = 3;
+			}
+		}
+	}
+	
+	switch(local){
+		case 1:
+			if(!(lis->disp == 1)){
+				ind = lis->IL;
+				lis->IL = lis->v[ind].prox;
+				lis->v[ind].prox = lis->disp;
+				lis->disp = ind;
+			}
+			break;
+		case 2:
+			if(!(lis->disp == 1)){
+				i = lis->IL;
+				while(lis->v[i].prox != -1){
+					i = lis->v[i].prox;
+				}
+				lis->v[lis->v[i].prox].prox = lis->disp;
+				lis->disp = lis->v[i].prox;
+				lis->v[i].prox = -1;
+			}
+			break;
+		case 3:
+			if(!(lis->disp == 1)){
+				i = lis->IL;
+				while(lis->v[i].prox != -1){
+					if(lis->v[i].prox == remover){
+						break;
+					}
+					i = lis->v[i].prox;
+				}
+				ind_ant = i;
+				ind_rem = lis->v[ind_ant].prox;
+				lis->v[ind_ant].prox = lis->v[lis->v[ind_rem].prox].prox;
+				lis->v[ind_rem].prox = lis->disp;
+				lis->disp = ind_rem;
+			}
+			break;
+		default:
+			break;
+	}
+}
+
 int main(){
 	int i,num,b=0,numerador;
 	tApp aux[T];
@@ -169,7 +230,7 @@ int main(){
 		//}
 	}
 	while(num != 100){
-		printf("Digite o NUMERO: ");
+		printf("Digite o NUMERO <Sair - 100>: ");
 		scanf(" %d", &num);
 		inserirLLSE(&s,&aux[0],num-1,&b);
 		printf("\n");
@@ -203,6 +264,36 @@ int main(){
 		printf("Disp: %d\n", s.disp);
 	}
 	printf("\n");
+	
+	num = 0;
+	while(num != 100){
+		printf("Digite o Numero a Excluir <Sair - 100>: ");
+		scanf(" %d", &num);
+		removerLLSE(&s,&num,&b);
+		printf("\n");
+		
+		i = s.IL;
+		numerador = 0;
+		if(s.v[i].prox == -1){
+			numerador++;
+			printf("%d - %s: %d  PROX: %d    i: %d\n", numerador, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+		}
+		else{
+			numerador = 0;
+			while(s.v[i].prox != -1){
+				numerador++;
+				printf("%d - %s: %d  PROX: %d    i: %d\n", numerador, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+				i = s.v[i].prox;
+				if(s.v[i].prox == -1){
+					numerador++;
+					printf("%d - %s: %d  PROX: %d    i: %d\n", numerador, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+				}
+			}
+		}
+		
+		printf("\nIL: %d\n", s.IL);
+		printf("Disp: %d\n", s.disp);
+	}
 	
 	return 0;
 }
