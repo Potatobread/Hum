@@ -69,7 +69,13 @@ void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
 				i = lis->v[i].prox;
 				printf("i: %d     LOCAL 2\n", i);
 				local = 2;
+				if(lis->v[i].info.tam > old[indic_orig].tam){
+					printf("i: %d   LOCAL 3\n", i);
+					local = 3;
+					break;
 				}
+				printf("i: %d     LOCAL 2\n", i);
+				local = 2;
 			}
 		}
 	}
@@ -79,7 +85,6 @@ void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
 			if(!(lis->disp == -1)){
 				ind = lis->disp;
 				lis->v[ind].info = old[indic_orig];
-				lis->IL = ind;
 				lis->disp = lis->v[ind].prox;
 				if(*quant_elem != 0){
 					lis->v[ind].prox = lis->IL;
@@ -89,6 +94,7 @@ void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
 					lis->v[ind].prox = -1;
 					(*quant_elem)++;
 				}
+				lis->IL = ind;
 			}
 			printf("ENTRO NO INSERIR INICIO\n");
 			break;
