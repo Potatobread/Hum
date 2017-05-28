@@ -19,6 +19,10 @@ typedef struct{
 	No v[T];
 }LLSE;
 
+typedef struct{
+	int ind;
+}visual;
+
 void carregar_Arquivos(tApp *p){
 	FILE *leitura;
 	int i=0;
@@ -49,7 +53,7 @@ void inicializarLLSE(LLSE *lis){
 }
 
 void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
-	int i,k,local,ind,novo,cont,find;
+	int i,k,local,ind,novo,find,cont;
 	
 	if((lis->v[lis->IL].info.tam > old[indic_orig].tam)||(lis->disp == 1)){
 		local = 1;
@@ -142,7 +146,7 @@ void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
 
 
 void removerLLSE(LLSE *lis, int *remover, int *quant_elem){
-	int i,ind,local;
+	int i,ind,local,ind_ant,ind_rem;
 	
 	if(remover == lis->IL){
 		local = 1;
@@ -202,13 +206,15 @@ void removerLLSE(LLSE *lis, int *remover, int *quant_elem){
 }
 
 int main(){
-	int i,num,b=0,numerador;
+	int i,num=0,b=0,numerador,j;
 	tApp aux[T];
 	LLSE s;
+	visual v[T];
 	
 	for(i=0;i<=T;i++){
 		aux[i].tam = 0;
 		s.v[i].info.tam = 0;
+		v[T].ind = 0;
 		strcpy(aux[i].nome,"");  
 		strcpy(s.v[i].info.nome,"");
 	}
@@ -244,11 +250,11 @@ int main(){
 		else{
 			numerador = 0;
 			while(s.v[i].prox != -1){
-				numerador++;
+				numerador += 1;
 				printf("%d - %s: %d  PROX: %d    i: %d\n", numerador, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
 				i = s.v[i].prox;
 				if(s.v[i].prox == -1){
-					numerador++;
+					numerador += 1;
 					printf("%d - %s: %d  PROX: %d    i: %d\n", numerador, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
 				}
 			}
@@ -265,6 +271,7 @@ int main(){
 	}
 	printf("\n");
 	
+	
 	num = 0;
 	while(num != 100){
 		printf("Digite o Numero a Excluir <Sair - 100>: ");
@@ -273,20 +280,23 @@ int main(){
 		printf("\n");
 		
 		i = s.IL;
-		numerador = 0;
+		j = 0;
 		if(s.v[i].prox == -1){
-			numerador++;
-			printf("%d - %s: %d  PROX: %d    i: %d\n", numerador, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+			j++;
+			v[j].ind = i;
+			printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
 		}
 		else{
-			numerador = 0;
+			j = 0;
 			while(s.v[i].prox != -1){
-				numerador++;
-				printf("%d - %s: %d  PROX: %d    i: %d\n", numerador, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+				j++;
+				v[j].ind = i;
+				printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind = i, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
 				i = s.v[i].prox;
 				if(s.v[i].prox == -1){
-					numerador++;
-					printf("%d - %s: %d  PROX: %d    i: %d\n", numerador, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+					j++;
+					v[j].ind = i;
+					printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind = i, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
 				}
 			}
 		}
