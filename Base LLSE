@@ -208,7 +208,7 @@ void removerLLSE(LLSE *lis, int *remover, int *quant_elem){
 */
 
 int main(){
-	int i,j,num=0,b=0,numerador,j;
+	int i,num=0,b=0,numerador,j;
 	tApp aux[T];
 	LLSE s;
 	visual v[T];
