@@ -1,0 +1,203 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define T 20
+
+typedef struct{
+	char nome[20];
+	int tam;
+}tApp;
+
+typedef struct{
+	tApp info;
+	int prox;
+}No;
+
+typedef struct{
+	int disp;
+	int IL;
+	No v[T];
+}LLSE;
+
+typedef struct{
+	int ind;
+	int ind_LLSE;
+}visual;
+
+void carregar_Arquivos(tApp *p){
+	FILE *leitura;
+	int i=0;
+	
+	leitura = fopen("MobileED.txt", "r");
+	
+	if(leitura == NULL){
+		printf("Erro ao abrir o arquivo.\n");
+		exit(0);
+	}
+	else{
+		while((fscanf(leitura,"%s %d\n", &p[i].nome,&p[i].tam))!= EOF){
+			i++;
+		}
+	}
+	
+	fclose(leitura);
+}
+
+void inicializarLLSE(LLSE *lis){
+	int i;
+	
+	for(i=1;i<T;i++){
+		lis->v[i].prox = i+1;
+	}
+	lis->disp = 1;
+	lis->v[T].prox = 0;	
+}
+
+void inserirPilha(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
+	int ind;
+	
+	if(!(lis->disp == -1)){
+		ind = lis->disp;
+		lis->v[ind].info = old[indic_orig];
+		lis->disp = lis->v[ind].prox;
+		if(*quant_elem != 0){
+			lis->v[ind].prox = lis->IL;
+			(*quant_elem)++;	
+		}				
+		else{
+			lis->v[ind].prox = -1;
+			(*quant_elem)++;
+		}
+		lis->IL = ind;
+	}
+	printf("ENTRO NO INSERIR INICIO\n");
+}
+
+void removerPilha(LLSE *lis){
+	int ind;
+	
+	if(!(lis->disp == 1)){
+		ind = lis->IL;
+		lis->IL = lis->v[ind].prox;
+		lis->v[ind].prox = lis->disp;
+		lis->disp = ind;
+	}
+}
+
+int main(){
+	int i,num=0,b=0,j;
+	tApp aux[T];
+	LLSE s;
+	visual v[T];
+	
+	for(i=0;i<T;i++){
+		aux[i].tam = 0;
+		s.v[i].info.tam = 0;
+		v[T].ind = 0;
+		strcpy(aux[i].nome,"");  
+		strcpy(s.v[i].info.nome,"");
+	}
+	
+	carregar_Arquivos(&aux[0]);
+	inicializarLLSE(&s);
+	
+	for(i=0;i<T;i++){
+		if(aux[i].tam != 0){
+			printf("%d - %s %d\n", i+1,aux[i].nome,aux[i].tam);
+		}
+	}
+	printf("\n");
+	
+	s.v[T].info.tam = 0;  
+	strcpy(s.v[T].info.nome,"");
+	for(i=1;i<=T;i++){
+		printf("%d - %s %d  PROX: %d\n", i,s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox);				
+	}
+	
+	while(num != 100){
+		printf("Digite o NUMERO <Sair - 100>: ");
+		scanf(" %d", &num);
+		if(num == 100){
+			break;
+		}
+		inserirPilha(&s,&aux[0],num-1,&b);
+		printf("\n");
+		
+		i = s.IL;
+		j = 0;
+		for(j=0;j<T;j++){
+			v[j].ind = j+1; 
+		}
+		j = 0;
+		if(s.v[i].prox == -1){
+			v[j].ind_LLSE = i;
+			printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+		}
+		else{
+			j = 0;
+			while(s.v[i].prox != -1){
+				v[j].ind_LLSE = i;
+				printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+				j++;
+				i = s.v[i].prox;
+				if(s.v[i].prox == -1){
+					v[j].ind_LLSE = i;
+					printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+				}
+			}
+		}
+		
+		printf("\n");
+		for(i=0;i<T;i++){
+			if(aux[i].tam != 0){
+				printf("%d - %s %d\n", i+1,aux[i].nome,aux[i].tam);
+			}
+		}
+		printf("\nIL: %d\n", s.IL);
+		printf("Disp: %d\n", s.disp);
+	}
+	printf("\n\n");
+	
+	num = 0;
+	
+	while(num != 100){
+		printf("Remover <1 - Sim || 2 - Nao>: ");
+		scanf(" %d", &num);
+		if(num == 1){
+			removerPilha(&s);
+		}
+		else{
+			break;
+		}
+		printf("\n");
+		
+		i = s.IL;
+		j = 0;
+		for(j=0;j<T;j++){
+			v[j].ind = j+1; 
+		}
+		j = 0;
+		if(s.v[i].prox == -1){
+			v[j].ind_LLSE = i;
+			printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+		}
+		else{
+			j = 0;
+			while(s.v[i].prox != -1){
+				v[j].ind_LLSE = i;
+				printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+				j++;
+				i = s.v[i].prox;
+				if(s.v[i].prox == -1){
+					v[j].ind_LLSE = i;
+					printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+				}
+			}
+		}
+		
+		printf("\nIL: %d\n", s.IL);
+		printf("Disp: %d\n", s.disp);
+	}
+	
+	return 0;
+}
