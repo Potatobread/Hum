@@ -1,0 +1,213 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define T 20
+
+typedef struct{
+	char nome[20];
+	int tam;
+}tApp;
+
+typedef struct{
+	tApp info;
+	int prox;
+	int ant;
+}No;
+
+typedef struct{
+	int disp;
+	int IL;
+	No v[T];
+}LLDE;
+
+typedef struct{
+	int ind;
+	int ind_LLDE;
+}visual;
+
+void carregar_Arquivos(tApp *p){
+	FILE *leitura;
+	int i=0;
+	
+	leitura = fopen("MobileED.txt", "r");
+	
+	if(leitura == NULL){
+		printf("Erro ao abrir o arquivo.\n");
+		exit(0);
+	}
+	else{
+		while((fscanf(leitura,"%s %d\n", &p[i].nome,&p[i].tam))!= EOF){
+			i++;
+		}
+	}
+	
+	fclose(leitura);
+}
+
+void inicializarLLDE(LLDE *lis){
+	int i;
+	
+	for(i=1;i<=T;i++){
+		lis->v[i].prox = i+1;
+		lis->v[i].ant = i-1;
+	}
+	lis->disp = 1;
+	lis->IL = -1;
+	lis->v[1].ant = -1;
+	lis->v[T].prox = 0;
+}
+
+void inserirFILA(LLDE *lis, tApp *old, int indic_orig, int *quant_elem){
+		int ind;
+		
+		if(!(lis->disp == -1)){
+			if(lis->v[1].info.tam == 0){
+				ind = lis->disp;
+				lis->disp = lis->v[ind].prox;
+				lis->v[ind].info = old[indic_orig];
+				lis->v[ind].prox = lis->IL;
+				lis->IL = ind;
+			}
+			else{
+				ind = lis->disp;
+				lis->disp = lis->v[ind].prox;
+				lis->v[ind].info = old[indic_orig];
+				lis->v[ind].prox = lis->IL;
+				lis->v[ind].ant = lis->v[lis->IL].ant;
+				lis->v[lis->IL].ant = ind;
+				lis->IL = ind;
+			}
+		}
+}
+
+void removerFILA(LLDE *lis){
+	int fim,ind_ant;
+	
+	fim = lis->IL;
+	while(lis->v[fim].prox != -1){
+		fim = lis->v[fim].prox;
+	}
+	ind_ant = lis->v[fim].ant;
+	lis->v[ind_ant].prox = lis->v[fim].prox;
+	lis->v[fim].prox = lis->disp;
+	lis->disp = fim;
+}
+
+int main(){
+	int i,j,num,b=0;
+	tApp aux[T];
+	LLDE s;
+	visual v[T];
+	
+	for(i=0;i<T;i++){
+		aux[i].tam = 0;
+		s.v[i].info.tam = 0;
+		v[T].ind = 0;
+		strcpy(aux[i].nome,"");  
+		strcpy(s.v[i].info.nome,"");
+	}
+	
+	carregar_Arquivos(&aux[0]);
+	inicializarLLDE(&s);
+	
+	for(i=0;i<T;i++){
+		if(aux[i].tam != 0){
+			printf("%d - %s %d\n", i+1,aux[i].nome,aux[i].tam);
+		}
+	}
+	printf("\n");
+	
+	s.v[T].info.tam = 0;
+	strcpy(s.v[T].info.nome,"");
+  	for(i=1;i<=T;i++){
+  		printf("%d - %s %d || ANT: %d  PROX: %d\n", i,s.v[i].info.nome,s.v[i].info.tam,s.v[i].ant,s.v[i].prox);				
+	}
+	
+	while(num != 0){
+		printf("Digite o NUMERO <Sair - 0>: ");
+		scanf(" %d", &num);
+		if(num == 0){
+			break;
+			
+		}
+		inserirFILA(&s,&aux[0],num-1,&b);
+		printf("\n");
+		
+		i = s.IL;
+		j = 0;
+		for(j=0;j<T;j++){
+			v[j].ind = j+1; 
+		}
+		j = 0;
+		if(s.v[i].prox == -1){
+			v[j].ind_LLDE = i;
+			printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+		}
+		else{
+			j = 0;
+			while(s.v[i].prox != -1){
+				v[j].ind_LLDE = i;
+				printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+				j++;
+				i = s.v[i].prox;
+				if(s.v[i].prox == -1){
+					v[j].ind_LLDE = i;
+					printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+				}
+			}
+		}
+		
+		printf("\n");
+		for(i=0;i<T;i++){
+			if(aux[i].tam != 0){
+				printf("%d - %s %d\n", i+1,aux[i].nome,aux[i].tam);
+			}
+		}
+		printf("\nIL: %d\n", s.IL);
+		printf("Disp: %d\n", s.disp);
+	}
+	printf("\n\n");
+	
+	num = 0;
+	
+	while(num != 100){
+		printf("Remover <1 - Sim || 2 - Nao>: ");
+		scanf(" %d", &num);
+		if(num == 1){
+			removerFILA(&s);
+		}
+		else{
+			break;
+		}
+		printf("\n");
+		
+		i = s.IL;
+		j = 0;
+		for(j=0;j<T;j++){
+			v[j].ind = j+1; 
+		}
+		j = 0;
+		if(s.v[i].prox == -1){
+			v[j].ind_LLDE = i;
+			printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+		}
+		else{
+			j = 0;
+			while(s.v[i].prox != -1){
+				v[j].ind_LLDE = i;
+				printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+				j++;
+				i = s.v[i].prox;
+				if(s.v[i].prox == -1){
+					v[j].ind_LLDE = i;
+					printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+				}
+			}
+		}
+		
+		printf("\nIL: %d\n", s.IL);
+		printf("Disp: %d\n", s.disp);
+	}
+	
+	return 0;
+}
