@@ -163,25 +163,30 @@ void inserirLLDE(LLDE *lis, LLSE *old, int indic_orig, int *quant_elem){
 	
 	if((lis->v[lis->IL].info.tam > old->v[indic_orig].info.tam)||(lis->disp == 1)){
 		local = 1;
+		printf("LOCAL 1 > INICIO\n");
 	}
 	else{
 		i = lis->IL;
 		if(lis->v[i].prox == -1){
 			local = 2;
+			printf("LOCAL 2 > FIM\n");
 		}
 		else{
 			while(lis->v[i].prox != -1){
 				if(lis->v[i].info.tam > old->v[indic_orig].info.tam){
 					local = 3;
+					printf("LOCAL 3 > MEIO\n");
 					break;
 				}
 				i = lis->v[i].prox;
 				local = 2;
 				if(lis->v[i].info.tam > old->v[indic_orig].info.tam){
 					local = 3;
+					printf("LOCAL 3 > MEIO\n");
 					break;
 				}
 				local = 2;
+				printf("LOCAL 2 > FIM\n");
 			}
 		}
 	}	
@@ -196,6 +201,7 @@ void inserirLLDE(LLDE *lis, LLSE *old, int indic_orig, int *quant_elem){
 					lis->v[ind].prox = lis->IL;
 					lis->IL = ind;
 					(*quant_elem)++;
+					printf("FEZ INSERIR INICIO\n");
 				}
 				else{
 					ind = lis->disp;
@@ -206,6 +212,7 @@ void inserirLLDE(LLDE *lis, LLSE *old, int indic_orig, int *quant_elem){
 					lis->v[lis->IL].ant = ind;
 					lis->IL = ind;
 					(*quant_elem)++;
+					printf("FEZ INSERIR INICIO\n");					
 				}
 			}
 			break;
@@ -222,6 +229,7 @@ void inserirLLDE(LLDE *lis, LLSE *old, int indic_orig, int *quant_elem){
 				lis->v[fim].prox = ind;
 				lis->v[ind].info = old->v[indic_orig].info;
 				(*quant_elem)++;
+				printf("FEZ INSERIR FIM\n");				
 			}
 			break;
 		case 3:
@@ -242,6 +250,7 @@ void inserirLLDE(LLDE *lis, LLSE *old, int indic_orig, int *quant_elem){
 				lis->v[lis->v[meio].prox].ant = ind;
 				lis->v[ind].info = old->v[indic_orig].info;
 				(*quant_elem)++;
+				printf("FEZ INSERIR MEIO\n");				
 			}
 			break;
 		default:
@@ -276,11 +285,9 @@ int main(){
 			printf("%d - %s %d\n", i+1,aux[i].nome,aux[i].tam);
 		}
 	}
-	printf("\n");
+	printf("\n\n");
 	s.v[T].info.tam = 0;  
 	strcpy(s.v[T].info.nome,"");
-	for(i=1;i<=T;i++)
-		printf("%d - %s %d  PROX: %d\n", i,s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox);				
 	
 	while(num != 100){
 		printf("Digite o NUMERO <Sair - 100>: ");
@@ -288,9 +295,8 @@ int main(){
 		if(num == 100){
 			break;
 		}
-		printf("ANTES DO INSERIR\n");
+		
 		inserirLLSE(&s,&aux[0],num-1,&b);
-		printf("INSERIU NA LLSE\n");
 		printf("\n");
 		
 		i = s.IL;
@@ -362,9 +368,10 @@ int main(){
 		}
 		for(i=0;i<T;i++){
 			if(num == v[i].ind){
-				num = v[i].ind_LL;
+				break;
 			}
 		}
+		num = v[i].ind_LL;
 		inserirLLDE(&ins,&s,num,&b);
 		printf("\n");
 		
@@ -376,18 +383,18 @@ int main(){
 		j = 0;
 		if(ins.v[i].prox == -1){
 			a[j].ind_LL = i;
-			printf("%d - %s %d || ANT: %d  PROX: %d\n",a[j].ind,ins.v[i].info.nome,ins.v[i].info.tam,ins.v[i].ant,ins.v[i].prox);
+			printf("%d - %s %d || ANT: %d  PROX: %d  i:%d\n",a[j].ind,ins.v[i].info.nome,ins.v[i].info.tam,ins.v[i].ant,ins.v[i].prox,a[j].ind_LL);
 		}
 		else{
 			j = 0;
 			while(ins.v[i].prox != -1){
 				a[j].ind_LL = i;
-				printf("%d - %s %d || ANT: %d  PROX: %d\n",a[j].ind,ins.v[i].info.nome,ins.v[i].info.tam,ins.v[i].ant,ins.v[i].prox);
+				printf("%d - %s %d || ANT: %d  PROX: %d  i:%d\n",a[j].ind,ins.v[i].info.nome,ins.v[i].info.tam,ins.v[i].ant,ins.v[i].prox,a[j].ind_LL);
 				j++;
 				i = ins.v[i].prox;
 				if(ins.v[i].prox == -1){
 					a[j].ind_LL = i;
-					printf("%d - %s %d || ANT: %d  PROX: %d\n",a[j].ind,ins.v[i].info.nome,ins.v[i].info.tam,ins.v[i].ant,ins.v[i].prox);
+					printf("%d - %s %d || ANT: %d  PROX: %d  i:%d\n",a[j].ind,ins.v[i].info.nome,ins.v[i].info.tam,ins.v[i].ant,ins.v[i].prox,a[j].ind_LL);
 				}
 			}
 		}
