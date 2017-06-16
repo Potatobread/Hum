@@ -143,10 +143,10 @@ void inserirLLDE(LLDE *lis, tApp *old, int indic_orig, int *quant_elem){
 					}
 					aux = lis->v[aux].prox;
 				}
-				printf("aux: %d\n", aux);
-				printf("Anterior do AUX: %d\n", lis->v[aux].ant);
-				meio = lis->v[aux].ant;
-				printf("MEIO: %d\n", meio);
+				meio = lis->IL;
+				while(lis->v[meio].prox != aux){
+					meio = lis->v[meio].prox;
+				}
 				ind = lis->disp;
 				lis->disp = lis->v[ind].prox;
 				lis->v[ind].prox = lis->v[meio].prox;
