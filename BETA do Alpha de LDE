@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct aluno{
+	int matricula;
+	char nome[30];
+	float n1,n2,n3;
+};
+
+typedef struct elemento* Lista;
+
+struct elemento{
+	struct elemento *ant;
+	struct aluno dados;
+	struct elemento *prox;
+};
+typedef struct elemento Elem;
+
+Lista* cria_lista(){
+	Lista* li = (Lista*)malloc(sizeof(Lista));
+	if(li != NULL)
+		*li = NULL;
+	return li;
+}
+
+void libera_lista(Lista* li){
+	if(li != NULL){
+		Elem* no;
+		while((*li) != NULL){
+			no = *li;
+			*li = (*li)->prox;
+		}
+		free(li);
+	}
+}
+
+int main(){
+	Lista *li;
+	li = cria_lista();
+	libera_lista(li);
+	
+	return 0;
+}
