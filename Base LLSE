@@ -165,38 +165,44 @@ void removerLLSE(LLSE *lis, int remover, int *quant_elem){
 	
 	switch(local){
 		case 1:
-			ind = lis->IL;
-			lis->IL = lis->v[ind].prox;
-			lis->v[ind].prox = lis->disp;
-			lis->disp = ind;
-			printf("FEZ REMOVER INICIO\n");
+			if(!(lis->IL == -1)){
+				ind = lis->IL;
+				lis->IL = lis->v[ind].prox;
+				lis->v[ind].prox = lis->disp;
+				lis->disp = ind;
+				printf("FEZ REMOVER INICIO\n");
+			}	
 			break;
 		case 2:
-			i = lis->IL;
-			while(lis->v[i].prox != -1){
-				i = lis->v[i].prox;
-			}
-			j = lis->IL;
-			while(lis->v[j].prox != i){
-				j = lis->v[j].prox;
-			}
-			ind = j;
-			lis->v[lis->v[ind].prox].prox = lis->disp;
-			lis->disp = lis->v[ind].prox;
-			lis->v[ind].prox = -1;
-			printf("FEZ REMOVER FIM\n");
+			if(!(lis->IL == -1)){
+				i = lis->IL;
+				while(lis->v[i].prox != -1){
+					i = lis->v[i].prox;
+				}
+				j = lis->IL;
+				while(lis->v[j].prox != i){
+					j = lis->v[j].prox;
+				}
+				ind = j;
+				lis->v[lis->v[ind].prox].prox = lis->disp;
+				lis->disp = lis->v[ind].prox;
+				lis->v[ind].prox = -1;
+				printf("FEZ REMOVER FIM\n");
+			}	
 			break;
 		case 3:
-			i = lis->IL;
-			while(lis->v[i].prox != remover){
-				i = lis->v[i].prox;
-			}
-			ind_ant = i;
-			ind_rem = lis->v[ind_ant].prox;
-			lis->v[ind_ant].prox = lis->v[ind_rem].prox;
-			lis->v[ind_rem].prox = lis->disp;
-			lis->disp = ind_rem;
-			printf("FEZ REMOVER MEIO\n");
+			if(!(lis->IL == -1)){
+				i = lis->IL;
+				while(lis->v[i].prox != remover){
+					i = lis->v[i].prox;
+				}
+				ind_ant = i;
+				ind_rem = lis->v[ind_ant].prox;
+				lis->v[ind_ant].prox = lis->v[ind_rem].prox;
+				lis->v[ind_rem].prox = lis->disp;
+				lis->disp = ind_rem;
+				printf("FEZ REMOVER MEIO\n");
+			}	
 			break;
 		default:
 			break;
