@@ -23,7 +23,7 @@ typedef struct{
 typedef struct{
 	int ind;
 	int ind_LLDE;
-}visual;
+}id;
 
 void carregar_Arquivos(tApp *p){
 	FILE *leitura;
@@ -161,8 +161,8 @@ void inserirLLDE(LLDE *lis, tApp *old, int indic_orig, int *quant_elem){
 	}
 }
 
-/*
-void removerLLDE(LLDE *lis, int *remover, int *quant_elem){
+
+void removerLLDE(LLDE *lis, int remover, int *quant_elem){
 	int i,ind,local,ind_ant,ind_prox,fim;
 	
 	if(remover == lis->IL){
@@ -173,7 +173,9 @@ void removerLLDE(LLDE *lis, int *remover, int *quant_elem){
 		while(lis->v[i].prox != -1){
 			i = lis->v[i].prox;
 			if(lis->v[i].prox == -1){
-				local = 2;
+				if(remover == i){
+					local = 2;
+				}
 			}
 			else{
 				local = 3;
@@ -183,52 +185,53 @@ void removerLLDE(LLDE *lis, int *remover, int *quant_elem){
 	
 	switch(local){
 		case 1:
-			if(!(lis->disp == 1)){
-				ind = lis->IL;
-				lis->IL = lis->v[ind].prox;
-				lis->v[lis->IL].ant = lis->v[ind].ant;
-				lis->v[ind].prox = lis->disp;	
-				lis->disp = ind;
-			}
+			ind = lis->IL;
+			lis->IL = lis->v[ind].prox;
+			lis->v[lis->IL].ant = lis->v[ind].ant;
+			lis->v[ind].prox = lis->disp;	
+			lis->disp = ind;
+			printf("ENTROU REMOVER INICIO\n");
 			break;
 		case 2:
-			if(!(lis->disp == 1)){
-				fim = lis->IL;
-				while(lis->v[fim].prox != -1){
-					fim = lis->v[fim].prox;
-				}
-				ind_ant = lis->v[fim].ant;
-				lis->v[ind_ant].prox = lis->v[fim].prox;
-				lis->v[fim].prox = lis->disp;
-				lis->disp = fim;
+			fim = lis->IL;
+			while(lis->v[fim].prox != -1){
+				fim = lis->v[fim].prox;
 			}
+			ind_ant = lis->IL;
+			while(lis->v[ind_ant].prox != fim){
+				ind_ant = lis->v[ind_ant].prox;
+			}
+			lis->v[ind_ant].prox = lis->v[fim].prox;
+			lis->v[fim].prox = lis->disp;
+			lis->disp = fim;
+			printf("ENTROU REMOVER FIM\n");
 			break;
 		case 3:
-			if(!(lis->disp == 1)){
-				ind_ant = lis->v[remover].ant;
-				ind_prox = lis->v[remover].prox;
-				lis->v[ind_ant].prox = ind_prox;
-				lis->v[ind_prox].ant = ind_ant;
-				lis->v[remover].prox = lis->disp;
-				lis->disp = remover;
-			}
+			ind_ant = lis->v[remover].ant;
+			ind_prox = lis->v[remover].prox;
+			lis->v[ind_ant].prox = ind_prox;
+			lis->v[ind_prox].ant = ind_ant;
+			lis->v[remover].prox = lis->disp;
+			lis->disp = remover;
+			printf("ENTROU REMOVER MEIO\n");
 			break;
 		default:
 			break;
 	}
 }
-*/
+
 
 int main(){
 	int i,j,num,b=0;
 	tApp aux[T];
 	LLDE s;
-	visual v[T];
+	id v[T];
 	
 	for(i=0;i<T;i++){
 		aux[i].tam = 0;
 		s.v[i].info.tam = 0;
-		v[T].ind = 0;
+		v[i].ind = 0;
+		v[i].ind_LLDE = 0;
 		strcpy(aux[i].nome,"");  
 		strcpy(s.v[i].info.nome,"");
 	}
@@ -252,6 +255,9 @@ int main(){
 	while(num != 100){
 		printf("Digite o NUMERO <Sair - 100>: ");
 		scanf(" %d", &num);
+		if(num == 100){
+			break;
+		}
 		inserirLLDE(&s,&aux[0],num-1,&b);
 		printf("\n");
 		
@@ -288,8 +294,56 @@ int main(){
 		printf("\nIL: %d\n", s.IL);
 		printf("Disp: %d\n", s.disp);
 	}
-	printf("\n");
+	printf("\n\n");
 	
-	
+	num = 0;
+	while(num != 100){
+		i = s.IL;
+		j = 0;
+		for(j=0;j<T;j++){
+			v[j].ind = j+1; 
+		}
+		j = 0;
+		if(s.v[i].prox == -1){
+			v[j].ind_LLDE = i;
+			printf("%d - %s %d || ANT: %d  PROX: %d   i:%d\n",v[j].ind,s.v[i].info.nome,s.v[i].info.tam,s.v[i].ant,s.v[i].prox,v[j].ind_LLDE);
+		}
+		else{
+			j = 0;
+			while(s.v[i].prox != -1){
+				v[j].ind_LLDE = i;
+				printf("%d - %s %d || ANT: %d  PROX: %d   i:%d\n",v[j].ind,s.v[i].info.nome,s.v[i].info.tam,s.v[i].ant,s.v[i].prox,v[j].ind_LLDE);
+				j++;
+				i = s.v[i].prox;
+				if(s.v[i].prox == -1){
+					v[j].ind_LLDE = i;
+					printf("%d - %s %d || ANT: %d  PROX: %d   i:%d\n",v[j].ind,s.v[i].info.nome,s.v[i].info.tam,s.v[i].ant,s.v[i].prox,v[j].ind_LLDE);
+				}
+			}
+		}
+		printf("\nIL: %d\n", s.IL);
+		printf("Disp: %d\n", s.disp);
+		printf("\n");
+		printf("Digite o NUMERO a EXCLUIR <Sair - 100>: ");
+		scanf(" %d", &num);
+		if(num == 100){
+			break;
+		}
+		printf("\n");
+		for(i=0;i<T;i++){
+			printf("v[%d].ind = %d || v[%d].ind_LLDE = %d\n", i,v[i].ind,i,v[i].ind_LLDE);
+		}
+		printf("\n");
+		for(i=0;i<T;i++){
+			if(num == v[i].ind){
+				num = v[i].ind_LLDE;
+				printf("Num: %d || i: %d\n", num,i);
+				break;
+			}
+		}
+		removerLLDE(&s,num,&b);
+		printf("\n");
+	}
+
 	return 0;
 }
