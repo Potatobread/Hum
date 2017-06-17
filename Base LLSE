@@ -22,7 +22,7 @@ typedef struct{
 typedef struct{
 	int ind;
 	int ind_LLSE;
-}visual;
+}id;
 
 void carregar_Arquivos(tApp *p){
 	FILE *leitura;
@@ -165,44 +165,38 @@ void removerLLSE(LLSE *lis, int remover, int *quant_elem){
 	
 	switch(local){
 		case 1:
-			if(!(lis->disp == 1)){
-				ind = lis->IL;
-				lis->IL = lis->v[ind].prox;
-				lis->v[ind].prox = lis->disp;
-				lis->disp = ind;
-				printf("FEZ REMOVER INICIO\n");
-			}
+			ind = lis->IL;
+			lis->IL = lis->v[ind].prox;
+			lis->v[ind].prox = lis->disp;
+			lis->disp = ind;
+			printf("FEZ REMOVER INICIO\n");
 			break;
 		case 2:
-			if(!(lis->disp == 1)){
-				i = lis->IL;
-				while(lis->v[i].prox != -1){
-					i = lis->v[i].prox;
-				}
-				j = lis->IL;
-				while(lis->v[j].prox != i){
-					j = lis->v[j].prox;
-				}
-				ind = j;
-				lis->v[lis->v[ind].prox].prox = lis->disp;
-				lis->disp = lis->v[ind].prox;
-				lis->v[ind].prox = -1;
-				printf("FEZ REMOVER FIM\n");
+			i = lis->IL;
+			while(lis->v[i].prox != -1){
+				i = lis->v[i].prox;
 			}
+			j = lis->IL;
+			while(lis->v[j].prox != i){
+				j = lis->v[j].prox;
+			}
+			ind = j;
+			lis->v[lis->v[ind].prox].prox = lis->disp;
+			lis->disp = lis->v[ind].prox;
+			lis->v[ind].prox = -1;
+			printf("FEZ REMOVER FIM\n");
 			break;
 		case 3:
-			if(!(lis->disp == 1)){
-				i = lis->IL;
-				while(lis->v[i].prox != remover){
-					i = lis->v[i].prox;
-				}
-				ind_ant = i;
-				ind_rem = lis->v[ind_ant].prox;
-				lis->v[ind_ant].prox = lis->v[ind_rem].prox;
-				lis->v[ind_rem].prox = lis->disp;
-				lis->disp = ind_rem;
-				printf("FEZ REMOVER MEIO\n");
+			i = lis->IL;
+			while(lis->v[i].prox != remover){
+				i = lis->v[i].prox;
 			}
+			ind_ant = i;
+			ind_rem = lis->v[ind_ant].prox;
+			lis->v[ind_ant].prox = lis->v[ind_rem].prox;
+			lis->v[ind_rem].prox = lis->disp;
+			lis->disp = ind_rem;
+			printf("FEZ REMOVER MEIO\n");
 			break;
 		default:
 			break;
@@ -214,12 +208,13 @@ int main(){
 	int i,num=0,b=0,j;
 	tApp aux[T];
 	LLSE s;
-	visual v[T];
+	id v[T];
 	
 	for(i=0;i<T;i++){
 		aux[i].tam = 0;
 		s.v[i].info.tam = 0;
-		v[T].ind = 0;
+		v[i].ind = 0;
+		v[i].ind_LLSE = 0;
 		strcpy(aux[i].nome,"");  
 		strcpy(s.v[i].info.nome,"");
 	}
