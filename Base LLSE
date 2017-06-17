@@ -193,15 +193,12 @@ void removerLLSE(LLSE *lis, int remover, int *quant_elem){
 		case 3:
 			if(!(lis->disp == 1)){
 				i = lis->IL;
-				while(lis->v[i].prox != -1){
-					if(lis->v[i].prox == remover){
-						break;
-					}
+				while(lis->v[i].prox != remover){
 					i = lis->v[i].prox;
 				}
 				ind_ant = i;
 				ind_rem = lis->v[ind_ant].prox;
-				lis->v[ind_ant].prox = lis->v[lis->v[ind_rem].prox].prox;
+				lis->v[ind_ant].prox = lis->v[ind_rem].prox;
 				lis->v[ind_rem].prox = lis->disp;
 				lis->disp = ind_rem;
 				printf("FEZ REMOVER MEIO\n");
@@ -219,7 +216,7 @@ int main(){
 	LLSE s;
 	visual v[T];
 	
-	for(i=0;i<=T;i++){
+	for(i=0;i<T;i++){
 		aux[i].tam = 0;
 		s.v[i].info.tam = 0;
 		v[T].ind = 0;
@@ -309,15 +306,24 @@ int main(){
 				}
 			}
 		}
+		printf("\nIL: %d\n", s.IL);
+		printf("Disp: %d\n", s.disp);
 		printf("\n");
 		printf("Digite o NUMERO a EXCLUIR <Sair - 100>: ");
 		scanf(" %d", &num);
 		if(num == 100){
 			break;
 		}
+		printf("\n");
 		for(i=0;i<T;i++){
-			if(v[i].ind == num){
+			printf("v[%d].ind = %d || v[%d].ind_LLSE = %d\n", i,v[i].ind,i,v[i].ind_LLSE);
+		}
+		printf("\n");
+		for(i=0;i<T;i++){
+			if(num == v[i].ind){
 				num = v[i].ind_LLSE;
+				printf("Num: %d || i: %d\n", num,i);
+				break;
 			}
 		}
 		removerLLSE(&s,num,&b);
