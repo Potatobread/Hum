@@ -54,7 +54,7 @@ void inicializarLLSE(LLSE *lis){
 }
 
 void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
-	int i,k,local,ind,novo,find,cont;
+	int i,k,local,ind,novo,find;
 	
 	if((lis->v[lis->IL].info.tam > old[indic_orig].tam)||(lis->disp == 1)){
 		local = 1;
@@ -67,19 +67,15 @@ void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
 		else{
 			while(lis->v[i].prox != -1){
 				if(lis->v[i].info.tam > old[indic_orig].tam){
-					printf("i: %d   LOCAL 3\n", i);
 					local = 3;
 					break;
 				}
 				i = lis->v[i].prox;
-				printf("i: %d     LOCAL 2\n", i);
 				local = 2;
 				if(lis->v[i].info.tam > old[indic_orig].tam){
-					printf("i: %d   LOCAL 3\n", i);
 					local = 3;
 					break;
 				}
-				printf("i: %d     LOCAL 2\n", i);
 				local = 2;
 			}
 		}
@@ -101,7 +97,7 @@ void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
 				}
 				lis->IL = ind;
 			}
-			printf("ENTRO NO INSERIR INICIO\n");
+			printf("ENTROU NO INSERIR INICIO\n");
 			break;
 		case 2:
 			if(!(lis->disp == -1)){
@@ -115,11 +111,11 @@ void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
 				lis->v[ind].prox = novo;
 				lis->v[novo].info = old[indic_orig];
 				(*quant_elem)++;
-				printf("ENTRO NO INSERIR FIM\n");				
+				printf("ENTROU NO INSERIR FIM\n");				
 			}
 			break;
 		case 3:
-			printf("ENTRO NO INSERIR MEIO\n");
+			printf("ENTROU NO INSERIR MEIO\n");
             k = lis->IL;
 			while(lis->v[k].prox != -1){
 				if(lis->v[k].info.tam > old[indic_orig].tam){
@@ -128,14 +124,14 @@ void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
 				k = lis->v[k].prox;
 			}
 			if(!(lis->disp == -1)){
-				 novo = lis->disp;
-				 lis->disp = lis->v[novo].prox;
-				 lis->v[novo].prox = k;
-				 find = lis->IL;
-				 while(lis->v[find].prox != k){
-					 find = lis->v[find].prox;
-				 }
-				 lis->v[find].prox = novo;
+				novo = lis->disp;
+				lis->disp = lis->v[novo].prox;
+				lis->v[novo].prox = k;
+				find = lis->IL;
+				while(lis->v[find].prox != k){
+					find = lis->v[find].prox;
+				}
+				lis->v[find].prox = novo;
 				lis->v[novo].info = old[indic_orig];
 				(*quant_elem)++; 
 			}
@@ -145,9 +141,9 @@ void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
 	}	
 }
 
-/*
-void removerLLSE(LLSE *lis, int *remover, int *quant_elem){
-	int i,ind,local,ind_ant,ind_rem;
+
+void removerLLSE(LLSE *lis, int remover, int *quant_elem){
+	int i,j,ind,local,ind_ant,ind_rem;
 	
 	if(remover == lis->IL){
 		local = 1;
@@ -157,7 +153,9 @@ void removerLLSE(LLSE *lis, int *remover, int *quant_elem){
 		while(lis->v[i].prox != -1){
 			i = lis->v[i].prox;
 			if(lis->v[i].prox == -1){
-				local = 2;
+				if(remover == i){
+					local = 2;
+				}
 			}
 			else{
 				local = 3;
@@ -172,6 +170,7 @@ void removerLLSE(LLSE *lis, int *remover, int *quant_elem){
 				lis->IL = lis->v[ind].prox;
 				lis->v[ind].prox = lis->disp;
 				lis->disp = ind;
+				printf("FEZ REMOVER INICIO\n");
 			}
 			break;
 		case 2:
@@ -180,9 +179,15 @@ void removerLLSE(LLSE *lis, int *remover, int *quant_elem){
 				while(lis->v[i].prox != -1){
 					i = lis->v[i].prox;
 				}
-				lis->v[lis->v[i].prox].prox = lis->disp;
-				lis->disp = lis->v[i].prox;
-				lis->v[i].prox = -1;
+				j = lis->IL;
+				while(lis->v[j].prox != i){
+					j = lis->v[j].prox;
+				}
+				ind = j;
+				lis->v[lis->v[ind].prox].prox = lis->disp;
+				lis->disp = lis->v[ind].prox;
+				lis->v[ind].prox = -1;
+				printf("FEZ REMOVER FIM\n");
 			}
 			break;
 		case 3:
@@ -199,16 +204,17 @@ void removerLLSE(LLSE *lis, int *remover, int *quant_elem){
 				lis->v[ind_ant].prox = lis->v[lis->v[ind_rem].prox].prox;
 				lis->v[ind_rem].prox = lis->disp;
 				lis->disp = ind_rem;
+				printf("FEZ REMOVER MEIO\n");
 			}
 			break;
 		default:
 			break;
 	}
 }
-*/
+
 
 int main(){
-	int i,num=0,b=0,numerador,j;
+	int i,num=0,b=0,j;
 	tApp aux[T];
 	LLSE s;
 	visual v[T];
@@ -229,17 +235,17 @@ int main(){
 			printf("%d - %s %d\n", i+1,aux[i].nome,aux[i].tam);
 		}
 	}
+	
 	printf("\n");
 	s.v[T].info.tam = 0;  
 	strcpy(s.v[T].info.nome,"");
-	for(i=1;i<=T;i++){
-		//if(s.v[i].info.tam != 0){
-			printf("%d - %s %d  PROX: %d\n", i,s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox);				
-		//}
-	}
+	
 	while(num != 100){
 		printf("Digite o NUMERO <Sair - 100>: ");
 		scanf(" %d", &num);
+		if(num == 100){
+			break;
+		}
 		inserirLLSE(&s,&aux[0],num-1,&b);
 		printf("\n");
 		
@@ -277,6 +283,45 @@ int main(){
 		printf("Disp: %d\n", s.disp);
 	}
 	printf("\n");
+	
+	num = 0;
+	while(num != 100){
+		i = s.IL;
+		j = 0;
+		for(j=0;j<T;j++){
+			v[j].ind = j+1; 
+		}
+		j = 0;
+		if(s.v[i].prox == -1){
+			v[j].ind_LLSE = i;
+			printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+		}
+		else{
+			j = 0;
+			while(s.v[i].prox != -1){
+				v[j].ind_LLSE = i;
+				printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+				j++;
+				i = s.v[i].prox;
+				if(s.v[i].prox == -1){
+					v[j].ind_LLSE = i;
+					printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
+				}
+			}
+		}
+		printf("\n");
+		printf("Digite o NUMERO a EXCLUIR <Sair - 100>: ");
+		scanf(" %d", &num);
+		if(num == 100){
+			break;
+		}
+		for(i=0;i<T;i++){
+			if(v[i].ind == num){
+				num = v[i].ind_LLSE;
+			}
+		}
+		removerLLSE(&s,num,&b);
+	}
 	
 	return 0;
 }
