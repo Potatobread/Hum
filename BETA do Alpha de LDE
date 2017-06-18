@@ -7,37 +7,114 @@ struct aluno{
 	float n1,n2,n3;
 };
 
-typedef struct elemento* Lista;
-
 struct elemento{
 	struct elemento *ant;
 	struct aluno dados;
 	struct elemento *prox;
 };
-typedef struct elemento Elem;
 
-Lista* cria_lista(){
-	Lista* li = (Lista*)malloc(sizeof(Lista));
-	if(li != NULL)
+struct elemento *Lista;
+struct elemento Elem;
+
+Lista *cria_lista(){ // CRIAR LISTA
+	Lista *li = (Lista*)malloc(sizeof(Lista));
+	if(li != NULL){
 		*li = NULL;
+	}
 	return li;
 }
 
-void libera_lista(Lista* li){
+void libera_lista(Lista *li){ // LIBERAR LISTA
 	if(li != NULL){
 		Elem* no;
 		while((*li) != NULL){
 			no = *li;
 			*li = (*li)->prox;
+			free(no);
 		}
 		free(li);
 	}
+}
+
+int tamanho_lista(Lista *li){ //TAMANHO
+	if(li == NULL){
+		return 0;
+	}
+	int cont = 0;
+	Elem *no = *li;
+	while(no != NULL){
+		cont++;
+		no = no->prox;
+	}
+	return cont;
+}
+
+int lista_cheia(Lista *li){
+	return 0;
+}
+
+int lista_vazia(Lista *li){
+	if(li == NULL){
+		return 1;
+	}
+	if(*li == NULL){
+		return 1;
+	}
+	return 0;
+}
+
+//*li == l.IL;
+
+void insere_lista_vazia(Lista *li,struct aluno al){
+	if(*li == NULL){
+		Elem *no = (Elem*)malloc(sizeof(Elem));
+		if(no == NULL)
+			return 0;
+		no->dados = al;
+		no->prox = NULL;
+	   	no->ant = NULL;
+		*li = no;
+	}	
+} 
+
+
+int insere_lista_inicio(Lista *li, struct aluno al){
+	if(li == NULL){
+		return 0;
+	}
+	Elem *no = (Elem*)malloc(sizeof(Elem));
+	if(no == NULL){
+		return 0;
+	}
+	no->dados = al;
+	no->prox = (*li);
+	no->ant = NULL;
+	if(*li != NULL){
+		(*li)->ant = no;
+	}	
+	*li = no;
+	return 1;
 }
 
 int main(){
 	Lista *li;
 	li = cria_lista();
 	libera_lista(li);
+	int x = tamanho_lista(li);
+	int x = lista_cheia(li);
+	int x = lista_vazia(li);
+	int x = insere_lista_inicio(li,dados_aluno);
 	
 	return 0;
 }
+/*
+Tamanho
+Lista Cheia
+Lista Vazia
+
+INSERIR:
+	.Inicio;
+	.Meio;
+	.Fim;
+	.INSERIR QUANDO A LISTA ESTA VAZIA;
+*/
