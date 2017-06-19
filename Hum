@@ -132,35 +132,24 @@ int remover_inicio(TLista *pLista){
 					}
 				}
 				else{
-					
+					if(elem_proximo != NULL){
+						elem_proximo->anterior = NULL;
+						pLista->inicio = elem_proximo;
+						free(elem_atual);
+						break;
+					}
+					else{
+						free(elem_atual);
+					}
 				}
 			}
+			else{
+				elem_atual = elem_atual->proximo;
+			}
 		}
+		printf("O elemento nao se encontra na lista\n");
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -183,4 +172,3 @@ int main(){
 	
 	return 0;
 }
-
