@@ -1,0 +1,94 @@
+/*
+nome da conta e o valor, N vezes /*
+*/
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct No{
+ 	int dado;
+    struct No *ant;
+    struct No *prox;
+}No;
+
+typedef struct{
+	No info;
+	No *IL;
+	No *FL;
+}LDE;
+
+LDE* alocaNo(){
+    LDE *novo;
+    novo = (LDE *)malloc(sizeof(LDE));
+    if(novo == NULL){
+        printf("\nMEMORIA INSUFICIENTE!\n");
+        exit(1);
+    }
+    return novo;
+}
+
+LDE* crialistaLDE(){
+    LDE *l;
+	*l = alocanoLDE();
+	if(l == 1){
+		printf("Try again, but harder this time");
+		exit(1);	
+	}
+	l->IL = NULL;
+    l->FL = NULL;
+    return l;
+}
+
+void inserirInicio(LDE *lista){
+	LDE *novoElemento;
+	
+	novoElemento = alocaNo();
+	novoElemento.info = valor;
+	
+	if(l->IL == NULL){
+		novoElemento.info.ant = NULL;
+		novoElemento.info.prox = NULL;
+		lista->IL = novoElemento;
+		lista->FL = novoElemento;
+	}
+	else{
+		novoElemento.info.prox = lista->IL;
+		novoElemento.info.ant = lista->IL.ant;
+		lista->IL = novoElemento;
+	}
+}
+
+void inserirFim(LDE *lista){
+	LDE *novoELemento;
+	
+	novoELemento = alocaNo();
+	novoELemento.info = "Dados";
+	
+	novoELemento.info.prox = lista->FL->prox;
+	lista->FL->prox = novoElemento;
+	novoELemento.info.ant = lista->FL;
+	lista->FL = novoElemento;
+}
+
+void inserirMeio(LDE *lista){
+	No *novoElemento;
+	No *gancho;
+	
+	novoElemento = alocaNo();
+	novoELemento.info = "Dados";	
+	
+	gancho = lista.IL;
+	while(gancho.info.prox != NULL){
+		if(gancho.info.dados > "Dados"){
+			novoElemento.ant = gancho.ant;
+			gancho.ant = novoElemento;
+			novoElemento.info.prox = gancho.ant.prox;
+			gancho.ant.prox = novoElemento; 
+		}
+	}
+}
+
+int main(){
+	LDE listaDuplEncadeada;
+	crialistaLDE(&listaDuplEncadeada);
+	
+}
