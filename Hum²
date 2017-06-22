@@ -1,46 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#define T 20
 
-typedef struct {
-	char nome[20];
-	int tam;
-}tApp;
-
-typedef struct No{
- 	tApp dado;
-    struct No *anterior;
-    struct No *proximo;
-}No;
+typedef struct TipoNo{
+ 	int dado;
+    struct TipoNo *anterior;
+    struct TipoNo *proximo;
+}TipoNo;
 
 typedef struct{
-	No *IL;
-	No *FL;
+	TipoNo *IL;
+	TipoNo *FL;
 }tLista;
 
-void carregar_Arquivos(tApp *p){
-	FILE *leitura;
-	int i=0;
-	
-	leitura = fopen("MobileED.txt", "r");
-	
-	if(leitura == NULL){
-		printf("Erro ao abrir o arquivo.\n");
-		exit(0);
-	}
-	else{
-		while((fscanf(leitura,"%s %d\n", &p[i].nome,&p[i].tam))!= EOF){
-			i++;
-		}
-	}
-	
-	fclose(leitura);
-}
-
-No* alocaNo(){
-    No *novo;
-    novo = (No *)malloc(sizeof(No));
+TipoNo* alocaNo(){
+    TipoNo *novo;
+    novo = (TipoNo*)malloc(sizeof(TipoNo));
     if(novo == NULL){
         printf("\nMEMORIA INSUFICIENTE!\n");
         exit(1);
@@ -48,82 +22,73 @@ No* alocaNo(){
     return novo;
 }
 
-No* crialistaLDE(){
+tLista* criaLista(){
     tLista *l;
-	*l = alocaNo();
+	l = (tLista*)malloc(sizeof(tLista));
+	if(l == NULL){
+        printf("\nMEMORIA INSUFICIENTE!\n");
+        exit(1);
+	}
 	l->IL = NULL;
     l->FL = NULL;
+    printf("CRIOU LISTA\n\n");
     return l;
 }
 
-void inserirInicio(LDE *lista){
-	LDE *novoElemento;
+void inserirInicio(tLista *lista){
+	TipoNo *novoElemento;
 	
 	novoElemento = alocaNo();
-	novoElemento.info = valor;
+	novoElemento->dado = valor;
 	
-	if(l->IL == NULL){
-		novoElemento.info.ant = NULL;
-		novoElemento.info.prox = NULL;
+	if(lista->IL == NULL){
+		novoElemento->anterior = NULL;
+		novoElemento->proximo = NULL;
 		lista->IL = novoElemento;
 		lista->FL = novoElemento;
 	}
 	else{
-		novoElemento.info.prox = lista->IL;
-		novoElemento.info.ant = lista->IL.ant;
+		novoElemento->proximo = lista->IL;
+		novoElemento->anterior = lista->IL->anterior;
 		lista->IL = novoElemento;
 	}
 }
 
 void inserirFim(LDE *lista){
-	LDE *novoELemento;
+	TipoNo *novoElemento;
 	
-	novoELemento = alocaNo();
-	novoELemento.info = "Dados";
+	novoElemento = alocaNo();
+	novoElemento->dado = valor;
 	
-	novoELemento.info.prox = lista->FL->prox;
-	lista->FL->prox = novoElemento;
-	novoELemento.info.ant = lista->FL;
+	novoElemento->proximo = lista->FL->proximo;
+	lista->FL->proximo = novoElemento;
+	novoElemento->anterior = lista->FL;
 	lista->FL = novoElemento;
 }
 
 void inserirMeio(LDE *lista){
-	No *novoElemento;
-	No *gancho;
+	TipoNo *gancho,*novoElemento;
 	
 	novoElemento = alocaNo();
-	novoELemento.info = "Dados";	
+	novoElemento->dado = valor;	
 	
-	gancho = lista.IL;
-	while(gancho.info.prox != NULL){
-		if(gancho.info.dados > "Dados"){
-			novoElemento.ant = gancho.ant;
-			gancho.ant = novoElemento;
-			novoElemento.info.prox = gancho.ant.prox;
-			gancho.ant.prox = novoElemento; 
+	gancho = lista->IL;
+	while(gancho->proximo != NULL){
+		if(gancho->dado > valor){
+			novoElemento->anterior = gancho->anterior;
+			novoElemento->proximo = gancho->anterior->proximo;
+			gancho->anterior->proximo = novoElemento;
+			gancho->anterior = novoElemento;
+			break;
 		}
+		gancho = gancho->proximo;
 	}
 }
 
 int main(){
-	LDE listaDuplEncadeada;
-	int i;
-	tApp aux[T];
+	tLista *listaDuplEncadeada;
 	
-	for(i=0;i<T;i++){
-		aux[i].tam = 0;
-		strcpy(aux[i].nome,""); 
-	}
-	
-	carregar_Arquivos(&aux[0]);
-	crialistaLDE(&listaDuplEncadeada);
-	
-	for(i=0;i<T;i++){
-		if(aux[i].tam != 0){
-			printf("%d - %s %d\n", i+1,aux[i].nome,aux[i].tam);
-		}
-	}
-	printf("\n\n");
+	listaDuplEncadeada = criaLista();
 
 	return 0;   	
 }
