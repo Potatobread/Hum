@@ -1,24 +1,46 @@
-/*
-nome da conta e o valor, N vezes /*
-*/
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define T 20
+
+typedef struct {
+	char nome[20];
+	int tam;
+}tApp;
 
 typedef struct No{
- 	int dado;
-    struct No *ant;
-    struct No *prox;
+ 	tApp dado;
+    struct No *anterior;
+    struct No *proximo;
 }No;
 
 typedef struct{
-	No info;
 	No *IL;
 	No *FL;
-}LDE;
+}tLista;
 
-LDE* alocaNo(){
-    LDE *novo;
-    novo = (LDE *)malloc(sizeof(LDE));
+void carregar_Arquivos(tApp *p){
+	FILE *leitura;
+	int i=0;
+	
+	leitura = fopen("MobileED.txt", "r");
+	
+	if(leitura == NULL){
+		printf("Erro ao abrir o arquivo.\n");
+		exit(0);
+	}
+	else{
+		while((fscanf(leitura,"%s %d\n", &p[i].nome,&p[i].tam))!= EOF){
+			i++;
+		}
+	}
+	
+	fclose(leitura);
+}
+
+No* alocaNo(){
+    No *novo;
+    novo = (No *)malloc(sizeof(No));
     if(novo == NULL){
         printf("\nMEMORIA INSUFICIENTE!\n");
         exit(1);
@@ -26,13 +48,9 @@ LDE* alocaNo(){
     return novo;
 }
 
-LDE* crialistaLDE(){
-    LDE *l;
-	*l = alocanoLDE();
-	if(l == 1){
-		printf("Try again, but harder this time");
-		exit(1);	
-	}
+No* crialistaLDE(){
+    tLista *l;
+	*l = alocaNo();
 	l->IL = NULL;
     l->FL = NULL;
     return l;
@@ -89,6 +107,23 @@ void inserirMeio(LDE *lista){
 
 int main(){
 	LDE listaDuplEncadeada;
+	int i;
+	tApp aux[T];
+	
+	for(i=0;i<T;i++){
+		aux[i].tam = 0;
+		strcpy(aux[i].nome,""); 
+	}
+	
+	carregar_Arquivos(&aux[0]);
 	crialistaLDE(&listaDuplEncadeada);
 	
+	for(i=0;i<T;i++){
+		if(aux[i].tam != 0){
+			printf("%d - %s %d\n", i+1,aux[i].nome,aux[i].tam);
+		}
+	}
+	printf("\n\n");
+
+	return 0;   	
 }
