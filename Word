@@ -1,0 +1,36 @@
+Trabalho Prático 01 - MobileED 1.0
+Ler uma lista de Apps disponível em um arquivo texto. 
+Estas informações dever estar disponíveis no MobileED através do App StoreED; Comentários: Implementar uma função que leia um arquivo texto e carregue as informações para um vetor de estrutura do tipo App. 
+O tipo App é uma estrutura que possui no mínimo dois elementos, um do tipo char e outro do tipo int;
+ b) Permitir consultar Apps disponíveis na StoreED; Comentários: Implementar uma função que permita consultar elementos de um vetor;
+ c) Permitir selecionar um App do StoreED para "instalação". Nesta ação, o App selecionado deve ser exibido na Área de Trabalho do MobileED. Caso a área de trabalho já esteja completa, o App selecionado para "instalação" deve ser registrado apenas na lista dos Apps "instalados" no MobileED. 
+As informações sobre os Apps instalados devem ser acessadas através do App MeusAppsED; Comentários: 
+Implementar uma função que copie um elemento de um vetor para outro; 
+Implementar uma função que atualize elementos de uma matriz; ???
+a)	Permitir "executar" um App "instalado" no MobileED. A lista de Apps em execução deve ser acessada através da App AppRumED; 
+Comentários: Implementar uma função que copie um elemento de uma matriz para um vetor; ????
+
+b)	Implementar uma função que liste os elementos de um vetor;
+ f) Permitir parar a "execução" de um App. Nesta ação o usuário deverá consultar a listas de App em execução através do AppRumED e selecionar um App para parar a execução. Comentários: Implementar uma função que permita consultar os elementos de um vetor; 
+Implementar uma função que permita excluir elementos de um vetor;
+ g) Permitir selecionar um App do MeusAppsED para "desinstalação". Nesta ação, caso o App selecionado esteja ná na Área de Trabalho do MobileED seu "ícone" deve ser removido. Comentários:
+Implementar uma função que permita consultar os elementos de um vetor; 
+Implementar uma função que permita excluir elementos de um vetor;
+Implementar uma função que atualize elementos de uma matriz; ???
+h) Criatividade !!!
+
+
+
+Store – LLSE
+			Entre : na transferência segura numa FILA de espaço de 3
+			Possivel que os 3 apps q se encontram na FILA tbm tenham q aparecer no desktop e serem possível de serem executados;
+App – LLDE
+		Abrir varias abas num aplicativo utilizando PILHA (3) “Aplicativo X”
+Rum – LLV
+
+1. Partes importantes do código estão sem documentação, é sempre bom detalhar uma função, seus parâmetros e retorno. Um código bem comentado torna mais fácil sua análise e modificação; 
+2. É interessante sempre ter uma forte validação de entradas de dados, assim evita-se o acesso a áreas nulas/perigosas da memória. Em seu código, operações com números inválidos são permitidas (com id = 0, por exemplo), causando quebra do programa e/ou acesso de memória nula, ou até mesmo excluindo itens indesejados. Além disso, ás veses, seu programa permite operções indesejadas, como remoção de um app em execução (na primeira vez, seu programa barra a operação. Se tentarmos novamente, é permitida);
+3. É necessário um pouco mais de atenção nos requisitos do trabalho. A ordenação deve ser feita ao mesmo tempo da inserção (Seu programa insere na Store e só depois ordena); 
+4. Seu programa falha para alguns casos de teste. Por exemplo, você procura um app em um vetor pelo tamanho. Ou seja, caso existam apps com tamanhos iguais, a busca não é feita corretamente. Não seria mais eficiente uma função que busca pelo id/número do app? 
+5. Há muito código repetido. Funções e comandos de repetição tornam o código menor e mais legível.
+No geral, o programa está bom. Contudo, é necessário uma ligação mais coerente entre as partes do programa - Funções dos vetores com as funções de busca, por exemplo-. Além disso, ficar atento nas especificações do trabalho.
