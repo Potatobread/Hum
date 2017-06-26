@@ -159,7 +159,7 @@ void consultarApps(LLDE *lis){
 	}
 }
 
-void consultarRum(LLV *v, int *indic){
+void consultarRum(LLV *v, int *indic, int *elemen_pilha){
 	int i=0;
 	
 	if((v->info[i].tam > 0) && (v->info[i+1].tam > 0))
@@ -169,8 +169,18 @@ void consultarRum(LLV *v, int *indic){
 	
 	for(i=0;i<T;i++){
 		if(v->info[i].tam != 0){
-			printf("%d. %s - Consumo de Memória: %d mb\n", i+1, v->info[i].nome, (v->info[i].tam/2));
-			*indic = i+1;
+			if(v->info[i].tam == 34){
+				if(*elemen_pilha != 1){
+					printf("%d. %s || ABAS Abertas: %d - Consumo de Memória: %d mb\n", i+1, v->info[i].nome, *elemen_pilha,((v->info[i].tam/2)*(*elemen_pilha)));
+				}
+				else{
+					printf("%d. %s - Consumo de Memória: %d mb\n", i+1, v->info[i].nome, (v->info[i].tam/2));
+				}				
+			}
+			else{
+				printf("%d. %s - Consumo de Memória: %d mb\n", i+1, v->info[i].nome, (v->info[i].tam/2));
+				*indic = i+1;
+			}
 		}
 	}
 }
@@ -821,9 +831,9 @@ void store(LLSE *s, LLDE *ins, int *cont_tam, int *quant_inst){
 }
 
 
-void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum, int *quant_rum, LLSE *pilha){
+void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum, int *quant_rum, LLSE *pilha, int *elemen_pilha){
 	system("cls");
-	int num,i,j,var=0,remover,resp,resp2=2,tam_total = 100,elemen_pilha=0,aba=1;
+	int num,i,j,var=0,remover,resp,resp2=2,tam_total = 100,aba=1;
 	id v[T];
 	
 	for(i=0;i<T;i++){
@@ -874,8 +884,9 @@ void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum,
 							var = 0;
 						}
 						else{
-							if(elemen_pilha == 0){
-								inserirPILHA(pilha,ins,num,&elemen_pilha);
+							if(*elemen_pilha == 0){
+								inserirPILHA(pilha,ins,num,elemen_pilha);
+								inserirLLV(rum,ins,num,quant_rum);
 								*cont_rum += (ins->v[num].info.tam/2);
 								if(*cont_rum > tam_total){
 									printf("Memória Insuficiente.\n");
@@ -886,8 +897,8 @@ void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum,
 								printf("App %s em Execução.\n", ins->v[num].info.nome);
 								printf("Memória RAM: Atual: %d mb | MAX: 100 mb\n", *cont_rum);
 							}
-							if(elemen_pilha < 3){
-								inserirPILHA(pilha,ins,num,&elemen_pilha);
+							if(*elemen_pilha < 3){
+								inserirPILHA(pilha,ins,num,elemen_pilha);
 								*cont_rum += (ins->v[num].info.tam/2);
 								if(*cont_rum > tam_total){
 									printf("Memória Insuficiente.\n");
@@ -966,7 +977,12 @@ void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum,
 						return;
 					}
 					for(i=0;i<T;i++){
-						if(ins->v[remover-1].info.tam == rum->info[i].tam){
+						if(v[i].ind == remover){
+							remover = v[i].ind_LL;
+						}
+					}
+					for(i=0;i<T;i++){
+						if(ins->v[remover].info.tam == rum->info[i].tam){
 							printf("App em Execução.\n\n");
 							printf("Digite o número do App que deseja Desinstalar <0-Sair>: ");
 							scanf(" %d", &remover);
@@ -975,8 +991,8 @@ void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum,
 							}
 						}
 					}		
-					*cont_tam -= ins->v[remover-1].info.tam;
-					removerLLDE(ins,remover-1,quant_inst);
+					*cont_tam -= ins->v[remover].info.tam;
+					removerLLDE(ins,remover,quant_inst);
 					printf("\n");
 					printf("Memória: Atual: %d mb | MAX: 150 mb\n\n", *cont_tam);
 					sleep(2);
@@ -1020,11 +1036,11 @@ void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum,
 }
 
 	
-void executando(LLV *rum, int *cont_rum, int *quant_rum){
+void executando(LLV *rum, int *cont_rum, int *quant_rum, LLSE *pilha, int *elemen_pilha){
 	system("cls");
 	int remover,indic;
 			
-	consultarRum(rum,&indic);
+	consultarRum(rum,&indic,elemen_pilha);
 	while(remover != 0){
 		printf("\n");
 		printf("Memória RAM: Atual: %d mb | MAX: 50 mb.\n\n", *cont_rum);
@@ -1038,13 +1054,23 @@ void executando(LLV *rum, int *cont_rum, int *quant_rum){
 			printf("Opção Inválida\n");
 			return;
 		}
-		*cont_rum -= (rum->info[remover-1].tam/2);
-		removerLLV(rum,remover-1,quant_rum);
+		if(rum->info[remover-1].tam == 34){
+			removerPILHA(pilha);
+			*cont_rum -= (rum->info[remover-1].tam/2);
+			if(*elemen_pilha == 1){
+				removerLLV(rum,remover-1,quant_rum);
+			}
+			(*elemen_pilha)--;	
+		}
+		else{
+			*cont_rum -= (rum->info[remover-1].tam/2);
+			removerLLV(rum,remover-1,quant_rum);
+		}
 		printf("\n");
         printf("Memória RAM: Atual: %d mb | MAX: 50 mb.\n\n", *cont_rum);
         sleep(2);
         system("cls");
-        consultarRum(rum,&indic);
+        consultarRum(rum,&indic,elemen_pilha);
 	}
 	system("cls");
 }
@@ -1052,7 +1078,7 @@ void executando(LLV *rum, int *cont_rum, int *quant_rum){
 
 void menuprin(LLSE *s,LLDE *ins,LLV *rum, int *cont_tam, int *cont_rum){
 	system("cls");
-	int resp,quant_inst=0,quant_rum=0;
+	int resp,quant_inst=0,quant_rum=0,elemen_pilha=0;
 	int i,j,a,k=0;
 	LLSE pilha;
 	display m[L][C];
@@ -1097,10 +1123,10 @@ void menuprin(LLSE *s,LLDE *ins,LLV *rum, int *cont_tam, int *cont_rum){
 				store(s,ins,cont_tam,&quant_inst);
 				break;
 			case 2:
-				meusApps(ins,rum,&quant_inst,cont_tam,cont_rum,&quant_rum,&pilha);
+				meusApps(ins,rum,&quant_inst,cont_tam,cont_rum,&quant_rum,&pilha,&elemen_pilha);
 				break;
 			case 3:
-				executando(rum,cont_rum,&quant_rum);
+				executando(rum,cont_rum,&quant_rum,&pilha,&elemen_pilha);
 				break;
 			default:
 				printf("Opção inválida!\n");
