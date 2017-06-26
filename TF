@@ -850,6 +850,12 @@ void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum,
 				return;
 			case 1:
 				system("cls");
+				if(*cont_tam == 0){
+					printf("Sem Apps Instalados\n");
+					sleep(2);
+					system("cls");
+					break;
+				}
 				printf("Apps Instalados:\n\n");
 				consultarApps(ins);
 				printf("\n");
@@ -941,6 +947,12 @@ void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum,
 			case 2:
 				printf("\n");
 				system("cls");
+				if(*cont_tam == 0){
+					printf("Sem Apps Instalados\n");
+					sleep(2);
+					system("cls");
+					break;
+				}
 				printf("Desinstalar:\n\n");
 				i = ins->IL;
 				for(j=0;j<T;j++){
