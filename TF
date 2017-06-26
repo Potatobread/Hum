@@ -374,7 +374,7 @@ void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
 }
 
 void inserirLLDE(LLDE *lis, tApp *old, int indic_orig, int *quant_elem, int *ind_tam){
-	int local,ind,i,fim,meio;
+	int local,ind,i,fim,meio,aux;
 	
 	if((lis->v[lis->IL].info.tam > old[indic_orig].tam)||(lis->disp == 1)){
 		local = 1;
@@ -411,7 +411,7 @@ void inserirLLDE(LLDE *lis, tApp *old, int indic_orig, int *quant_elem, int *ind
 					lis->v[ind].prox = lis->IL;
 					lis->IL = ind;
 					(*quant_elem)++;
-					ind_tam = ind;
+					*ind_tam = ind;
 				}
 				else{
 					ind = lis->disp;
@@ -422,7 +422,7 @@ void inserirLLDE(LLDE *lis, tApp *old, int indic_orig, int *quant_elem, int *ind
 					lis->v[lis->IL].ant = ind;
 					lis->IL = ind;
 					(*quant_elem)++;
-					ind_tam = ind;
+					*ind_tam = ind;
 				}
 			}
 			break;
@@ -439,7 +439,7 @@ void inserirLLDE(LLDE *lis, tApp *old, int indic_orig, int *quant_elem, int *ind
 				lis->v[fim].prox = ind;
 				lis->v[ind].info = old[indic_orig];
 				(*quant_elem)++;
-				ind_tam = ind;
+				*ind_tam = ind;
 			}
 			break;
 		case 3:
@@ -463,7 +463,7 @@ void inserirLLDE(LLDE *lis, tApp *old, int indic_orig, int *quant_elem, int *ind
 				lis->v[lis->v[meio].prox].ant = ind;
 				lis->v[ind].info = old[indic_orig];
 				(*quant_elem)++;
-				ind_tam = ind;
+				*ind_tam = ind;
 			}
 			break;
 		default:
@@ -496,12 +496,12 @@ void inserirFILA(LLDE *lis, LLSE *old, int indic_orig, int *elem_fila){
 	}
 }
 
-void inserirPILHA(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
+void inserirPILHA(LLSE *lis, LLDE *old, int indic_orig, int *quant_elem){
 	int ind;
 	
 	if(!(lis->disp == -1)){
 		ind = lis->disp;
-		lis->v[ind].info = old[indic_orig];
+		lis->v[ind].info = old->v[indic_orig].info;
 		lis->disp = lis->v[ind].prox;
 		if(*quant_elem != 0){
 			lis->v[ind].prox = lis->IL;
@@ -736,12 +736,13 @@ void sleep(time_t delay){
 
 void store(LLSE *s, LLDE *ins, int *cont_tam, int *quant_inst){
 	system("cls");
-	int resp,i,j,num,ind=0,var=0,total_elem=0,tam_total=150,elemen_fila=0,ind_tam=0;
+	int resp,i,num,ind=0,var=0,total_elem=0,tam_total=150,elemen_fila=0,ind_tam=0,indic=0;
 	LLDE fila;
 	tApp realocador[T];
+	id v[T];
 	
 	for(i=0;i<T;i++){
-		fila.v[i].info.tam = 0
+		fila.v[i].info.tam = 0;
 		realocador[i].tam = 0;
 		strcpy(fila.v[i].info.nome,"");
 		strcpy(realocador[i].nome,"");	  		  
@@ -774,11 +775,10 @@ void store(LLSE *s, LLDE *ins, int *cont_tam, int *quant_inst){
 		}
 		if(var == 1){
 			printf("Aplicativo já Instalado.\n");
-			cont = 0;
 		}
 	   	else{
      		if(elemen_fila < 3){
-				inserirFILA(&fila,s,num,elemen_fila); 
+				inserirFILA(&fila,s,num,&elemen_fila); 
 			}
 			else{
 				removerFILA(&fila,&realocador[0],&indic);
@@ -837,10 +837,10 @@ void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum,
 	id v[T];
 	
 	for(i=0;i<T;i++){
-		pilha.v[i].info.tam = 0
-		strcpy(pilha.v[i].info.nome,"");	  		  
+		pilha->v[i].info.tam = 0;
+		strcpy(pilha->v[i].info.nome,"");	  		  
 	}
-	inicializarLLSE(&pilha);
+	inicializarLLSE(pilha);
 	
 	printf("---------------\n1 - Apps Instalados\n2 - Desinstalar App\n0 - Voltar\n---------------\n");
 	scanf(" %d", &resp);
@@ -957,7 +957,7 @@ void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum,
 						v[j].ind_LL = i;
 						printf("%d. %s - Ocupando: %d mb\n", v[j].ind, ins->v[i].info.nome,ins->v[i].info.tam);
 						j++;
-						i = ins.ins->v[i].prox;
+						i = ins->v[i].prox;
 						if(ins->v[i].prox == -1){
 							v[j].ind_LL = i;
 							printf("%d. %s - Ocupando: %d mb\n", v[j].ind, ins->v[i].info.nome,ins->v[i].info.tam);
@@ -1013,7 +1013,7 @@ void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum,
 							v[j].ind_LL = i;
 							printf("%d. %s - Ocupando: %d mb\n", v[j].ind, ins->v[i].info.nome,ins->v[i].info.tam);
 							j++;
-							i = ins.ins->v[i].prox;
+							i = ins->v[i].prox;
 							if(ins->v[i].prox == -1){
 								v[j].ind_LL = i;
 								printf("%d. %s - Ocupando: %d mb\n", v[j].ind, ins->v[i].info.nome,ins->v[i].info.tam);
@@ -1196,8 +1196,8 @@ int main(){
 	LLV apps_executando;
 	
 	for(i=0;i<T;i++){
-		apps_store.v[i].info.tam = 0
-		apps_instalados.v[i].info.tam = 0
+		apps_store.v[i].info.tam = 0;
+		apps_instalados.v[i].info.tam = 0;
 		apps_executando.info[i].tam = 0;
 		aux[i].tam = 0;
 		strcpy(apps_store.v[i].info.nome,"");
