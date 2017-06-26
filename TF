@@ -897,7 +897,7 @@ void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum,
 								printf("App %s em Execução.\n", ins->v[num].info.nome);
 								printf("Memória RAM: Atual: %d mb | MAX: 100 mb\n", *cont_rum);
 							}
-							if(*elemen_pilha < 3){
+							else{
 								inserirPILHA(pilha,ins,num,elemen_pilha);
 								*cont_rum += (ins->v[num].info.tam/2);
 								if(*cont_rum > tam_total){
