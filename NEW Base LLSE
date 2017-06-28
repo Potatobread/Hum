@@ -19,11 +19,6 @@ typedef struct{
 	No v[T];
 }LLSE;
 
-typedef struct{
-	int ind;
-	int ind_LLSE;
-}id;
-
 void carregar_Arquivos(tApp *p){
 	FILE *leitura;
 	int i=0;
@@ -141,7 +136,6 @@ void inserirLLSE(LLSE *lis, tApp *old, int indic_orig, int *quant_elem){
 	}	
 }
 
-
 void removerLLSE(LLSE *lis, int remover, int *quant_elem){
 	int i,j,ind,local,ind_ant,ind_rem;
 	
@@ -209,21 +203,28 @@ void removerLLSE(LLSE *lis, int remover, int *quant_elem){
 	}
 }
 
+void consultarStore(LLSE *lis){
+	int i,j=1;
+	
+	for(i=lis->IL;i != -1; i = lis->v[i].prox){
+		printf("%d. %s - Tamanho: %d mb\n", j, lis->v[i].info.nome,lis->v[i].info.tam);
+		j++;
+	}
+}
 
 int main(){
-	int i,num=0,b=0,j;
+	int i,num=0,b=0,j,ind;
 	tApp aux[T];
 	LLSE s;
-	id v[T];
 	
 	for(i=0;i<T;i++){
 		aux[i].tam = 0;
 		s.v[i].info.tam = 0;
-		v[i].ind = 0;
-		v[i].ind_LLSE = 0;
 		strcpy(aux[i].nome,"");  
 		strcpy(s.v[i].info.nome,"");
 	}
+	s.v[T].info.tam = 0;  
+	strcpy(s.v[T].info.nome,"");
 	
 	carregar_Arquivos(&aux[0]);
 	inicializarLLSE(&s);
@@ -232,44 +233,19 @@ int main(){
 		if(aux[i].tam != 0){
 			printf("%d - %s %d\n", i+1,aux[i].nome,aux[i].tam);
 		}
-	}
-	
+	}	
 	printf("\n");
-	s.v[T].info.tam = 0;  
-	strcpy(s.v[T].info.nome,"");
 	
-	while(num != 100){
+	while(ind != 100){
 		printf("Digite o NUMERO <Sair - 100>: ");
-		scanf(" %d", &num);
-		if(num == 100){
+		scanf(" %d", &ind);
+		if(ind == 100){
 			break;
 		}
-		inserirLLSE(&s,&aux[0],num-1,&b);
+		inserirLLSE(&s,&aux[0],ind-1,&b);
 		printf("\n");
 		
-		i = s.IL;
-		j = 0;
-		for(j=0;j<T;j++){
-			v[j].ind = j+1; 
-		}
-		j = 0;
-		if(s.v[i].prox == -1){
-			v[j].ind_LLSE = i;
-			printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
-		}
-		else{
-			j = 0;
-			while(s.v[i].prox != -1){
-				v[j].ind_LLSE = i;
-				printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
-				j++;
-				i = s.v[i].prox;
-				if(s.v[i].prox == -1){
-					v[j].ind_LLSE = i;
-					printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
-				}
-			}
-		}
+		consultarStore(&s);
 		
 		printf("\n");
 		for(i=0;i<T;i++){
@@ -282,50 +258,23 @@ int main(){
 	}
 	printf("\n");
 	
-	num = 0;
-	while(num != 100){
-		i = s.IL;
-		j = 0;
-		for(j=0;j<T;j++){
-			v[j].ind = j+1; 
-		}
-		j = 0;
-		if(s.v[i].prox == -1){
-			v[j].ind_LLSE = i;
-			printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
-		}
-		else{
-			j = 0;
-			while(s.v[i].prox != -1){
-				v[j].ind_LLSE = i;
-				printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
-				j++;
-				i = s.v[i].prox;
-				if(s.v[i].prox == -1){
-					v[j].ind_LLSE = i;
-					printf("%d - %s: %d  PROX: %d    i: %d\n", v[j].ind, s.v[i].info.nome,s.v[i].info.tam,s.v[i].prox,i);
-				}
-			}
-		}
+	ind = 0;
+	while(ind != 100){
+		consultarStore(&s);
 		printf("\nIL: %d\n", s.IL);
 		printf("Disp: %d\n", s.disp);
 		printf("\n");
 		printf("Digite o NUMERO a EXCLUIR <Sair - 100>: ");
-		scanf(" %d", &num);
-		if(num == 100){
+		scanf(" %d", &ind);
+		if(ind == 100){
 			break;
 		}
 		printf("\n");
-		for(i=0;i<T;i++){
-			printf("v[%d].ind = %d || v[%d].ind_LLSE = %d\n", i,v[i].ind,i,v[i].ind_LLSE);
-		}
-		printf("\n");
-		for(i=0;i<T;i++){
-			if(num == v[i].ind){
-				num = v[i].ind_LLSE;
-				printf("Num: %d || i: %d\n", num,i);
-				break;
-			}
+		num = s.IL;
+		while(ind > 1){
+			num = s.v[num].prox;
+			ind--; 
+			printf("ind: %d\n", ind);
 		}
 		removerLLSE(&s,num,&b);
 	}
