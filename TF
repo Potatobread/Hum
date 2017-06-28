@@ -1088,24 +1088,16 @@ void menuprin(LLSE *s,LLDE *ins,LLV *rum, int *cont_tam, int *cont_rum){
 				break;
 		};
 		
-		k=0;
+		k = ins->IL;
 		for(j=0;j<L;j++){
 			for(i=0;i<C;i++){
-				strcpy(m[j][i].nome,"");
-			}
-		}	   	
-		for(j=0;j<L;j++){
-			for(i=0;i<C;i++){
-				if(k <= quant_inst){
-					strcpy(m[j][i].nome,ins->v[k].info.nome);				
-					k++;
-				}
-				else{
-					strcpy(m[j][i].nome,"");
-					break;
+				if(k != -1){
+					strcpy(m[j][i].nome,ins->v[k].info.nome);
+					k = ins->v[k].prox;   	
 				}
 			}
 		}
+		
 		for(j=0;j<L;j++){
 			for(i=0;i<C;i++){
 				if(i != C-1){
