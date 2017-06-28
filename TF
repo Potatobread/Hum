@@ -39,11 +39,6 @@ typedef struct{
 	No v[T];
 }LLDE;
 
-typedef struct{
-	int ind;
-	int ind_LL;
-}id;
-
 /*
 1 - Colocar instalando nos aplicativos que ficam dentro da fila, ai quando lotar a fila colocar o primeiro
 que entrou como instalado;
@@ -117,30 +112,12 @@ void consultarStore(LLSE *lis){
 }
 
 void consultarApps(LLDE *lis){
-	int i,j;
-	id v[T];
+	int i,j=1;
 	
-	i = lis->IL;
-	for(j=0;j<T;j++){
-		v[j].ind = j+1; 
-	}
-	j = 0;
-	if(lis->v[i].prox == -1){
-		v[j].ind_LL = i;
-		printf("%d. %s - Tamanho: %d mb\n", v[j].ind, lis->v[i].info.nome,lis->v[i].info.tam);
-	}
-	else{
-		j = 0;
-		while(lis->v[i].prox != -1){
-			v[j].ind_LL = i;
-			printf("%d. %s - Tamanho: %d mb\n", v[j].ind, lis->v[i].info.nome,lis->v[i].info.tam);
-			j++;
-			i = lis->v[i].prox;
-			if(lis->v[i].prox == -1){
-				v[j].ind_LL = i;
-				printf("%d. %s - Tamanho: %d mb\n", v[j].ind, lis->v[i].info.nome,lis->v[i].info.tam);
-			}
-		}
+	for(i=lis->IL;i!=-1;){
+		printf("%d. %s - Tamanho: %d mb\n", j, lis->v[i].info.nome,lis->v[i].info.tam);
+		j++;
+		i = lis->v[i].prox;
 	}
 }
 
@@ -825,8 +802,7 @@ void store(LLSE *s, LLDE *ins, int *cont_tam, int *quant_inst){
 
 void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum, int *quant_rum, LLSE *pilha, int *elemen_pilha){
 	system("cls");
-	int num,i,j,var=0,remover,resp,resp2=2,tam_total = 100,aba=1;
-	id v[T];
+	int num,i,j,ind,verificador=0,remover,resp,resp2=2,tam_total = 100,aba=1;
 	
 	for(i=0;i<T;i++){
 		pilha->v[i].info.tam = 0;
@@ -863,41 +839,41 @@ void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum,
 								printf("Opção Inválida\n\n");
 						}
 					}
-					for(i=0;i<T;i++){
-						if(v[i].ind == num){
-							num = v[i].ind_LL;
-						}
+					ind = ins->IL;
+					while(num > 1){
+						ind = ins->v[ind].prox;
+						num--; 
 					}
 					for(i=0;i<T;i++){
-						if(ins->v[num].info.tam == rum->info[i].tam){
-							var = 1;
-							if(ins->v[num].info.tam == 34){
-								var = 2;
+						if(ins->v[ind].info.tam == rum->info[i].tam){
+							verificador = 1;
+							if(ins->v[ind].info.tam == 34){
+								verificador = 2;
 							}
 						}	
 					}
-					if(var > 0){
-						if(var == 1){
+					if(verificador > 0){
+						if(verificador == 1){
 							printf("Aplicativo já em Execução.\n");
-							var = 0;
+							verificador = 0;
 						}
 						else{
 							if(*elemen_pilha == 0){
-								inserirPILHA(pilha,ins,num,elemen_pilha);
-								inserirLLV(rum,ins,num,quant_rum);
-								*cont_rum += (ins->v[num].info.tam/2);
+								inserirPILHA(pilha,ins,ind,elemen_pilha);
+								inserirLLV(rum,ins,ind,quant_rum);
+								*cont_rum += (ins->v[ind].info.tam/2);
 								if(*cont_rum > tam_total){
 									printf("Memória Insuficiente.\n");
 									sleep(2);
 									system("cls");
 									return;
 								}
-								printf("App %s em Execução.\n", ins->v[num].info.nome);
+								printf("App %s em Execução.\n", ins->v[ind].info.nome);
 								printf("Memória RAM: Atual: %d mb | MAX: 100 mb\n", *cont_rum);
 							}
 							else{
-								inserirPILHA(pilha,ins,num,elemen_pilha);
-								*cont_rum += (ins->v[num].info.tam/2);
+								inserirPILHA(pilha,ins,ind,elemen_pilha);
+								*cont_rum += (ins->v[ind].info.tam/2);
 								if(*cont_rum > tam_total){
 									printf("Memória Insuficiente.\n");
 									sleep(2);
@@ -905,23 +881,23 @@ void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum,
 									return;
 								}
 								aba++;
-								printf("%s - Nova aba %d\n", ins->v[num].info.nome,aba);
+								printf("%s - Nova aba %d\n", ins->v[ind].info.nome,aba);
 								printf("Memória RAM: Atual: %d mb | MAX: 100 mb\n", *cont_rum);								
 							}
-							var = 0;
+							verificador = 0;
 						}
 					}		
 					else{
-						*cont_rum += (ins->v[num].info.tam/2);
+						*cont_rum += (ins->v[ind].info.tam/2);
 						if(*cont_rum > tam_total){
 							printf("Memória Insuficiente.\n");
 							sleep(2);
 							system("cls");
 							return;
 						}
-						printf("App %s em Execução.\n", ins->v[num].info.nome);
+						printf("App %s em Execução.\n", ins->v[ind].info.nome);
 						printf("Memória RAM: Atual: %d mb | MAX: 100 mb\n", *cont_rum);
-						inserirLLV(rum,ins,num,quant_rum);
+						inserirLLV(rum,ins,ind,quant_rum);
 					}
 					printf("\n");
 					printf("Continuar - 1, Sair - 0: ");
@@ -946,54 +922,43 @@ void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum,
 					break;
 				}
 				printf("Desinstalar:\n\n");
-				i = ins->IL;
-				for(j=0;j<T;j++){
-					v[j].ind = j+1; 
+				j = 1;
+				for(i=lis->IL;i!=-1;){
+					printf("%d. %s - Ocupando: %d mb\n", j, ins->v[i].info.nome,ins->v[i].info.tam);
+					j++;
+					i = lis->v[i].prox;
 				}
-				j = 0;
-				if(ins->v[i].prox == -1){
-					v[j].ind_LL = i;
-					printf("%d. %s - Ocupando: %d mb\n", v[j].ind, ins->v[i].info.nome,ins->v[i].info.tam);
-				}
-				else{
-					j = 0;
-					while(ins->v[i].prox != -1){
-						v[j].ind_LL = i;
-						printf("%d. %s - Ocupando: %d mb\n", v[j].ind, ins->v[i].info.nome,ins->v[i].info.tam);
-						j++;
-						i = ins->v[i].prox;
-						if(ins->v[i].prox == -1){
-							v[j].ind_LL = i;
-							printf("%d. %s - Ocupando: %d mb\n", v[j].ind, ins->v[i].info.nome,ins->v[i].info.tam);
-						}
-					}
-				}	
 				printf("\n");
 				printf("Memória: Atual: %d mb | MAX: 150 mb\n\n", *cont_tam);
-				while(remover != 0){
+				while(ind != 0){
 					printf("Digite o número do App que deseja Desinstalar <0-Sair>: ");
-					scanf(" %d", &remover);
-					if(remover == 0){
+					scanf(" %d", &ind);
+					if(ind == 0){
 						break;
 					}
-					if(remover > *quant_inst){
+					if(ind > *quant_inst){
 						printf("Opção Inválida\n");
 						return;
 					}
-					for(i=0;i<T;i++){
-						if(v[i].ind == remover){
-							remover = v[i].ind_LL;
-						}
+					remover = ins->IL;
+					while(ind > 1){
+						remover = ins->v[remover].prox;
+						ind--; 
 					}
 					for(i=0;i<T;i++){
 						if(ins->v[remover].info.tam == rum->info[i].tam){
 							printf("App em Execução.\n\n");
 							printf("Digite o número do App que deseja Desinstalar <0-Sair>: ");
-							scanf(" %d", &remover);
-							if(remover == 0){
+							scanf(" %d", &ind);
+							if(ind == 0){
 								break;
 							}
 						}
+					}
+					remover = ins->IL;
+					while(ind > 1){
+						remover = ins->v[remover].prox;
+						ind--; 
 					}		
 					*cont_tam -= ins->v[remover].info.tam;
 					removerLLDE(ins,remover,quant_inst);
@@ -1002,27 +967,11 @@ void meusApps(LLDE *ins, LLV *rum, int *quant_inst, int *cont_tam,int *cont_rum,
 					sleep(2);
 					system("cls");
 					printf("Desinstalar:\n\n");
-					i = ins->IL;
-					for(j=0;j<T;j++){
-						v[j].ind = j+1; 
-					}
-					j = 0;
-					if(ins->v[i].prox == -1){
-						v[j].ind_LL = i;
-						printf("%d. %s - Ocupando: %d mb\n", v[j].ind, ins->v[i].info.nome,ins->v[i].info.tam);
-					}
-					else{
-						j = 0;
-						while(ins->v[i].prox != -1){
-							v[j].ind_LL = i;
-							printf("%d. %s - Ocupando: %d mb\n", v[j].ind, ins->v[i].info.nome,ins->v[i].info.tam);
-							j++;
-							i = ins->v[i].prox;
-							if(ins->v[i].prox == -1){
-								v[j].ind_LL = i;
-								printf("%d. %s - Ocupando: %d mb\n", v[j].ind, ins->v[i].info.nome,ins->v[i].info.tam);
-							}
-						}
+					j = 1;
+					for(i=lis->IL;i!=-1;){
+						printf("%d. %s - Ocupando: %d mb\n", j, ins->v[i].info.nome,ins->v[i].info.tam);
+						j++;
+						i = lis->v[i].prox;
 					}
 					printf("\n");
 					printf("Memória: Atual: %d mb | MAX: 150 mb\n\n", *cont_tam);
