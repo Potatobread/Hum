@@ -103,29 +103,15 @@ void carregar_Arquivos(tApp *p){
 }
 
 
-void consultarStore(LLSE *lis, id *v){
-	int i,j;
+void consultarStore(LLSE *lis){
+	int i,j=1;
 	
-	i = lis->IL;
-	for(j=0;j<T;j++){
-		v[j].ind = j+1; 
-	}
-	j = 0;
-	if(lis->v[i].prox == -1){
-		v[j].ind_LL = i;
-		printf("%d. %s - Tamanho: %d mb\n", v[j].ind, lis->v[i].info.nome,lis->v[i].info.tam);
-	}
-	else{
-		j = 0;
-		while(lis->v[i].prox != -1){
-			v[j].ind_LL = i;
-			printf("%d. %s - Tamanho: %d mb\n", v[j].ind, lis->v[i].info.nome,lis->v[i].info.tam);
-			j++;
-			i = lis->v[i].prox;
-			if(lis->v[i].prox == -1){
-				v[j].ind_LL = i;
-				printf("%d. %s - Tamanho: %d mb\n", v[j].ind, lis->v[i].info.nome,lis->v[i].info.tam);
-			}
+	for(i=lis->IL;i!=-1;){
+		printf("%d. %s - Tamanho: %d mb\n", j, lis->v[i].info.nome,lis->v[i].info.tam);
+		j++;
+		i = lis->v[i].prox;
+		if(lis->v[i].info.tam == 19){
+			break;
 		}
 	}
 }
@@ -696,7 +682,7 @@ void removerLLDE(LLDE *lis, int remover, int *quant_elem){
 	}
 }
 
-void removerFILA(LLDE *lis, tApp *realoc, int *indic){
+void removerFILA(LLDE *lis, tApp *realoc, int *indic, int *elem_fila){
 	int fim,ind_ant;
 	
 	fim = lis->IL;
@@ -709,6 +695,7 @@ void removerFILA(LLDE *lis, tApp *realoc, int *indic){
 	lis->v[fim].prox = lis->disp;
 	lis->disp = fim;
 	(*indic)++;
+	(*elem_fila)--;
 }
 
 void removerPILHA(LLSE *lis){
@@ -735,10 +722,9 @@ void sleep(time_t delay){
 
 void store(LLSE *s, LLDE *ins, int *cont_tam, int *quant_inst){
 	system("cls");
-	int resp,i,num,ind=0,var=0,total_elem=0,tam_total=150,elemen_fila=0,ind_tam=0,indic=0;
+	int resp,i,num,ind=0,verificador=0,total_elem=0,tam_total=150,elemen_fila=0,ind_tam=0,indic=0;
 	LLDE fila;
 	tApp realocador[T];
-	id v[T];
 	
 	for(i=0;i<T;i++){
 		fila.v[i].info.tam = 0;
@@ -749,69 +735,76 @@ void store(LLSE *s, LLDE *ins, int *cont_tam, int *quant_inst){
 	inicializarLLDE(&fila);
 	
 	printf("Apps Disponíveis:\n\n");
-	consultarStore(s,&v[0]);
+	consultarStore(s);
 	printf("\n");
 	while(resp != 100){
 		printf("Digite o número do App que deseja instalar: ");
 		scanf("%d", &num);
 		printf("\n");
-		//"FOR" PARA VERIFICIAR SE o numero digitado eh maior que o total de elementos e Se o aplicativo ja foi instalado.
-		for(i=0;i<T;i++){
-			if(v[i].ind == num){
-				ind = v[i].ind_LL;
-			}
+		ind = s->IL;
+		while(num > 1){
+			ind = s->v[ind].prox;
+			num--; 
 		}
 		for(i=0;i<T;i++){
 			if(s->v[i].info.tam != 0){
 				total_elem++;
 			}
 			if(s->v[ind].info.tam == ins->v[i].info.tam){
-				var = 1;
+				verificador = 1;
+			}
+			if(s->v[ind].info.tam == fila.v[i].info.tam){
+				verificador = 2;
 			}
 		}
 		if(num > total_elem){
 			break;
 		}
-		if(var == 1){
-			printf("Aplicativo já Instalado.\n");
-		}
-	   	else{
-     		if(elemen_fila < 3){
-				inserirFILA(&fila,s,num,&elemen_fila); 
+		if((verificador == 1) || (verificador == 2)){
+			if(verificador == 1){
+				printf("Aplicativo já Instalado.\n");
 			}
 			else{
-				removerFILA(&fila,&realocador[0],&indic);
+				printf("Aplicativo Instalando\n");
+			}
+		}
+	   	else{
+     		inserirFILA(&fila,s,ind,&elemen_fila);
+			if(elemen_fila == 4){
+				removerFILA(&fila,&realocador[0],&indic,&elemen_fila);
 				for(i=0;i<T;i++){
 					if(realocador[i].tam != 0)
 						inserirLLDE(ins,&realocador[0],i,quant_inst,&ind_tam);
 				}
-			}
-			i = fila.IL;
-			if(fila.v[i].prox == -1)
-				printf("%s Instalando...\n",fila.v[i].info.nome);  
-			else{
-				while(fila.v[i].prox != -1){
+				i = fila.IL;
+				while(i != -1){
 					printf("%s Instalando...\n",fila.v[i].info.nome);  
 					i = fila.v[i].prox;
-					if(fila.v[i].prox == -1)
-						printf("%s Instalando...\n",fila.v[i].info.nome);
 				}
-			}		
-			if(elemen_fila >= 3){
-	   			*cont_tam += ins->v[ind_tam].info.tam;
+				*cont_tam += ins->v[ind_tam].info.tam;
 				if(*cont_tam > tam_total){
 					printf("Espaço Insuficiente.\n");
 					*cont_tam -= ins->v[ind_tam].info.tam;
 					return; 
 				}
-				printf("App %s Instalado com sucesso.\n",ins->v[ind_tam].info.nome);
-				printf("Memória: Atual: %d mb | MAX: 150 mb\n", *cont_tam);
+				printf("\nApp %s Instalado com sucesso.\n",ins->v[ind_tam].info.nome);
+				printf("Memória: Atual: %d mb | MAX: 150 mb\n", *cont_tam); 
+			}
+			else{
+				i = fila.IL;
+				while(i != -1){
+					printf("%s Instalando...\n",fila.v[i].info.nome);  
+					i = fila.v[i].prox;
+				}
 			}
 		}
 		printf("\n");
 		
 		printf("Deseja instalar outro App? <1-Continuar,0-Sair> ");
 		scanf(" %d", &resp);
+		if(resp == 0){
+			break;
+		}
 		if(resp > 1){
 			printf("Opção Inválida\n\n");
 			while(resp > 1){
@@ -823,7 +816,7 @@ void store(LLSE *s, LLDE *ins, int *cont_tam, int *quant_inst){
 		}
 		system("cls");
 		printf("Apps Disponíveis:\n\n");
-		consultarStore(s,&v[0]);
+		consultarStore(s);
 		printf("\n");
 	}
 	system("cls");
@@ -1216,6 +1209,8 @@ int main(){
 		strcpy(apps_executando.info[i].nome,"");
 		strcpy(aux[i].nome,"");  
 	}
+	apps_store.v[T].info.tam = 0;
+	strcpy(apps_store.v[T].info.nome,"");
 	
 	inicializarLLSE(&apps_store);
 	inicializarLLDE(&apps_instalados);
