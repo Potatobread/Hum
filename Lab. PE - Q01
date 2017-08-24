@@ -47,10 +47,28 @@ int main(){
 		
 		printf("Digite as Notas de Originalidade: ");
 		scanf("%f%f%f", &cand.origin.n1,&cand.origin.n2,&cand.origin.n3);
+		if(cand.origin.n1 < 0 || cand.origin.n2 < 0 || cand.origin.n3 < 0){
+			printf("Nota Invalida,Somente 0 ou Maior\n");
+			while((cand.origin.n1 < 0) || (cand.origin.n2 < 0) || (cand.origin.n3 < 0)){
+				scanf("%f%f%f", &cand.origin.n1,&cand.origin.n2,&cand.origin.n3);
+				if(cand.origin.n1 < 0 || cand.origin.n2 < 0 || cand.origin.n3 < 0){
+					printf("Nota Invalida\n");
+				}
+			}
+		}
 		cand.origin.n_valida = nota_valida(cand.origin.n1,cand.origin.n2,cand.origin.n3);
 		
 		printf("Digite as Notas de Beleza: ");
 		scanf("%f%f%f", &cand.belez.n1,&cand.belez.n2,&cand.belez.n3);
+		if(cand.belez.n1 < 0 || cand.belez.n2 < 0 || cand.belez.n3 < 0){
+			printf("Nota Invalida,Somente 0 ou Maior\n");
+			while((cand.belez.n1 < 0) || (cand.belez.n2 < 0) || (cand.belez.n3 < 0)){
+				scanf("%f%f%f", &cand.belez.n1,&cand.belez.n2,&cand.belez.n3);
+				if(cand.belez.n1 < 0 || cand.belez.n2 < 0 || cand.belez.n3 < 0){
+					printf("Nota Invalida\n");
+				}
+			}
+		}
 		cand.belez.n_valida = nota_valida(cand.belez.n1,cand.belez.n2,cand.belez.n3);
 		
 		nota_final(cand.origin.n_valida,cand.belez.n_valida,&cand.n_final);
@@ -61,7 +79,7 @@ int main(){
 		}
 		else{
 			printf("Nota Final do Candidato %d: %.1f\n\n", cand.insc,cand.n_final);
-		}
+		}	
 		printf("Digite o Numero do Candidato: ");
 		scanf("%d", &resp);		
 	}
