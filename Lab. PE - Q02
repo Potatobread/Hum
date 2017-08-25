@@ -3,11 +3,11 @@
 int primo(int n){
 	int i,cont=0;
 	
-	for(i=n;i>0;i--){
+	for(i=1;i<=n;i++){
 		if(n % i == 0)
 			cont++;
 	}
-	if(cont == 2)
+	if(cont == 2 || n == 1)
 		return 1;
 	else
 		return 0;
@@ -15,7 +15,7 @@ int primo(int n){
 
 int main(){
 	int n,resul;
-	float media,cont=0,soma=0;
+	double media,cont=0,soma=0;
 	
 	printf("Entre com um numero: ");
 	scanf("%d", &n);
