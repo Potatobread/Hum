@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+typedef struct{
+	char info;
+	struct arv* esq;
+	struct arv* dir;
+}Arv;
+
+Arv* arv_criavazia(){
+	return NULL;
+}
+
+Arv* arv_cria(char c, Arv* sae, Arv* sad){
+	Arv* p = (Arv*)malloc(sizeof(Arv));
+	p->info = c;
+	p->esq = sae;
+	p->dir = sad;
+	return p;
+}
+
+int main(){
+	Arv* a,a1,a2,a3,a4,a5;
+	
+	/*
+	a = arv_criavazia(); //ARVORE BINARIA VAZIA
+	a = arv_cria(c,sae,sad); //ARVORE COMPOSTO POR RAIZ E DUAS SUBARVORES
+	*/
+	
+	return 0;
+}
