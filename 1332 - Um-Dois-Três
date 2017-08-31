@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <string.h>
+
+int main(){
+	char palavra[5];
+	int n,quant;
+	
+	scanf("%d", &n);
+	while(n != 0){
+		scanf(" %s", &palavra);
+		quant = strlen(palavra);
+		
+		if(quant == 3){
+			if(((palavra[0] == 'o')&&(palavra[1]=='n'))||((palavra[0] == 'o')&&(palavra[2]=='e'))||((palavra[1] == 'n')&&(palavra[2]=='e')))
+				printf("1\n");
+			else if(((palavra[0]=='t')&&(palavra[1]=='w'))||((palavra[0]=='t')&&(palavra[2]=='o'))||((palavra[1]=='w')&&(palavra[2]=='o')))
+				printf("2\n");
+		}
+		else{
+			printf("3\n");
+		}
+		n--;
+	}
+	
+	return 0;
+}
