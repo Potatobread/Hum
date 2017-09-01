@@ -1,0 +1,52 @@
+#include <stdio.h>
+
+struct arv{
+  int valor;
+  struct arv* esq;
+  struct arv* dir;
+}
+
+typedef struct arv Arv;
+
+Arv* abb_cria(){
+  return NULL;
+}
+
+void abb_imprime(Arv* a){
+  if(a != NULL){
+    abb_imprime(a->esq);
+    printf("%d\n", a->valor);
+    abb_imprime(a->dir);
+  }
+}
+
+Arv* abb_busca(Arv* r, int v){
+  if(r == NULL)
+    return NULL;
+  else if(r->valor > v)
+    return abb_busca(r->esq,v);
+  else if(r->valor < v)
+    return abb_busca(r->dir,v);
+  else
+    return r;
+}
+
+Arv* abb_insere(Arv* a,int v){
+  if(a == NULL){
+    a = (Arv*)malloc(sizeof(Arv));
+    a->valor = v;
+    a->esq = a->dir = NULL;
+  }
+  else if(v < a->valor)
+    a->esq = abb_insere(a->esq,v);
+  else
+    a->dir = abb_insere(a->dir,v);
+    
+  return a;
+}
+
+int main(){
+
+  
+  return 0;
+}
