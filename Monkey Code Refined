@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct arv{
+  int valor;
+  struct arv* esq;
+  struct arv* dir;
+}Arvore;
+
+
+
+Arvore* criarArvoreBinaria(){
+  return NULL;
+}
+
+void imprimirArvore(Arvore* f){
+  if(f != NULL){
+    imprimirArvore(f->esq);
+    printf("%d\n", f->valor);
+    imprimirArvore(f->dir);
+  }
+}
+/*
+Arvore* buscarNaArvore(Arvore* r, int v){
+  if(r == NULL)
+    return NULL;
+  else if(r->valor > v)
+    return buscarNaArvore(r->esq,v);
+  else if(r->valor < v)
+    return buscarNaArvore(r->dir,v);
+  else
+    return r;
+}
+*/
+Arvore* inserirNaArvore(Arvore* f,int v){
+  if(f == NULL){
+    f = (Arvore*)malloc(sizeof(Arvore));
+    f->valor = v;
+    f->esq = f->dir = NULL;
+  }
+  else if(v < f->valor)
+    f->esq = inserirNaArvore(f->esq,v);
+  else
+    f->dir = inserirNaArvore(f->dir,v);
+    
+  return f;
+}
+
+int main(){
+	Arvore* arvore1;
+	arvore1 = criarArvoreBinaria();
+  	arvore1 = inserirNaArvore(arvore1,10);
+  	arvore1 = inserirNaArvore(arvore1,1);
+  	arvore1 = inserirNaArvore(arvore1,15);
+  	imprimirArvore(arvore1);
+    
+	return 0;
+}
