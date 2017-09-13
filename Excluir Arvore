@@ -1,0 +1,37 @@
+Arv* abb_retira(Arv* r, int v){
+	if(r == NULL)
+		return NULL;
+	else if(r->info > v)
+		r->esq = abb_retira(r->esq, v);
+	else if(r->info < v)
+		r->dir = abb_retira(r->dir, v);
+	else{ //Achou o elemento
+		//ELEMENTO SEM FILHOS
+		if(r->esq == NULL && r-dir == NULL){
+			free(r);
+			r = NULL;
+		}
+		//SO TEM FILHO A DIREITA
+		else if(r-esq == NULL){
+			Arv* t = r;
+			r = r->dir;
+			free(t);
+		}
+		//SO TEM FILHO A ESQUERDA
+		else if(r->dir == NULL){
+			Arv* t = r;
+			r = r->esq;
+			free(t);
+		}
+		//TEM OS DOIS FILHOS
+		else{
+			Arv* f = r->esq;
+			while(f->dir != NULL)
+				f = f->dir;
+			r->info = f->info;  // TROCA INFORMAÇÔES
+			f->info = v;
+			r-esq = abb_retira(r-esq,v);
+		}
+	}
+	return r;
+} 
