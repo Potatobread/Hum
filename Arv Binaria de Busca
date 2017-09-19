@@ -1,52 +1,90 @@
 #include <stdio.h>
 
 struct arv{
-  int valor;
-  struct arv* esq;
-  struct arv* dir;
+	int valor;
+    struct arv* esq;
+    struct arv* dir;
 }
 
 typedef struct arv Arv;
 
 Arv* abb_cria(){
-  return NULL;
+	return NULL;
 }
 
 void abb_imprime(Arv* a){
-  if(a != NULL){
-    abb_imprime(a->esq);
-    printf("%d\n", a->valor);
-    abb_imprime(a->dir);
-  }
+	if(a != NULL){
+    	abb_imprime(a->esq);
+    	printf("%d\n", a->valor);
+    	abb_imprime(a->dir);
+	}
 }
 
 Arv* abb_busca(Arv* r, int v){
-  if(r == NULL)
-    return NULL;
-  else if(r->valor > v)
-    return abb_busca(r->esq,v);
-  else if(r->valor < v)
-    return abb_busca(r->dir,v);
-  else
-    return r;
+	if(r == NULL)
+		return NULL;
+  	else if(r->valor > v)
+    	return abb_busca(r->esq,v);
+    else if(r->valor < v)
+    	return abb_busca(r->dir,v);
+    else
+    	return r;
 }
 
 Arv* abb_insere(Arv* a,int v){
-  if(a == NULL){
-    a = (Arv*)malloc(sizeof(Arv));
-    a->valor = v;
-    a->esq = a->dir = NULL;
-  }
-  else if(v < a->valor)
-    a->esq = abb_insere(a->esq,v);
-  else
-    a->dir = abb_insere(a->dir,v);
+	if(a == NULL){
+    	a = (Arv*)malloc(sizeof(Arv));
+    	a->valor = v;
+    	a->esq = a->dir = NULL;
+	}
+    else if(v < a->valor)
+    	a->esq = abb_insere(a->esq,v);
+    else
+    	a->dir = abb_insere(a->dir,v);
     
-  return a;
+	return a;
 }
 
-int main(){
+Arv* abb_retira(Arv* r, int v){
+	if(r == NULL)
+		return NULL;
+	else if(r->info > v)
+		r->esq = abb_retira(r->esq, v);
+	else if(r->info < v)
+		r->dir = abb_retira(r->dir, v);
+	else{ //Achou o elemento
+		//ELEMENTO SEM FILHOS
+		if(r->esq == NULL && r-dir == NULL){
+			free(r);
+			r = NULL;
+		}
+		//SO TEM FILHO A DIREITA
+		else if(r-esq == NULL){
+			Arv* t = r;
+			r = r->dir;
+			free(t);
+		}
+		//SO TEM FILHO A ESQUERDA
+		else if(r->dir == NULL){
+			Arv* t = r;
+			r = r->esq;
+			free(t);
+		}
+		//TEM OS DOIS FILHOS
+		else{
+			Arv* f = r->esq;
+			while(f->dir != NULL)
+				f = f->dir;
+			r->info = f->info;  // TROCA INFORMAÇÔES
+			f->info = v;
+			r-esq = abb_retira(r-esq,v);
+		}
+	}
+	return r;
+} 
 
-  
-  return 0;
+int main(){
+	
+	
+	return 0;
 }
