@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct arv{
+	int valor;
+    struct arv* esq;
+    struct arv* dir;
+}Arv;
+
+Arv* abb_cria(){
+	return NULL;
+}
+
+void abb_imprime(Arv* a){
+	if(a != NULL){
+    	abb_imprime(a->esq);
+    	printf("%d ", a->valor);
+    	abb_imprime(a->dir);
+	}
+}
+
+int somaPares(Arv* a, int soma){
+	if(a != NULL){
+    	soma = somaPares(a->esq,soma);
+    	if(a->valor % 2 == 0)
+    		soma += a->valor;
+    	soma = somaPares(a->dir,soma);
+	}
+	return soma;
+}
+
+Arv* abb_insere(Arv* a,int v){
+	if(a == NULL){
+    	a = (Arv*)malloc(sizeof(Arv));
+    	a->valor = v;
+    	a->esq = a->dir = NULL;
+	}
+    else if(v < a->valor)
+    	a->esq = abb_insere(a->esq,v);
+    else
+    	a->dir = abb_insere(a->dir,v);
+    
+	return a;
+}
+
+
+int main(){
+	int resp,somaPar=0;
+	Arv* a;
+	
+	a = abb_cria();
+	printf("Numero: ");
+	scanf("%d", &resp);
+	while(resp != 0){
+		a = abb_insere(a,resp);
+		printf("Numero: ");
+		scanf("%d", &resp);
+	}
+	printf("\n");
+	abb_imprime(a);
+	printf("\n");
+	
+	somaPar = somaPares(a,somaPar);
+	printf("\nSoma dos Numeros Pares: %d\n", somaPar);
+	
+	return 0;
+}
