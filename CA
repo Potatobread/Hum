@@ -1,13 +1,11 @@
 #include <stdio.h>
 
 int main(){
-	int x,n,aux,soma;
+	int x,aux,soma;
 	
-	printf("Vezes: ");
-	scanf("%d", &n);
-	while(n > 0){
-		printf("Valor Inicial: ");
-		scanf("%d", &x);
+	printf("Valor Inicial: ");
+	scanf("%d", &x);
+	while(x != 0){
 		aux = 1;
 		soma = 0;
 		while(aux <= 10){
@@ -16,8 +14,9 @@ int main(){
 			x *= 2;
 			aux++;
 		}
-		n--;
 		printf("\n\n");
+		printf("Valor Inicial: ");
+		scanf("%d", &x);
 	}
 	
 	return 0;
