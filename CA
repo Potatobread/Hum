@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+int main(){
+	int x,n,aux,soma;
+	
+	printf("Vezes: ");
+	scanf("%d", &n);
+	while(n > 0){
+		printf("Valor Inicial: ");
+		scanf("%d", &x);
+		aux = 1;
+		soma = 0;
+		while(aux <= 10){
+			soma += x;
+			printf("x%d : %d    ||  TOTAL : %d\n", aux,x,soma);
+			x *= 2;
+			aux++;
+		}
+		n--;
+		printf("\n\n");
+	}
+	
+	return 0;
+}
