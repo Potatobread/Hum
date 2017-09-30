@@ -1,12 +1,13 @@
 #include <stdio.h>
 
 int main(){
-	int x,aux,soma;
+	int x,aux,soma,h=10,total,aux2;
 	
 	printf("Valor Inicial: ");
 	scanf("%d", &x);
 	while(x != 0){
 		aux = 1;
+		aux2 = x;
 		soma = 0;
 		while(aux <= 10){
 			soma += x;
@@ -14,6 +15,9 @@ int main(){
 			x *= 2;
 			aux++;
 		}
+		total = aux2*h;
+		total *= h*7; 
+		printf("\n7 Dias: %d\n", total);
 		printf("\n\n");
 		printf("Valor Inicial: ");
 		scanf("%d", &x);
