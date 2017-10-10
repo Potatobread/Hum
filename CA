@@ -16,8 +16,9 @@ int main(){
 			aux++;
 		}
 		total = aux2*h;
-		total *= h*7; 
-		printf("\n7 Dias: %d\n", total);
+		total *= h*7;
+		printf("\n1 Dia: %d\n", total/7); 
+		printf("7 Dias: %d\n", total);
 		printf("\n\n");
 		printf("Valor Inicial: ");
 		scanf("%d", &x);
