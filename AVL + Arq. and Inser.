@@ -1,0 +1,159 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct arv{
+	int valor,altura;
+	struct arv* esq;
+	struct arv* dir;
+}Avl;
+
+typedef struct{
+	int num;
+	char cha;
+}tApp;
+
+Avl* Cria(){
+	return NULL;
+}
+
+int altura(Avl* a){
+	if(a == NULL)
+		return 0;
+	
+	return a->altura;
+}
+
+int max(int a, int b){
+	return (a > b)? a : b;
+}
+
+Avl* rotacao_Esquerda(Avl* a){
+	Avl* x = a->dir;
+	Avl* aux = x->esq;
+	
+	//ROTAÇÃO
+	x->esq = a;
+	a->dir = aux;
+	
+	//ALTURA
+	a->altura = max(altura(a->esq),altura(a->dir)) + 1;
+	x->altura = max(altura(x->esq),altura(x->dir)) + 1;
+	
+	return x;
+}
+
+Avl* rotacao_Direita(Avl* a){
+	Avl* x = a->esq;
+	Avl* aux = x->dir;
+	
+	//ROTAÇÃO
+	x->dir = a;
+	a->esq = aux;
+	
+	//ALTURA
+	a->altura = max(altura(a->esq),altura(a->dir)) + 1;
+	x->altura = max(altura(x->esq),altura(x->dir)) + 1;
+	
+	return x;
+}
+
+int fatorBalanceamento(Avl* a){
+	if(a == NULL)
+		return 0;
+	
+	return altura(a->dir) - altura(a->esq);
+}
+
+Avl* inserir(Avl* a, int v){
+	int fb;
+	
+	if(a == NULL){
+    	a = (Avl*)malloc(sizeof(Avl));
+    	a->valor = v;
+    	a->esq = a->dir = NULL;
+    	a->altura = 1;
+	}
+    else if(v < a->valor)
+    	a->esq = inserir(a->esq,v);
+    else
+    	a->dir = inserir(a->dir,v);
+    
+	a->altura = max(altura(a->esq),altura(a->dir)) + 1;
+	
+	fb = fatorBalanceamento(a);
+	
+	if(fb < -1 && v < a->esq->valor)
+		return rotacao_Direita(a); // ROTAÇÃO PARA DIREITA
+	else if(fb > 1 && v > a->dir->valor)
+		return rotacao_Esquerda(a); // Rotação para Esquerda
+	else if(fb < -1 && v > a->esq->valor){ // DUPLA RE
+		a->esq = rotacao_Esquerda(a->esq);
+		return rotacao_Direita(a);
+	}
+	else if(fb > 1 && v < a->dir->valor){ // DUPLA RD
+		a->dir = rotacao_Direita(a->dir);
+		return rotacao_Esquerda(a);
+	}
+	
+	return a;	
+}
+
+void imprime(Avl* a){
+	if(a != NULL){
+    	imprime(a->esq);
+    	printf("%d(FB: %d)  ", a->valor,fatorBalanceamento(a));
+    	imprime(a->dir);
+	}
+}
+
+void carregar_Arquivos(tApp *p){
+	FILE *leitura;
+	int i=0;
+	
+	leitura = fopen("Enem.txt", "r");
+	
+	if(leitura == NULL){
+		printf("Erro ao abrir o arquivo.\n");
+		exit(0);
+	}
+	else{
+		while((fscanf(leitura,"%d%c", &p[i].num,&p[i].cha))!= EOF){
+			i++;
+		}
+	}
+	
+	fclose(leitura);
+}
+
+int main(){
+	Avl* a;
+	int resp,i;
+	tApp aux[10];
+	
+	a = Cria();
+	carregar_Arquivos(&aux[0]);
+	
+	
+	for(i=0;i<9;i++){
+		a = inserir(a,aux[i].num);
+		printf("Inserindo: %d\n", aux[i].num);
+		printf("%d: ", i+1);
+		imprime(a);
+		printf("\n\n");
+	}
+	
+	printf("Numero: ");
+	scanf("%d", &resp);
+	while(resp != 0){
+		a = inserir(a,resp);
+		printf("Inserindo: %d || AVL : %d elementos\n", resp,i);
+		printf("%d: ", i+1);
+		i++;
+		imprime(a);
+		printf("\n\n");
+		printf("Num: ");
+		scanf("%d", &resp);
+	}
+		
+	return 0;
+}
