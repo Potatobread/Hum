@@ -132,8 +132,6 @@ int main(){
 	
 	a = Cria();
 	carregar_Arquivos(&aux[0]);
-	
-	
 	for(i=0;i<9;i++){
 		a = inserir(a,aux[i].num);
 		printf("Inserindo: %d\n", aux[i].num);
@@ -150,8 +148,7 @@ int main(){
 		printf("%d: ", i+1);
 		i++;
 		imprime(a);
-		printf("\n\n");
-		printf("Num: ");
+		printf("\n\nNum: ");
 		scanf("%d", &resp);
 	}
 		
