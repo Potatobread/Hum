@@ -5,6 +5,7 @@ typedef struct arv{
 	int valor,altura;
 	struct arv* esq;
 	struct arv* dir;
+	struct arv* pai;
 }Avl;
 
 typedef struct{
@@ -17,10 +18,7 @@ Avl* Cria(){
 }
 
 int altura(Avl* a){
-	if(a == NULL)
-		return 0;
-	
-	return a->altura;
+	return a == NULL? 0 : a->altura; 
 }
 
 int max(int a, int b){
@@ -28,39 +26,28 @@ int max(int a, int b){
 }
 
 Avl* rotacao_Esquerda(Avl* a){
-	Avl* x = a->dir;
-	Avl* aux = x->esq;
+	Avl* aux = a->dir;
 	
 	//ROTAÇÃO
-	x->esq = a;
-	a->dir = aux;
+	a->dir = aux->esq;
+	aux->esq = a;
 	
-	//ALTURA
-	a->altura = max(altura(a->esq),altura(a->dir)) + 1;
-	x->altura = max(altura(x->esq),altura(x->dir)) + 1;
-	
-	return x;
+	return aux;
 }
 
 Avl* rotacao_Direita(Avl* a){
-	Avl* x = a->esq;
-	Avl* aux = x->dir;
+	Avl* aux = a->esq;
 	
 	//ROTAÇÃO
-	x->dir = a;
-	a->esq = aux;
-	
-	//ALTURA
-	a->altura = max(altura(a->esq),altura(a->dir)) + 1;
-	x->altura = max(altura(x->esq),altura(x->dir)) + 1;
-	
-	return x;
+	a->esq = aux->dir;
+	aux->dir = a;
+
+	return aux;
 }
 
 int fatorBalanceamento(Avl* a){
 	if(a == NULL)
 		return 0;
-	
 	return altura(a->dir) - altura(a->esq);
 }
 
@@ -68,15 +55,21 @@ Avl* inserir(Avl* a, int v){
 	int fb;
 	
 	if(a == NULL){
-    	a = (Avl*)malloc(sizeof(Avl));
-    	a->valor = v;
-    	a->esq = a->dir = NULL;
-    	a->altura = 1;
+    	a = (Avl*)malloc(sizeof(Avl)); 
+    	a->valor = v; //  15
+    	a->esq = a->dir = a->pai = NULL; // NULL
+    	a->altura = 1; // 1
 	}
-    else if(v < a->valor)
+    else if(v < a->valor){
     	a->esq = inserir(a->esq,v);
+    	//a->esq->pai = a;
+	}	
+    else if(v > a->valor){
+    	a->dir = inserir(a->dir,v); // a-> = 10;
+    	//a->dir->pai = a;
+	} 	
     else
-    	a->dir = inserir(a->dir,v);
+    	;
     
 	a->altura = max(altura(a->esq),altura(a->dir)) + 1;
 	
@@ -105,6 +98,22 @@ void imprime(Avl* a){
     	imprime(a->dir);
 	}
 }
+
+
+void findMin(Avl* y){
+    if(y->esq == NULL)
+        printf("Menor valor presente na AVL: %d\n", y->valor);
+    else
+        findMin(y->esq);
+}
+ 
+void findMax(Avl* y){
+    if(y->dir == NULL)
+        printf("Maior valor presente na AVL: %d\n", y->valor);
+    else
+        findMax(y->dir);
+}
+
 
 void carregar_Arquivos(tApp *p){
 	FILE *leitura;
@@ -139,7 +148,7 @@ int main(){
 		imprime(a);
 		printf("\n\n");
 	}
-	
+	/*
 	printf("Numero: ");
 	scanf("%d", &resp);
 	while(resp != 0){
@@ -151,6 +160,6 @@ int main(){
 		printf("\n\nNum: ");
 		scanf("%d", &resp);
 	}
-		
+	*/	
 	return 0;
 }
