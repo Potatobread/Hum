@@ -31,6 +31,10 @@ Avl* rotacao_Esquerda(Avl* a){
 	a->dir = aux->esq;
 	aux->esq = a;
 	
+	//ALTURA
+	a->altura = max(altura(a->esq),altura(a->dir)) + 1;
+	aux->altura = max(altura(aux->esq),altura(aux->dir)) + 1;
+	
 	return aux;
 }
 
@@ -40,7 +44,11 @@ Avl* rotacao_Direita(Avl* a){
 	//ROTAÇÃO
 	a->esq = aux->dir;
 	aux->dir = a;
-
+	
+	//ALTURA
+	a->altura = max(altura(a->esq),altura(a->dir)) + 1;
+	aux->altura = max(altura(aux->esq),altura(aux->dir)) + 1;
+	
 	return aux;
 }
 
@@ -55,27 +63,24 @@ Avl* inserir(Avl* a, int v){
 	
 	if(a == NULL){
     	a = (Avl*)malloc(sizeof(Avl)); 
-    	a->valor = v; //  15
-    	a->esq = a->dir = NULL; // NULL
-    	a->altura = 1; // 1
+    	a->valor = v;
+		a->esq = a->dir = a->pai = NULL;
+    	a->altura = 1;
 	}
-    else if(v < a->valor){
-    	a->esq = inserir(a->esq,v);
-    	//a->esq->pai = a;
-	}	
-    else if(v > a->valor){
-    	a->dir = inserir(a->dir,v); // a-> = 10;
-    	//a->dir->pai = a;
-	} 	
+    else if(v < a->valor)
+    	a->esq = inserir(a->esq,v);	
+    else if(v > a->valor)
+    	a->dir = inserir(a->dir,v); 	
     else
     	;
     
+    a->pai = identificaPai(a,v);
 	a->altura = max(altura(a->esq),altura(a->dir)) + 1;
 	
 	fb = fatorBalanceamento(a);
 	
 	if(fb < -1 && v < a->esq->valor)
-		return rotacao_Direita(a); // ROTAÇÃO PARA DIREITA
+		return rotacao_Direita(a);  // ROTAÇÃO PARA DIREITA
 	else if(fb > 1 && v > a->dir->valor)
 		return rotacao_Esquerda(a); // Rotação para Esquerda
 	else if(fb < -1 && v > a->esq->valor){ // DUPLA RE
@@ -174,12 +179,13 @@ int main(){
 		imprime(a);
 		printf("\n\n");
 	}
-	
-	printf("Digite o No: ");
-	scanf("%d", &x);
-	pai = identificaPai(a,x);
-	printf("Pai do No %d: %d\n", x,pai->valor);
-		
+	x = 1;
+	while(x != 0){
+		printf("Digite o No: ");
+		scanf("%d", &x);
+		pai = identificaPai(a,x);
+		printf("Pai do No %d: %d\n", x,pai->valor);
+	}	
 	
 	/*
 	printf("Numero: ");
