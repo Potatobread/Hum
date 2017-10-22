@@ -1,0 +1,34 @@
+    public void deleteKey(in int delKey) pure nothrow @safe @nogc {
+        if (root is null)
+            return;
+        Node* n = root;
+        Node* parent = root;
+        Node* delNode = null;
+        Node* child = root;
+ 
+        while (child !is null) {
+            parent = n;
+            n = child;
+            child = delKey >= n.key ? n.right : n.left;
+            if (delKey == n.key)
+                delNode = n;
+        }
+ 
+        if (delNode !is null) {
+            delNode.key = n.key;
+ 
+            child = n.left !is null ? n.left : n.right;
+ 
+            if (root.key == delKey) {
+                root = child;
+            } else {
+                if (parent.left is n) {
+                    parent.left = child;
+                } else {
+                    parent.right = child;
+                }
+                rebalance(parent);
+            }
+        }
+    }
+ 
