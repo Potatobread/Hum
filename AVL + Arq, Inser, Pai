@@ -5,6 +5,7 @@ typedef struct arv{
 	int valor,altura;
 	struct arv* esq;
 	struct arv* dir;
+	struct arv* pai;
 }Avl;
 
 typedef struct{
