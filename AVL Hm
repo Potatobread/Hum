@@ -58,41 +58,6 @@ int fatorBalanceamento(Avl* a){
 		return 0;
 	return altura(a->dir) - altura(a->esq);
 }
-/*
-Avl* deleteKey(int x, Avl* y){
-	if(y == null)
-		return;
-	
-	Avl* n = y;
-	Avl* pai = y;
-	Avl* delNo = NULL;
-	Avl* filho = y;
-	
-	while(filho != NULL){
-		pai = n;
-		n = filho;
-		filho = x >= n->valor ? n->dir : n->esq;
-		if(x == n->valor)
-			delNo = n;
-	}
-	
-	if(delNo != NULL){
-		delNo->valor = n->valor;
-		
-		filho = n->esq != NULL ? n->esq : n->dir;
-		
-		if(y->valor == x)
-			y = filho;
-		else{
-			if(pai->esq == n)
-				pai->esq = filho;
-			else
-				pai->dir = filho;
-			rebalanceia(pai);
-		}
-	}
-}
-*/
 
 Avl* identificaPai(Avl* a, int v){
 	Avl* pai = NULL;
@@ -192,16 +157,31 @@ Avl* excluiElemento(int x, Avl* y){
 				y->dir = excluiElemento(aux->valor,y->dir); // Delete the inorder successor				
 			}
 			*/
-			if(y->esq == NULL)
-				y = y->dir;
-			else if(y->dir == NULL)
-				y = y->esq;
+			if(y->esq == NULL && y->dir == NULL){ // NO NAO TEM FILHOS
+				free(y);
+				y = NULL;
+			}
+			else if(y->esq == NULL || y->dir == NULL){
+				if(y->esq == NULL){
+					Avl* aux = y;
+					y = y->dir;
+					free(aux);
+				}
+				if(y->dir == NULL){
+					Avl* aux = y;
+					y = y->esq;
+					free(aux);
+				}
+			}
 			else{
-				Avl* aux = findMin(y->dir);
-				int sucessor = aux->valor;
-				y->valor = sucessor;
-				y->dir = excluiElemento(sucessor,y->dir); 
-			} 
+				Avl* aux = y->esq;
+				while(aux->dir != NULL)
+					aux = aux->dir;
+					
+				y->valor = aux->valor;
+				aux->valor = x;
+				y->esq = excluiElemento(x,y->esq);
+			}
 		}
 		// If the tree had only one node then return
     	if (y == NULL)
@@ -210,7 +190,6 @@ Avl* excluiElemento(int x, Avl* y){
     	y->altura = max(altura(y->esq),altura(y->dir)) + 1;
     	
     	int	fb = fatorBalanceamento(y);
-    	
     	
     	if(fb > 1 && fatorBalanceamento(y->esq) >= 0) // ROT. ESQUERDA
     		return rotacao_Direita(y);
@@ -229,84 +208,6 @@ Avl* excluiElemento(int x, Avl* y){
 	}
 }
 
-/*
-130	    private AVLTreeNode delete(AVLTreeNode node, int key)
-131	    {
-132	         
-133	        if (node == null) return null;
-134	        
-135	        if (key < node.data)
-136	        {
-137	            node.left = delete(node.left, key);
-138	        }
-139	        else if (key > node.data)
-140	        {
-141	            node.right = delete(node.right, key);
-142	        }
-143	        
-144	        else  
-145	        {
-146	             
-147	            if (node.left == null)
-148	            {
-149	                node = node.right;
-150	            }
-151	            else if (node.right == null)
-152	            {
-153	                node = node.left;
-154	            }
-155	            
-156	             
-157	             
-158	             
-159	            else
-160	            {
-161	                int inorderSuccessorValue = getMinValue(node.right);
-162	                node.data = inorderSuccessorValue;
-163	                node.right = delete(node.right, inorderSuccessorValue);
-164	            }
-165	        }
-166	
-167	         
-168	        if (node == null)
-169	        {
-170	            return null;
-171	        }
-172	        
-173	         
-174	        updateHeight(node);
-175	        
-176	         
-177	        int balance = getBalance(node);
-178	        
-179	        if (balance > 1)  
-180	        {
-181	            if (getBalance(node.left) >= 0)  
-182	            {
-183	                node = rotateRight(node);
-184	            }
-185	            else  
-186	            {
-187	                node.left = rotateLeft(node.left);
-188	                node = rotateRight(node);
-189	            }
-190	        }
-191	        
-192	        else if (balance < -1)  
-193	        {
-194	            if (getBalance(node.right) <= 0)  
-195	            {
-196	                node = rotateLeft(node);
-197	            }
-198	            else  
-199	            {
-200	                node.right = rotateRight(node.right);
-201	                node = rotateLeft(node);
-202	            }
-203	        }
-204	        return node;
-205	    }
-*/
 
 void imprime(Avl* a){
 	if(a != NULL){
@@ -316,15 +217,12 @@ void imprime(Avl* a){
 	}
 }
 
-Avl* abb_busca(Avl* r, int v){
-	if(r == NULL)
-		return NULL;
-  	else if(r->valor > v)
-    	return abb_busca(r->esq,v);
-    else if(r->valor < v)
-    	return abb_busca(r->dir,v);
-    else
-    	return r;
+void imprimePre(Avl* a){
+	if(a != NULL){
+		printf("%d(FB: %d) ", a->valor,fatorBalanceamento(a));
+    	imprime(a->esq);
+    	imprime(a->dir);
+	}
 }
 
 void carregar_Arquivos(tApp *p){
@@ -390,7 +288,8 @@ int main(){
 		printf("Excluindo: %d\n", resp);
 		//printf("%d: ", i+1);
 		i++;
-		imprime(a);
+		//imprime(a);
+		imprimePre(a);
 		printf("\n\nNum: ");
 		scanf("%d", &resp);
 	}
