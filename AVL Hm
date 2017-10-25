@@ -175,17 +175,17 @@ Avl* excluiElemento(int x, Avl* y){
 				}
 			}
 			*/
-				if((y->esq == NULL) || (y->dir == NULL)){ // NO COM 1 FILHO OU SEM FILHO
-					Avl* aux = y->esq ? y->esq : y->dir;
-					if(aux == NULL){ // CASO: SEM FILHO
-						aux = y;
-						y = NULL;
-					}
-					else // CASO: 1 FILHO
-						y = aux;	// Copy the contents of the non-empty child
-					free(aux);
+			if((y->esq == NULL) || (y->dir == NULL)){ // NO COM 1 FILHO OU SEM FILHO
+				Avl* aux = y->esq ? y->esq : y->dir;
+				if(aux == NULL){ // CASO: SEM FILHO
+					aux = y;
+					y = NULL;
 				}
-				else{
+				else // CASO: 1 FILHO
+					*y = *aux;	// Copy the contents of the non-empty child
+				free(aux);
+			}
+			else{
 				Avl* aux = y->esq;
 				while(aux->dir != NULL)
 					aux = aux->dir;
@@ -194,6 +194,8 @@ Avl* excluiElemento(int x, Avl* y){
 				y->esq = excluiElemento(x,y->esq);
 			}
 		}
+		if(y == NULL)
+			return y;
     	
     	y->altura = max(altura(y->esq),altura(y->dir)) + 1;
     	
