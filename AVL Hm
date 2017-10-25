@@ -157,6 +157,7 @@ Avl* excluiElemento(int x, Avl* y){
 				y->dir = excluiElemento(aux->valor,y->dir); // Delete the inorder successor				
 			}
 			*/
+			/*
 			if(y->esq == NULL && y->dir == NULL){ // NO NAO TEM FILHOS
 				free(y);
 				y = NULL;
@@ -173,19 +174,26 @@ Avl* excluiElemento(int x, Avl* y){
 					free(aux);
 				}
 			}
-			else{
+			*/
+				if((y->esq == NULL) || (y->dir == NULL)){ // NO COM 1 FILHO OU SEM FILHO
+					Avl* aux = y->esq ? y->esq : y->dir;
+					if(aux == NULL){ // CASO: SEM FILHO
+						aux = y;
+						y = NULL;
+					}
+					else // CASO: 1 FILHO
+						y = aux;	// Copy the contents of the non-empty child
+					free(aux);
+				}
+				else{
 				Avl* aux = y->esq;
 				while(aux->dir != NULL)
 					aux = aux->dir;
-					
 				y->valor = aux->valor;
 				aux->valor = x;
 				y->esq = excluiElemento(x,y->esq);
 			}
 		}
-		// If the tree had only one node then return
-    	if (y == NULL)
-    		return y;
     	
     	y->altura = max(altura(y->esq),altura(y->dir)) + 1;
     	
