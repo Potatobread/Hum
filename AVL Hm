@@ -1,17 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <locale.h>
 
 typedef struct arv{
 	int valor,altura;
 	struct arv* esq;
 	struct arv* dir;
-	struct arv* pai;
 }Avl;
 
 typedef struct{
 	int num;
-	char cha;
-}tApp;
+	char caracter;
+}tArquivo;
 
 Avl* Cria(){
 	return NULL;
@@ -25,7 +25,7 @@ int max(int a, int b){
 	return (a > b)? a : b;
 }
 
-Avl* rotacao_Esquerda(Avl* a){
+Avl* rotacionarEsquerda(Avl* a){
 	Avl* aux = a->dir;
 	
 	//ROTAÇÃO
@@ -39,7 +39,7 @@ Avl* rotacao_Esquerda(Avl* a){
 	return aux;
 }
 
-Avl* rotacao_Direita(Avl* a){
+Avl* rotacionarDireita(Avl* a){
 	Avl* aux = a->esq;
 	
 	//ROTAÇÃO
@@ -54,26 +54,23 @@ Avl* rotacao_Direita(Avl* a){
 }
 
 int fatorBalanceamento(Avl* a){
-	if(a == NULL)
-		return 0;
-	return altura(a->dir) - altura(a->esq);
+	return a == NULL? 0 : altura(a->dir) - altura(a->esq);
 }
 
-Avl* identificaPai(Avl* a, int v){
+Avl* identificaPai(int v, Avl* a){
 	Avl* pai = NULL;
 	
-	if(a == NULL)
-		return NULL;
-	else{
+	if(a != NULL){
 		while(a->valor != v){ 
 			pai = a;
 			if(a->valor > v)
 				a = a->esq;
-    		else
-    			a = a->dir;
+			else
+				a = a->dir;
 		}	
-    	return pai;
+		return pai;
 	}	
+	return NULL;
 }
 
 Avl* inserir(Avl* a, int v){
@@ -82,7 +79,7 @@ Avl* inserir(Avl* a, int v){
 	if(a == NULL){
     	a = (Avl*)malloc(sizeof(Avl)); 
     	a->valor = v;
-		a->esq = a->dir = a->pai = NULL;
+		a->esq = a->dir = NULL;
     	a->altura = 1;
 	}
     else if(v < a->valor)
@@ -92,39 +89,92 @@ Avl* inserir(Avl* a, int v){
     else
     	;
     
-    a->pai = identificaPai(a,v);
 	a->altura = max(altura(a->esq),altura(a->dir)) + 1;
 	
 	fb = fatorBalanceamento(a);
 	
 	if(fb < -1 && v < a->esq->valor)
-		return rotacao_Direita(a);  // ROTAÇÃO PARA DIREITA
+		return rotacionarDireita(a);  // ROTAÇÃO PARA DIREITA
 	else if(fb > 1 && v > a->dir->valor)
-		return rotacao_Esquerda(a); // Rotação para Esquerda
-	else if(fb < -1 && v > a->esq->valor){ // DUPLA RE
-		a->esq = rotacao_Esquerda(a->esq);
-		return rotacao_Direita(a);
+		return rotacionarEsquerda(a); // Rotação para Esquerda
+	else if(fb < -1 && v > a->esq->valor){ // DUPLA DIREITA
+		a->esq = rotacionarEsquerda(a->esq);
+		return rotacionarDireita(a);
 	}
-	else if(fb > 1 && v < a->dir->valor){ // DUPLA RD
-		a->dir = rotacao_Direita(a->dir);
-		return rotacao_Esquerda(a);
+	else if(fb > 1 && v < a->dir->valor){ // DUPLA ESQUERDA
+		a->dir = rotacionarDireita(a->dir);
+		return rotacionarEsquerda(a);
 	}
 	
 	return a;	
 }
 
-Avl* findMin(Avl* y){
-    if(y->esq == NULL)
-        return y;
-    else
-        return findMin(y->esq);
+Avl* encontraMaior(Avl* a){
+	return a->dir == NULL? a : encontraMaior(a->dir);
 }
- 
-void findMax(Avl* y){
-    if(y->dir == NULL)
-        printf("Maior valor presente na AVL: %d\n", y->valor);
-    else
-        findMax(y->dir);
+
+void imprimeNos(Avl* y, int alt){
+	int fb;
+	int cont,i;
+	
+	static int controle = 1; 
+	if(y->dir != NULL){
+		fb = fatorBalanceamento(y->dir);
+		for(i=alt;i != 0; i--){
+			printf("\t");
+		}	
+		printf("%d   (pai: %d - FB : %d)\n", y->dir->valor,y->valor,fb);
+		printf("ALTURA : %d\n", alt);
+		alt++;
+		imprimeNos(y->dir,alt);
+	}
+	if(y->esq != NULL){
+		fb = fatorBalanceamento(y->esq);
+		for(i=alt;i != 0; i--){
+			printf("\t");
+		}	
+		printf("%d   (pai: %d - FB : %d)\n", y->esq->valor,y->valor,fb);
+		printf("ALTURA : %d\n", alt);
+		if(controle == alt)
+			alt++;
+		imprimeNos(y->esq,alt);
+	}
+	alt = controle;
+}
+void identada(Avl* y){
+	int fb = fatorBalanceamento(y),alt; 
+	alt = y->altura - (y->altura - 1);
+	printf("%d (raiz FB: %d)\n", y->valor,fb);
+	imprimeNos(y,alt);
+}
+
+void localizaNo(int x, Avl* y){
+	Avl* aux = y;
+	while(y != NULL){
+		if(x > y->valor)
+			y = y->dir;
+		else if(x < y->valor)
+			y = y->esq;
+		else{
+			Avl* pai = identificaPai(x,aux);
+			int fb = fatorBalanceamento(y);
+			printf("No: %d (FB: %d)\n", y->valor,fb);
+			if(pai != NULL){
+				fb = fatorBalanceamento(pai);
+				printf("\tPai: %d (FB: %d)\n", pai->valor,fb);
+			}
+			if(y->dir != NULL){
+				fb = fatorBalanceamento(y->dir);
+				printf("\tFilho a Direita: %d (FB: %d)\n", y->dir->valor,fb);				
+			}
+			if(y->esq != NULL){
+				fb = fatorBalanceamento(y->esq);
+				printf("\tFilho a Esquerda: %d (FB: %d)\n", y->esq->valor,fb);
+			}
+			return;
+		}
+	}
+	printf("Elemento nao presente na AVL.\n");
 }
 
 Avl* excluiElemento(int x, Avl* y){
@@ -136,83 +186,46 @@ Avl* excluiElemento(int x, Avl* y){
 		else if(x > y->valor)
 			y->dir = excluiElemento(x,y->dir);
 		else{
-			/*
-			if((y->esq == NULL) || (y->dir == NULL)){ // NO COM 1 FILHO OU SEM FILHO
-				Avl* aux = y->esq ? y->esq : y->dir;
-				if(aux == NULL){ // CASO: SEM FILHO
-					aux = y;
-					y = NULL;
-				}
-				else // CASO: 1 FILHO
-					*y = *aux;	// Copy the contents of the non-empty child
-				free(aux);
-			}
-			else{
-	            // node with two children: Get the inorder
-                // successor (smallest in the right subtree)
-				Avl* aux = findMin(y->dir);
-				
-				y->valor = aux->valor; // Copy the inorder successor's data to this node
-				
-				y->dir = excluiElemento(aux->valor,y->dir); // Delete the inorder successor				
-			}
-			*/
-			/*
-			if(y->esq == NULL && y->dir == NULL){ // NO NAO TEM FILHOS
-				free(y);
-				y = NULL;
-			}
-			else if(y->esq == NULL || y->dir == NULL){
+			if(y->esq == NULL && y->dir == NULL)
+				return NULL;
+			else if((y->esq == NULL) || (y->dir == NULL)){
+				Avl* aux = NULL;
 				if(y->esq == NULL){
-					Avl* aux = y;
-					y = y->dir;
+					aux = y->dir;
+					y->dir = aux->esq;
+					y = aux;
 					free(aux);
 				}
 				if(y->dir == NULL){
-					Avl* aux = y;
-					y = y->esq;
+					aux = y->esq;
+					y->esq = aux->dir;
+					y = aux;
 					free(aux);
 				}
 			}
-			*/
-			if((y->esq == NULL) || (y->dir == NULL)){ // NO COM 1 FILHO OU SEM FILHO
-				Avl* aux = y->esq ? y->esq : y->dir;
-				if(aux == NULL){ // CASO: SEM FILHO
-					aux = y;
-					y = NULL;
-				}
-				else // CASO: 1 FILHO
-					*y = *aux;	// Copy the contents of the non-empty child
-				free(aux);
-			}
 			else{
-				Avl* aux = y->esq;
-				while(aux->dir != NULL)
-					aux = aux->dir;
+				Avl* aux = encontraMaior(y->esq);
 				y->valor = aux->valor;
 				aux->valor = x;
 				y->esq = excluiElemento(x,y->esq);
 			}
 		}
-		if(y == NULL)
-			return y;
-    	
-    	y->altura = max(altura(y->esq),altura(y->dir)) + 1;
+		y->altura = max(altura(y->esq),altura(y->dir)) + 1;
     	
     	int	fb = fatorBalanceamento(y);
     	
-    	if(fb > 1 && fatorBalanceamento(y->esq) >= 0) // ROT. ESQUERDA
-    		return rotacao_Direita(y);
-    	else if(fb > 1 && fatorBalanceamento(y->esq) < 0){ // DUPLA R.ESQUERDA
-    		y->esq = rotacao_Esquerda(y->esq);
-			return rotacao_Direita(y);	
-		}
-		else if(fb < -1 && fatorBalanceamento(y->dir) <= 0) // ROT. DIREITA
-			return rotacao_Esquerda(y);
-		else if(fb < -1 && fatorBalanceamento(y->dir) > 0){ // DUPLA R. DIREITA
-			y->dir = rotacao_Direita(y->dir);
-			return rotacao_Esquerda(y);
-		}
+    	if(fb > 1 && fatorBalanceamento(y->dir) >= 0) // ROT. ESQUERDA
+   			return rotacionarEsquerda(y);
+   	   	else if(fb > 1 && fatorBalanceamento(y->dir) < 0){ // DUPLA ESQUERDA
+   	   		y->dir = rotacionarDireita(y->dir);	
+   	   		return rotacionarEsquerda(y);
+   		}
+   		else if(fb < -1 && fatorBalanceamento(y->esq) <= 0) // ROT. DIREITA
+   			return rotacionarDireita(y);
+   		else if(fb < -1 && fatorBalanceamento(y->esq) > 0){ // DUPLA DIREITA
+   			y->esq = rotacionarEsquerda(y->esq);
+   			return rotacionarDireita(y);
+   		}
 			
 		return y;		
 	}
@@ -235,18 +248,18 @@ void imprimePre(Avl* a){
 	}
 }
 
-void carregar_Arquivos(tApp *p){
+void carregar_Arquivos(tArquivo *p){
 	FILE *leitura;
 	int i=0;
 	
-	leitura = fopen("Enem.txt", "r");
+	leitura = fopen("INPUT.txt", "r");
 	
 	if(leitura == NULL){
 		printf("Erro ao abrir o arquivo.\n");
 		exit(0);
 	}
 	else{
-		while((fscanf(leitura,"%d%c", &p[i].num,&p[i].cha))!= EOF){
+		while((fscanf(leitura,"%d%c", &p[i].num,&p[i].caracter))!= EOF){
 			i++;
 		}
 	}
@@ -255,54 +268,58 @@ void carregar_Arquivos(tApp *p){
 }
 
 int main(){
-	Avl* a;
-	//Avl* pai;
-	int resp,i=1;
-	//tApp aux[10];
+	setlocale(LC_ALL,"Portuguese");
+	Avl* arvore;
+	int resp,i,num;
+	tArquivo aux[11];
 	
-	a = Cria();
-	/*
-	carregar_Arquivos(&aux[0]);
-	for(i=0;i<9;i++){
-		a = inserir(a,aux[i].num);
-		printf("Inserindo: %d\n", aux[i].num);
-		printf("%d: ", i+1);
-		imprime(a);
-		printf("\n\n");
-	}
-	x = 1;
-	while(x != 0){
-		printf("Digite o No: ");
-		scanf("%d", &x);
-		pai = identificaPai(a,x);
-		printf("Pai do No %d: %d\n", x,pai->valor);
-	}	
-	*/
-	
-	printf("Numero: ");
+	arvore = Cria();
+	printf("--------------ARVORE AVL--------------\n");
+	printf("1-Inserir\n2-Carregar arquivo INPUT.TXT\n3-Imprimir\n4-Localizar\n5-Excluir\n");
+	printf("\nOpção: ");
 	scanf("%d", &resp);
 	while(resp != 0){
-		a = inserir(a,resp);
-		printf("Inserindo: %d || AVL : %d elementos\n", resp,i);
-		printf("%d: ", i+1);
-		i++;
-		imprime(a);
-		printf("\n\nNum: ");
+		switch(resp){
+			case 0:
+				break;
+			case 1:
+				printf("Digite o numero a Inserir: ");
+				scanf("%d", &num);
+				arvore = inserir(arvore,num);
+				printf("Numero %d Inserido\n", num);
+				break;
+			case 2:
+				carregar_Arquivos(&aux[0]);
+				for(i=0;i<9;i++)
+					arvore = inserir(arvore,aux[i].num);
+				printf("Carregamento Concluído\n");
+				break;
+			case 3:
+				printf("\n");
+				identada(arvore);
+				printf("\n");
+				break;
+			case 4:
+				printf("Encontrar No: ");
+				scanf("%d", &num);
+				localizaNo(num,arvore);
+				break;
+			case 5:
+				printf("Excluir No: ");
+				scanf("%d", &num);
+				arvore = excluiElemento(num,arvore);
+				printf("\n");
+				identada(arvore);
+				printf("\n");
+				break;
+			default:
+				printf("Opção Inválida\n");
+				break;
+		}
+		printf("\n1-Inserir\n2-Carregar arquivo INPUT.TXT\n3-Imprimir\n4-Localizar\n5-Excluir\n");
+		printf("\nOpção: ");
 		scanf("%d", &resp);
 	}
 	
-	printf("Deleta NO: ");
-	scanf("%d", &resp);
-	while(resp != 0){
-		a = excluiElemento(resp,a);
-		printf("Excluindo: %d\n", resp);
-		//printf("%d: ", i+1);
-		i++;
-		//imprime(a);
-		imprimePre(a);
-		printf("\n\nNum: ");
-		scanf("%d", &resp);
-	}
-		
 	return 0;
 }
