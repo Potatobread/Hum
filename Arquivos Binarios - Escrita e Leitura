@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct{
+	float x,y,z;
+}ponto;
+
+void salva_Binario(char* arquivo, int n, ponto* vet){
+	FILE* fp = fopen(arquivo,"wb");
+	
+	if(fp == NULL){
+		printf("Erro na abertura do arquivo.\n");
+		exit(1);
+	}
+	fwrite(vet, sizeof(ponto),n,fp);
+	fclose(fp);
+}
+
+void carrega_Binario(char* arquivo, int n, ponto* vet){
+	FILE* fp = fopen(arquivo,"rb");
+	
+	if(fp == NULL){
+		printf("Erro na abertura do arquivo.\n");
+		exit(1);
+	}
+	fread(vet, sizeof(ponto), n, fp);
+	fclose(fp);
+}
+
+int main(){
+	ponto Ponto[3];
+	char arq[15] = "teste.txt";
+	int i;
+	
+	/*
+	for(i=0;i<3;i++){
+		printf("X: ");
+		scanf("%f", &Ponto[i].x);
+		printf("Y: ");		
+		scanf("%f", &Ponto[i].y);
+		printf("Z: ");		
+		scanf("%f", &Ponto[i].z);
+		printf("\n");
+	}
+	
+	*/
+	carrega_Binario(arq,3,Ponto);
+	for(i=0;i<3;i++){
+		printf("X[%d]: %.1f\n", i,Ponto[i].x);
+		printf("Y[%d]: %.1f\n", i,Ponto[i].y);		
+		printf("Z[%d]: %.1f\n", i,Ponto[i].z);
+		printf("\n");		
+	}
+	//*/
+	//salva_Binario(arq,3,Ponto);	
+	
+	return 0;
+}
