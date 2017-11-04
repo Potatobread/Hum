@@ -73,9 +73,26 @@ Avl* identificaPai(int v, Avl* a){
 	return NULL;
 }
 
-Avl* inserir(Avl* a, int v){
-	int fb;
+Avl* balanceamento(Avl* y){
+    int	fb = fatorBalanceamento(y);
 	
+	if(fb > 1 && fatorBalanceamento(y->dir) >= 0) // ROT. ESQUERDA
+		return rotacionarEsquerda(y);
+   	else if(fb > 1 && fatorBalanceamento(y->dir) < 0){ // DUPLA ESQUERDA
+   		y->dir = rotacionarDireita(y->dir);	
+   		return rotacionarEsquerda(y);
+	}
+	else if(fb < -1 && fatorBalanceamento(y->esq) <= 0) // ROT. DIREITA
+		return rotacionarDireita(y);
+	else if(fb < -1 && fatorBalanceamento(y->esq) > 0){ // DUPLA DIREITA
+		y->esq = rotacionarEsquerda(y->esq);
+		return rotacionarDireita(y);
+	}
+	
+	return y;
+}
+
+Avl* inserir(Avl* a, int v){
 	if(a == NULL){
     	a = (Avl*)malloc(sizeof(Avl)); 
     	a->valor = v;
@@ -91,22 +108,7 @@ Avl* inserir(Avl* a, int v){
     
 	a->altura = max(altura(a->esq),altura(a->dir)) + 1;
 	
-	fb = fatorBalanceamento(a);
-	
-	if(fb < -1 && v < a->esq->valor)
-		return rotacionarDireita(a);  // ROTAÇÃO PARA DIREITA
-	else if(fb > 1 && v > a->dir->valor)
-		return rotacionarEsquerda(a); // Rotação para Esquerda
-	else if(fb < -1 && v > a->esq->valor){ // DUPLA DIREITA
-		a->esq = rotacionarEsquerda(a->esq);
-		return rotacionarDireita(a);
-	}
-	else if(fb > 1 && v < a->dir->valor){ // DUPLA ESQUERDA
-		a->dir = rotacionarDireita(a->dir);
-		return rotacionarEsquerda(a);
-	}
-	
-	return a;	
+	return a = balanceamento(a);	
 }
 
 Avl* encontraMaior(Avl* a){
@@ -211,26 +213,10 @@ Avl* excluiElemento(int x, Avl* y){
 			}
 		}
 		y->altura = max(altura(y->esq),altura(y->dir)) + 1;
-    	
-    	int	fb = fatorBalanceamento(y);
-    	
-    	if(fb > 1 && fatorBalanceamento(y->dir) >= 0) // ROT. ESQUERDA
-   			return rotacionarEsquerda(y);
-   	   	else if(fb > 1 && fatorBalanceamento(y->dir) < 0){ // DUPLA ESQUERDA
-   	   		y->dir = rotacionarDireita(y->dir);	
-   	   		return rotacionarEsquerda(y);
-   		}
-   		else if(fb < -1 && fatorBalanceamento(y->esq) <= 0) // ROT. DIREITA
-   			return rotacionarDireita(y);
-   		else if(fb < -1 && fatorBalanceamento(y->esq) > 0){ // DUPLA DIREITA
-   			y->esq = rotacionarEsquerda(y->esq);
-   			return rotacionarDireita(y);
-   		}
-			
-		return y;		
-	}
+    		
+		return y = balanceamento(y);		
+	}	
 }
-
 
 void imprime(Avl* a){
 	if(a != NULL){
@@ -242,9 +228,9 @@ void imprime(Avl* a){
 
 void imprimePre(Avl* a){
 	if(a != NULL){
-		printf("%d(FB: %d) ", a->valor,fatorBalanceamento(a));
-    	imprime(a->esq);
-    	imprime(a->dir);
+		printf("%d(FB: %d) || Altura: %d\n",a->valor,fatorBalanceamento(a),a->altura);
+    	imprimePre(a->esq);
+    	imprimePre(a->dir);
 	}
 }
 
@@ -290,13 +276,15 @@ int main(){
 				break;
 			case 2:
 				carregar_Arquivos(&aux[0]);
-				for(i=0;i<9;i++)
+				for(i=0;i<11;i++)
 					arvore = inserir(arvore,aux[i].num);
 				printf("Carregamento Concluído\n");
 				break;
 			case 3:
 				printf("\n");
-				identada(arvore);
+				imprimePre(arvore);
+				//imprimePre(arvore);
+				//identada(arvore);
 				printf("\n");
 				break;
 			case 4:
