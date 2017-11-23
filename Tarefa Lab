@@ -37,3 +37,45 @@ int main(){
 	
 	return 0;
 }
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct{
+	char matricula[10];
+	char nome[50];
+	float n1,n2,n3;
+}tAluno;
+
+int main(){
+	FILE* arq = fopen("alunos.bin", "rb");
+	tAluno aluno[5];
+	int i;
+	float media=0;
+	
+	if(arq == NULL){
+		printf("Erro na leitura!\n");
+		exit(1);
+	}
+	else{
+		fread(aluno,sizeof(tAluno),5,arq);
+		for(i=0;i<5;i++){
+			printf("Nome: %s\n", aluno[i].nome);
+			printf("Matricula: %s\n", aluno[i].matricula);
+			media = (aluno[i].n1 + aluno[i].n2 + aluno[i].n3)/3;
+			printf("Media: %.1f ", media);
+			if(media >= 7)
+				printf(" APROVADO\n\n");
+			else if(media >= 4 && media < 7)
+				printf(" EF\n\n");
+			else
+				printf(" REPROVADO\n\n");
+			media = 0;
+		}
+	}
+	
+	fclose(arq);
+	
+	return 0;
+}
