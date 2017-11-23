@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct{
+	char matricula[10];
+	char nome[50];
+	float n1,n2,n3;
+}tAluno;
+
+int main(){
+	FILE* arquivo = fopen("alunos.bin","wb");
+	tAluno aluno[5];
+	int i;
+	
+	if(arquivo == NULL){
+		printf("Erro em criar o Arquivo!\n");
+		exit(1);
+	}
+	else{
+		for(i=0;i<5;i++){
+			printf("Nome: ");
+			scanf(" %s", aluno[i].nome);
+			printf("Matricula: ");
+			scanf(" %s", aluno[i].matricula);
+			printf("Nota 1: ");
+			scanf(" %f", &aluno[i].n1);
+			printf("Nota 2: ");
+			scanf(" %f", &aluno[i].n2);
+			printf("Nota 3: ");
+			scanf(" %f", &aluno[i].n3);
+			printf("\n");
+		}
+		fwrite(aluno,sizeof(tAluno),5,arquivo);
+	}
+	
+	fclose(arquivo);
+	
+	return 0;
+}
