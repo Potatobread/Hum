@@ -67,8 +67,6 @@ public class BotDao {
 		boolean achou = false;
 		for (Taxa t : taxas) {
 			b.imprimirMensagem("Taxa: " + t.getNome() + " - Vigência: " + t.getVigencia(), update);
-			System.out.println("Taxa: " + t.getNome() + " - Vigência: " + t.getVigencia());
-			
 			for(Pagamento p : pagamentos) {
 				if(p.getTaxa().equals(t.getNome())) {
 					b.imprimirMensagem("Pagamento Realizado no Valor: " + p.getValorPago() + " || Data: " + p.getDataPagamento(), update);
@@ -79,9 +77,8 @@ public class BotDao {
 			if(achou) {
 				achou = false;
 			} else {
-				b.imprimirMensagem("Pagamento NÃO Realizado da Taxa: " + t.getNome(), update);
+				b.imprimirMensagem("Pagamento não Realizado da Taxa: " + t.getNome(), update);
 			}
-			//b.imprimirMensagem("Pagamento NÃO Realizado da Taxa: " + t.getNome(), update);
 		}
 	}
 	
