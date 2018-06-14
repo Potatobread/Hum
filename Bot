@@ -5,13 +5,16 @@ import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
-import alexander.MinhaAssociacao;
-import alexander.associacao.*;
-import alexander.exececoes.*;
+import excecoes.AssociacaoNaoExistente;
+import excecoes.AssociadoJaExistente;
+import excecoes.ValorInvalido;
+import wenderson.MinhaAssociacao;
 
 public class Bot extends TelegramLongPollingBot{
 	MinhaAssociacao controle = new MinhaAssociacao();
 	BotDao botDao = new BotDao();
+	boolean aux = false;
+	boolean aux2 = false;
 	
 	public String getBotUsername() {
 		// TODO Auto-generated method stub
@@ -23,7 +26,7 @@ public class Bot extends TelegramLongPollingBot{
 		send.setText(texto);
 		send.setChatId(update.getMessage().getChatId());
 		try {
-			sendMessage(send);
+			execute(send);
 			System.out.println("Mensagem enviada!");
 		} catch (TelegramApiException e) {
 			e.getMessage();
@@ -39,22 +42,48 @@ public class Bot extends TelegramLongPollingBot{
 		System.out.println("Nome: " + update.getMessage().getFrom().getFirstName()+ " - ID: "+ update.getMessage().getChatId() + " || Text: " + update.getMessage().getText());
 		BotDao dao = new BotDao();
 		
-		dao.consultarPagamentos(update.getMessage().getChatId(), update.getMessage().getText(), update);
+		//dao.consultarPagamentos(update.getMessage().getChatId(), update.getMessage().getText(), update);
 		
-		/*
-		String mensagem = "Bem Vindo! Suas opções são:\n1 - Consultar Pagamentos\n2 - Consultar Frequencia";
-		imprimirMensagem(mensagem,update);
+		if(!(aux)) {
+			String mensagem = "Bem Vindo " + update.getMessage().getFrom().getFirstName() + " ! Suas opções são:\n1 - Consultar Pagamentos\n2 - Consultar Frequencia";
+			imprimirMensagem(mensagem,update);
+			aux = true;
+			aux2 = false;
+		}	
 		String resp = update.getMessage().getText();
-		if(resp.equals("1")) {
-			imprimirMensagem("Digite o ano desejado!", update);
-			String vigencia = update.getMessage().getText();
-			dao.consultarPagamentos(update.getMessage().getChatId(), vigencia, update);
-		} else if(resp.equals("2")) {
-			imprimirMensagem("Você escolheu Consultar Frequencia", update);
-			System.out.println("getMessage: " + update.getMessage().getText());
-			imprimirMensagem("Vc digitou: " + update.getMessage().getText(), update);
-		}
-		*/
+		switch(resp) {
+			case "1":
+				if(aux)
+					imprimirMensagem("Digite o ano desejado!", update);
+				String vigencia = update.getMessage().getText();
+				dao.consultarPagamentos(update.getMessage().getChatId(), vigencia, update);
+				break;
+			case "2":
+				if(!(aux2)) {
+					imprimirMensagem("Digite a Data Inicial(DD/MM/AAAA): ", update);
+					aux2 = true;
+				}
+				String inicial = update.getMessage().getText();
+				if(aux2)
+					imprimirMensagem("Digite a Data Inicial(DD/MM/AAAA): ", update);
+				String fim = update.getMessage().getText();
+				try {
+					dao.calcularFrequencia(update.getMessage().getFrom().getId(), inicial, fim, update);
+				} catch (ValorInvalido e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (AssociacaoNaoExistente e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (AssociadoJaExistente e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;
+			default:
+				imprimirMensagem("Por favor escolha uma das opções!", update);
+				break;
+			}				
 	}
 	
 	@Override
