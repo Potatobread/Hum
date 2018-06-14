@@ -48,7 +48,7 @@ public class Bot extends TelegramLongPollingBot{
 		if(resp.equals("1")) {
 			imprimirMensagem("Digite o ano desejado!", update);
 			String vigencia = update.getMessage().getText();
-			dao.consultarPagamentos(update.getMessage().getChatId(), update.getMessage().getText(), update);
+			dao.consultarPagamentos(update.getMessage().getChatId(), vigencia, update);
 		} else if(resp.equals("2")) {
 			imprimirMensagem("Você escolheu Consultar Frequencia", update);
 			System.out.println("getMessage: " + update.getMessage().getText());
