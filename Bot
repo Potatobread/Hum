@@ -5,22 +5,31 @@ import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
-import excecoes.AssociacaoNaoExistente;
-import excecoes.AssociadoJaExistente;
-import excecoes.ValorInvalido;
-import wenderson.MinhaAssociacao;
+import alexander.MinhaAssociacao;
+import alexander.associacao.*;
+import alexander.exececoes.*;
 
 public class Bot extends TelegramLongPollingBot{
 	MinhaAssociacao controle = new MinhaAssociacao();
 	BotDao botDao = new BotDao();
-	boolean aux = false;
-	boolean aux2 = false;
+	boolean c1 = false;
+	boolean c2 = false;
+	boolean c3 = false;
+	boolean c4 = false;
+	boolean c5 = false;
+	boolean c6 = false;
+	boolean c7 = false;
+	boolean c8 = false;
+	boolean c9 = false;
+	boolean c10 = false;
+	String inicial = null;
+	String fim = null;
 	
 	public String getBotUsername() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+ 
 	public void imprimirMensagem(String texto,Update update) {
 		SendMessage send = new SendMessage();
 		send.setText(texto);
@@ -34,7 +43,6 @@ public class Bot extends TelegramLongPollingBot{
 	}
 	
 	public void onUpdateReceived(Update update) {
-
 		
 		SendMessage send = new SendMessage();
 		send.setChatId(update.getMessage().getChatId());
@@ -42,48 +50,66 @@ public class Bot extends TelegramLongPollingBot{
 		System.out.println("Nome: " + update.getMessage().getFrom().getFirstName()+ " - ID: "+ update.getMessage().getChatId() + " || Text: " + update.getMessage().getText());
 		BotDao dao = new BotDao();
 		
-		//dao.consultarPagamentos(update.getMessage().getChatId(), update.getMessage().getText(), update);
-		
-		if(!(aux)) {
-			String mensagem = "Bem Vindo " + update.getMessage().getFrom().getFirstName() + " ! Suas opções são:\n1 - Consultar Pagamentos\n2 - Consultar Frequencia";
+		if(!(c1)) {
+			String mensagem = "Bem Vindo " + update.getMessage().getFrom().getFirstName() + " ! Suas opções são:\n> Consultar Pagamentos\n> Consultar Frequencia";
 			imprimirMensagem(mensagem,update);
-			aux = true;
-			aux2 = false;
-		}	
-		String resp = update.getMessage().getText();
-		switch(resp) {
-			case "1":
-				if(aux)
-					imprimirMensagem("Digite o ano desejado!", update);
-				String vigencia = update.getMessage().getText();
-				dao.consultarPagamentos(update.getMessage().getChatId(), vigencia, update);
-				break;
-			case "2":
-				if(!(aux2)) {
-					imprimirMensagem("Digite a Data Inicial(DD/MM/AAAA): ", update);
-					aux2 = true;
-				}
-				String inicial = update.getMessage().getText();
-				if(aux2)
-					imprimirMensagem("Digite a Data Inicial(DD/MM/AAAA): ", update);
-				String fim = update.getMessage().getText();
-				try {
-					dao.calcularFrequencia(update.getMessage().getFrom().getId(), inicial, fim, update);
-				} catch (ValorInvalido e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (AssociacaoNaoExistente e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (AssociadoJaExistente e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				break;
-			default:
-				imprimirMensagem("Por favor escolha uma das opções!", update);
-				break;
-			}				
+			c1 = true;
+		}
+		if(!(c2)){
+			String resp = update.getMessage().getText();
+			System.out.println("Resp1: " + resp);
+			if(resp.equals("Pagamento") || resp.equals("pagamento") || resp.equals("Pagamentos") || resp.equals("pagamentos") || resp.equals("pag") || resp.equals("Pag")) {
+				imprimirMensagem("Digite o ano!",update);
+				c3 = true;
+				c2 = true;
+			}
+			if(resp.equals("Frequencia") || resp.equals("frequencia") || resp.equals("freq") || resp.equals("Freq")) {
+				imprimirMensagem("Digite a Data Inicial:",update);
+				resp = update.getMessage().getText();
+				System.out.println("Resp2 || i: " + resp);
+				c6 = true;
+			}
+		}
+		if(c3) {
+			String resp = update.getMessage().getText();
+			System.out.println("Resp2 || i: " + resp);
+			int i = Integer.parseInt(resp);
+			if(i == 2017 || i == 2018) {
+				c4 = true;
+			} else {
+				c5 = true;
+			}
+			c3 = false;
+		}
+		if(c4) {
+			String vigencia = update.getMessage().getText();
+			System.out.println("Vigencia: " + vigencia);
+			dao.consultarPagamentos(update.getMessage().getChatId(), vigencia, update);
+			imprimirMensagem(update.getMessage().getFrom().getFirstName() + ", Escolha:\n> Consultar Pagamentos\n> Consultar Frequencia",update);
+			c4 = false;
+			c2 = false;
+		}
+		if(c5) {
+			imprimirMensagem("Ano Invalido!\n" + update.getMessage().getFrom().getFirstName() + ", Escolha:\n> Consultar Pagamentos\n> Consultar Frequencia",update);
+			String resp = update.getMessage().getText();
+			System.out.println("Resp3: " + resp);
+			c2 = false;
+			c5 = false;
+		}
+		if(c6) {
+			inicial = update.getMessage().getText();
+			System.out.println("Inicial: " + inicial);
+			imprimirMensagem("Digite a Data Final:",update);
+			String fim = update.getMessage().getText();
+			System.out.println("Final: " + fim);
+			//c7 = true;
+		}
+		if(c7) {
+			String inicial = update.getMessage().getText();
+			System.out.println("Inicial: " + inicial);
+			String fim = update.getMessage().getText();
+			System.out.println("Final: " + fim);
+		}						
 	}
 	
 	@Override
@@ -91,5 +117,4 @@ public class Bot extends TelegramLongPollingBot{
 		// TODO Auto-generated method stub
 		return "528994101:AAE656HO54G_kcA_WSPzkTNnZrQPXLpF0Xo";
 	}
-
 }
