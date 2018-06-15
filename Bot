@@ -87,6 +87,11 @@ public class Bot extends TelegramLongPollingBot{
 			}
 			if(resp.equals("Frequencia") || resp.equals("frequencia") || resp.equals("freq") || resp.equals("Freq")) {
 				primeiraData = dao.primeiraReuniao(update.getMessage().getFrom().getId());
+				DateFormat df = new SimpleDateFormat ("dd/MM/yyyy");
+			    df.setTimeZone (TimeZone.getTimeZone ("GMT"));
+			    df.format(primeiraData);
+			    System.out.println(primeiraData);
+				imprimirMensagem("Digite a Data Inicial(A primeira reuniao foi realizada em " + df.format(primeiraData) + "):",update);
 				ultimaData = dao.ultimaReuniao(update.getMessage().getFrom().getId());
 				c6 = true;
 				c2 = false;
@@ -119,11 +124,6 @@ public class Bot extends TelegramLongPollingBot{
 			c2 = true;
 		}
 		if(c6) { // Validação da DataInicial
-			DateFormat df = new SimpleDateFormat ("dd/MM/yyyy");
-		    df.setTimeZone (TimeZone.getTimeZone ("GMT"));
-		    df.format(primeiraData);
-		    System.out.println(primeiraData);
-			imprimirMensagem("Digite a Data Inicial(A primeira reuniao foi realizada em " + df.format(primeiraData) + "):",update);
 			inicial = update.getMessage().getText();
 			System.out.println("Inicial: " + inicial);
 			long dataInicial = dataConvertida(inicial);
@@ -131,7 +131,7 @@ public class Bot extends TelegramLongPollingBot{
 			if(dataInicial >= primeiraData) {
 				c7 = true;
 			} else {
-				c9 = true;
+				c10 = true;
 			}
 			c6 = false;
 		}
@@ -140,36 +140,40 @@ public class Bot extends TelegramLongPollingBot{
 		    df.setTimeZone (TimeZone.getTimeZone ("GMT"));
 		    df.format(ultimaData);
 			imprimirMensagem("Digite a Data Final(A ultima reuniao foi realizada em " + df.format(ultimaData) + "):",update);
+			c7 = false;
+			c8 = true;
+		}
+		if(c8) {
 			fim = update.getMessage().getText();
 			System.out.println("Final: " + fim);
 			long dataFim = dataConvertida(fim);
 			
 			if(dataFim <= ultimaData) {
-				c8 = true;
+				c9 = true;
 			} else {
-				c10 = true;
+				c11 = true;
 			}
-			c7 = false;
+			c8 = false;
 		}
-		if(c8) {
+		if(c9) {
 			try {
 				dao.calcularFrequencia(update.getMessage().getFrom().getId(), inicial, fim, update);
 			} catch (ValorInvalido | AssociacaoNaoExistente | AssociadoJaExistente e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} finally {
-				c8 = false;
+				c9 = false;
 				c2 = true;
 			}
 		}
-		if(c9) {
+		if(c10) {
 			imprimirMensagem(update.getMessage().getFrom().getFirstName() + ", Data Inicial Invalida!\n",update);
-			c9 = false;
+			c10 = false;
 			c6 = true;
 		}
-		if(c10) {
+		if(c11) {
 			imprimirMensagem(update.getMessage().getFrom().getFirstName() + ", Data Final Invalida!\n",update);
-			c10 = false;
+			c11 = false;
 			c6 = true;
 		}
 	}
