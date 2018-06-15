@@ -1,222 +1,195 @@
 package telegram;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
 
+import alexander.MinhaAssociacao;
 import alexander.associacao.*;
-import alexander.bancoDeDados.*;
 import alexander.exececoes.*;
 
-public class BotDao {
+public class Bot extends TelegramLongPollingBot{
+	//MinhaAssociacao controle = new MinhaAssociacao();
+	BotDao botDao = new BotDao();
+	boolean c1 = true;
+	boolean c2 = true;
+	boolean c3 = false;
+	boolean c4 = false;
+	boolean c5 = false;
+	boolean c6 = false;
+	boolean c7 = false;
+	boolean c8 = false;
+	boolean c9 = false;
+	boolean c10 = false;
+	boolean c11 = false;
+	boolean c12 = false;
+	boolean c13 = false;
+	String inicial = null;
+	String fim = null;
+	long primeiraData;
+	long ultimaData;
+	long dataInicial;
+	long dataFim;
 	
-	AssociacaoDAO dao = new AssociacaoDAO();
-	
-	public void consultarPagamentos(Long id, String v, Update update) {
-		Connection c = Conexao.getConnection();
-		PreparedStatement stmt = null;
-		Bot b = new Bot();
-		int ano = 0;
-		
-		if(v.equals("2018"))
-			ano = 2018;
-		else if (v.equals("2017"))
-			ano = 2017;
-		
-		ArrayList<Taxa> taxas = new ArrayList<Taxa>();
-		ArrayList<Pagamento> pagamentos = new ArrayList<Pagamento>();
-		
+	public String getBotUsername() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+ 
+	public void imprimirMensagem(String texto,Update update) {
+		SendMessage send = new SendMessage();
+		send.setText(texto);
+		send.setChatId(update.getMessage().getChatId());
 		try {
-			stmt = c.prepareStatement("select * from associacao.taxa where vigencia like " + ano + ";");
-			ResultSet rs = stmt.executeQuery();
-			while(rs.next()) {
-				Taxa t = new Taxa(rs.getString("nome"), rs.getInt("vigencia"), rs.getDouble("valor"), rs.getInt("parcelas"),
-						rs.getBoolean("administrativa"));
-				t.setAssociacao(rs.getInt("associacao"));
-				taxas.add(t);
-			}
-		} catch (SQLException e) {
-            throw new RuntimeException(e);
+			execute(send);
+			System.out.println("Mensagem enviada!");
+		} catch (TelegramApiException e) {
+			e.getMessage();
 		}
-		 try {
-			stmt = c.prepareStatement("select * from associacao.pagamento where associado like " + id + ";");
-			ResultSet rs = stmt.executeQuery();
-			while(rs.next()) {
-				if(rs.getInt("vigencia") == ano) {
-					Pagamento p = new Pagamento(rs.getInt("associado"), rs.getDouble("valor"),rs.getLong("data"), 
-							rs.getString("nome"), rs.getInt("vigencia"));
-					p.setAssociacao(rs.getInt("associacao"));
-					pagamentos.add(p);
-				}
+	}
+	
+	public long dataConvertida(String data) {
+		String[] partes = data.split("/");
+		int dia = Integer.parseInt(partes[0]);
+		int mes = Integer.parseInt(partes[1]);
+		int ano = Integer.parseInt(partes[2]);
+		
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.set(ano, mes, dia);
+		long dataConvertida = gc.getTimeInMillis();
+		
+		return dataConvertida;
+	}
+	
+	public void onUpdateReceived(Update update) {
+		
+		SendMessage send = new SendMessage();
+		send.setChatId(update.getMessage().getChatId());
+		String nome = update.getMessage().getFrom().getFirstName();
+		System.out.println("Nome: " + update.getMessage().getFrom().getFirstName()+ " - ID: "+ update.getMessage().getChatId() + " || Text: " + update.getMessage().getText());
+		BotDao dao = new BotDao();
+		
+		if(c1) {
+			String mensagem = "Bem Vindo " + update.getMessage().getFrom().getFirstName() + " ! Suas opções são:\n> Consultar Pagamentos\n> Consultar Frequencia";
+			imprimirMensagem(mensagem,update);
+			c1 = false;
+		}
+		if(c2){
+			String resp = update.getMessage().getText();
+			System.out.println("Resp1: " + resp);
+			if(resp.equals("Pagamento") || resp.equals("pagamento") || resp.equals("Pagamentos") || resp.equals("pagamentos") || resp.equals("pag") || resp.equals("Pag")) {
+				imprimirMensagem("Digite o ano!",update);
+				c3 = true;
+				c2 = false;
 			}
-		} catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-        	Conexao.closeConnection(c);
-        }
-		boolean achou = false;
-		for (Taxa t : taxas) {
-			b.imprimirMensagem("Taxa: " + t.getNome() + " - Vigencia: " + t.getVigencia(), update);
-			for(Pagamento p : pagamentos) {
-				if(p.getTaxa().equals(t.getNome())) {
-					DateFormat df = new SimpleDateFormat ("dd/MM/yyyy");
-			        df.setTimeZone (TimeZone.getTimeZone ("GMT"));
-					b.imprimirMensagem("Pagamento Realizado no Valor: " + p.getValorPago() + " || Data: " + df.format(p.getDataPagamento()), update);
-					achou = true;
-					break;
-				}
+			if(resp.equals("Frequencia") || resp.equals("frequencia") || resp.equals("freq") || resp.equals("Freq")) {
+				primeiraData = dao.primeiraReuniao(update.getMessage().getFrom().getId());
+				ultimaData = dao.ultimaReuniao(update.getMessage().getFrom().getId());
+				imprimirMensagem("Digite a Data Inicial(A primeira reuniao foi realizada em 27/02/2018):",update);
+				c6 = true;
+				c2 = false;
 			}
-			if(achou) {
-				achou = false;
+		}
+		if(c3) {
+			String resp = update.getMessage().getText();
+			System.out.println("Resp2 || i: " + resp);
+			int i = Integer.parseInt(resp);
+			if(i == 2017 || i == 2018) {
+				c4 = true;
 			} else {
-				b.imprimirMensagem("Pagamento nao Realizado da Taxa: " + t.getNome(), update);
+				c5 = true;
 			}
+			c3 = false;
 		}
-	}
-	
-	public long primeiraReuniao(int associado)  {
-		Connection con = Conexao.getConnection();
-		PreparedStatement statement = null;
-		Associado aux = null;
-		try {
-			aux = buscarAssociado(associado);
-		} catch (Exception e) {
-			e.printStackTrace();
+		if(c4) {
+			String vigencia = update.getMessage().getText();
+			System.out.println("Vigencia: " + vigencia);
+			dao.consultarPagamentos(update.getMessage().getChatId(), vigencia, update);
+			imprimirMensagem(update.getMessage().getFrom().getFirstName() + ", Escolha:\n> Consultar Pagamentos\n> Consultar Frequencia",update);
+			c4 = false;
+			c2 = true;
 		}
-		long data = 0;
-		try {
-				statement = con.prepareStatement("select data from associacao.reuniao where associacao =" +aux.getAssociacao()+"");
-				ResultSet rs = statement.executeQuery();
-				rs.next();
-				data= rs.getLong("data");
-			}catch (Exception e) {
-				
-			}
-		return data;
-	}
-	
-	public long ultimaReuniao(int associado)  {
-		Connection con = Conexao.getConnection();
-		PreparedStatement statement = null;
-		Associado aux = null;
-		try {
-			aux = buscarAssociado(associado);
-		} catch (Exception e) {
-			e.printStackTrace();
-			}
-		long data = 0;
-		try {
-			statement = con.prepareStatement("select data from associacao.reuniao where associacao =" +aux.getAssociacao()+"");
-			ResultSet rs = statement.executeQuery();
-			while(rs.next()) {
-				data = rs.getLong("data");}
-		}catch (Exception e) {
+		if(c5) {
+			imprimirMensagem("Ano Invalido!\n" + update.getMessage().getFrom().getFirstName() + ", Escolha:\n> Consultar Pagamentos\n> Consultar Frequencia",update);
+			String resp = update.getMessage().getText();
+			System.out.println("Resp3: " + resp);
+			c5 = false;
+			c2 = true;
+		}
+		if(c6) { // Validação da DataInicial
+			inicial = update.getMessage().getText();
+			System.out.println("Inicial: " + inicial);
+			dataInicial = dataConvertida(inicial);
 			
+			if(dataInicial >= primeiraData) {
+				c7 = true;
+			} else {
+				c10 = true;
+			}
+			c6 = false;
 		}
-		return data;
-	}
-
-
-	public void calcularFrequencia(int id, long inicio, long fim, Update update) {
-		dao.getConnection();
-		Associado a = null;
-		try {
-			a = buscarAssociado(id);
-		} catch (ValorInvalido | AssociacaoNaoExistente | AssociadoJaExistente e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(c12) {
+			c8 = true;
 		}
-		Bot b = new Bot();
-		double total = 0, presenca = 0;
-		
-		for(Reuniao r : dao.getReunioes()) {
-			if(r.getDataReuniao() >= inicio && r.getDataReuniao() <= fim) {
-				total++;
-				DateFormat df = new SimpleDateFormat ("dd/MM/yyyy");
-		        df.setTimeZone (TimeZone.getTimeZone ("GMT"));
-				if(dao.procurarFrequencia(a.getAssociacao(), id, r.getDataReuniao())) {
-					presenca++;
-					b.imprimirMensagem("Reunião: " + r.getAta() + " Data: " + r.getDataReuniao() + " Presente: Sim",update);
-				} else {	
-					b.imprimirMensagem("Reunião: " + r.getAta() + " Data: " + r.getDataReuniao() + " Presente: Não",update);
-				}
+		if(c7){
+			if(!(c12)) {
+			    if(!(c8)) {
+			    	imprimirMensagem("Digite a Data Final(A ultima reuniao foi realizada em 13/03/2018):",update);
+			    	c12 = true;
+			    }
+				c7 = false;
 			}
 		}
-		b.imprimirMensagem("A presença total foi de: " + presenca + "/" + total + " = "  + (presenca/total)*100 +"%",update);
-		dao.closeConnection();
-	}
-	/*
-	public void calcularFrequencia(int id,String dataInicial,String dataFinal,Update update) throws ValorInvalido, AssociacaoNaoExistente, AssociadoJaExistente {
-		Connection con = Conexao.getConnection();
-		PreparedStatement statement = null;
-		double numeroReunioes=0;
-		double presenca =0;
-		String presente;
-		Associado aux= buscarAssociado(id);
-		Bot bote = new Bot();
-		try {
-			statement = con.prepareStatement("select data,ata from associacao.reuniao where associacao = "+aux.getAssociacao()+"");
-			ResultSet rs = statement.executeQuery();
-			while(rs.next()) {
-				String datasReunioes =String.valueOf(rs.getLong("data"));
-				if(datasReunioes.compareTo(dataFinal) <0) {
-					presente = presente(id, rs.getLong("data"));
-					bote.imprimirMensagem("ReuniÃ£o: " + rs.getString("ata") + " Data: " + rs.getLong("data") + " Presente: " +  presente ,update);
-					if(presente == "sim") {
-						presenca++;
-					}
-					numeroReunioes++;
-				}
-				}
-				bote.imprimirMensagem("A presenÃ§a total foi de: " + presenca + "/" + numeroReunioes + " = "  + (presenca/numeroReunioes)*100+  "%",update);
-			}catch(Exception e) { 
-				System.out.println(e.getMessage());
+		if(c8) {
+			fim = update.getMessage().getText();
+			System.out.println("FiM: " + fim);
+			dataFim = dataConvertida(fim);
+			System.out.println("DataFim: " + dataFim);
+			System.out.println("ultimaData: " + ultimaData);
+			if(dataFim <= ultimaData) {
+				c9 = true;
+			} else {
+				c11 = true;
 			}
-		Conexao.closeConnection(con);
-	}
-	*/
-	private String presente(int id,long data) {
-		Connection con = Conexao.getConnection();
-		PreparedStatement statement = null;
-		String presente = "nÃ£o";
-		try {
-			statement = con.prepareStatement("select data from associacao.frequencia where associado = "+id+"");
-			ResultSet rsFrequencia = statement.executeQuery();
-			while(rsFrequencia.next()){
-				if(rsFrequencia.getLong("data") == data) {
-					presente = "sim";
-					return presente;
-					}else {
-						presente = "nÃ£o";
-					}
-				}
-		}catch (Exception e) {
+			c8 = false;
 		}
-		return presente;
-	}
-	public Associado buscarAssociado(int id) throws ValorInvalido, AssociacaoNaoExistente, AssociadoJaExistente{
-		Connection con = Conexao.getConnection();
-		PreparedStatement statement = null;
-		Associado aux = null;		
+		if(c9) {
+			dao.calcularFrequencia(update.getMessage().getFrom().getId(), dataInicial, dataFim, update);
+			imprimirMensagem(update.getMessage().getFrom().getFirstName() + ", Escolha:\n> Consultar Pagamentos\n> Consultar Frequencia",update);
+			/*
 			try {
-				statement = con.prepareStatement("select * from associacao.associado where numero like "+id+"");
-				ResultSet rs = statement.executeQuery();	
-				while(rs.next()) { 
-					aux = new Associado(rs.getInt("numero"), rs.getString("nome"), rs.getString("telefone"), rs.getLong("nascimento"),rs.getLong("data"));
-					aux.setAssociacao(rs.getInt("associacao"));
-					}
-			}catch(SQLException e){
-				throw new AssociacaoNaoExistente();
-			}finally {
-				Conexao.closeConnection(con);
+				dao.calcularFrequencia(update.getMessage().getFrom().getId(),inicial, fim, update);
+			} catch (ValorInvalido | AssociacaoNaoExistente | AssociadoJaExistente e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			return aux;
+			*/
+			c9 = false;
+			c2 = true;
+		}
+		if(c10) {
+			imprimirMensagem(update.getMessage().getFrom().getFirstName() + ", Data Inicial Invalida!\n",update);
+			imprimirMensagem("Digite a Data Inicial(A primeira reuniao foi realizada em 27/02/2018):",update);
+			c10 = false;
+			c6 = true;
+		}
+		if(c11) {
+			imprimirMensagem(update.getMessage().getFrom().getFirstName() + ", Data Final Invalida!\n",update);
+			imprimirMensagem("Digite a Data Final(A ultima reuniao foi realizada em 13/03/2018):",update);
+			c11 = false;
+			c8 = false;
+		}
+	}
+	
+	@Override
+	public String getBotToken() {
+		// TODO Auto-generated method stub
+		return "528994101:AAE656HO54G_kcA_WSPzkTNnZrQPXLpF0Xo";
 	}
 }
