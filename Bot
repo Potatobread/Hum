@@ -1,5 +1,10 @@
 package telegram;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -12,8 +17,8 @@ import alexander.exececoes.*;
 public class Bot extends TelegramLongPollingBot{
 	MinhaAssociacao controle = new MinhaAssociacao();
 	BotDao botDao = new BotDao();
-	boolean c1 = false;
-	boolean c2 = false;
+	boolean c1 = true;
+	boolean c2 = true;
 	boolean c3 = false;
 	boolean c4 = false;
 	boolean c5 = false;
@@ -22,8 +27,12 @@ public class Bot extends TelegramLongPollingBot{
 	boolean c8 = false;
 	boolean c9 = false;
 	boolean c10 = false;
+	boolean c11 = false;
+	boolean c12 = false;
 	String inicial = null;
 	String fim = null;
+	long primeiraData;
+	long ultimaData;
 	
 	public String getBotUsername() {
 		// TODO Auto-generated method stub
@@ -42,6 +51,19 @@ public class Bot extends TelegramLongPollingBot{
 		}
 	}
 	
+	public long dataConvertida(String data) {
+		String[] partes = data.split("/");
+		int dia = Integer.parseInt(partes[0]);
+		int mes = Integer.parseInt(partes[1]);
+		int ano = Integer.parseInt(partes[2]);
+		
+		GregorianCalendar gc = new GregorianCalendar();
+		gc.set(ano, mes, dia);
+		long dataConvertida = gc.getTimeInMillis();
+		
+		return dataConvertida;
+	}
+	
 	public void onUpdateReceived(Update update) {
 		
 		SendMessage send = new SendMessage();
@@ -50,24 +72,24 @@ public class Bot extends TelegramLongPollingBot{
 		System.out.println("Nome: " + update.getMessage().getFrom().getFirstName()+ " - ID: "+ update.getMessage().getChatId() + " || Text: " + update.getMessage().getText());
 		BotDao dao = new BotDao();
 		
-		if(!(c1)) {
+		if(c1) {
 			String mensagem = "Bem Vindo " + update.getMessage().getFrom().getFirstName() + " ! Suas opções são:\n> Consultar Pagamentos\n> Consultar Frequencia";
 			imprimirMensagem(mensagem,update);
-			c1 = true;
+			c1 = false;
 		}
-		if(!(c2)){
+		if(c2){
 			String resp = update.getMessage().getText();
 			System.out.println("Resp1: " + resp);
 			if(resp.equals("Pagamento") || resp.equals("pagamento") || resp.equals("Pagamentos") || resp.equals("pagamentos") || resp.equals("pag") || resp.equals("Pag")) {
 				imprimirMensagem("Digite o ano!",update);
 				c3 = true;
-				c2 = true;
+				c2 = false;
 			}
 			if(resp.equals("Frequencia") || resp.equals("frequencia") || resp.equals("freq") || resp.equals("Freq")) {
-				imprimirMensagem("Digite a Data Inicial:",update);
-				resp = update.getMessage().getText();
-				System.out.println("Resp2 || i: " + resp);
+				primeiraData = dao.primeiraReuniao(update.getMessage().getFrom().getId());
+				ultimaData = dao.ultimaReuniao(update.getMessage().getFrom().getId());
 				c6 = true;
+				c2 = false;
 			}
 		}
 		if(c3) {
@@ -87,29 +109,69 @@ public class Bot extends TelegramLongPollingBot{
 			dao.consultarPagamentos(update.getMessage().getChatId(), vigencia, update);
 			imprimirMensagem(update.getMessage().getFrom().getFirstName() + ", Escolha:\n> Consultar Pagamentos\n> Consultar Frequencia",update);
 			c4 = false;
-			c2 = false;
+			c2 = true;
 		}
 		if(c5) {
 			imprimirMensagem("Ano Invalido!\n" + update.getMessage().getFrom().getFirstName() + ", Escolha:\n> Consultar Pagamentos\n> Consultar Frequencia",update);
 			String resp = update.getMessage().getText();
 			System.out.println("Resp3: " + resp);
-			c2 = false;
 			c5 = false;
+			c2 = true;
 		}
-		if(c6) {
+		if(c6) { // Validação da DataInicial
+			DateFormat df = new SimpleDateFormat ("dd/MM/yyyy");
+		    df.setTimeZone (TimeZone.getTimeZone ("GMT"));
+		    df.format(primeiraData);
+		    System.out.println(primeiraData);
+			imprimirMensagem("Digite a Data Inicial(A primeira reuniao foi realizada em " + df.format(primeiraData) + "):",update);
 			inicial = update.getMessage().getText();
 			System.out.println("Inicial: " + inicial);
-			imprimirMensagem("Digite a Data Final:",update);
-			String fim = update.getMessage().getText();
-			System.out.println("Final: " + fim);
-			//c7 = true;
+			long dataInicial = dataConvertida(inicial);
+			
+			if(dataInicial >= primeiraData) {
+				c7 = true;
+			} else {
+				c9 = true;
+			}
+			c6 = false;
 		}
-		if(c7) {
-			String inicial = update.getMessage().getText();
-			System.out.println("Inicial: " + inicial);
-			String fim = update.getMessage().getText();
+		if(c7){
+			DateFormat df = new SimpleDateFormat ("dd/MM/yyyy");
+		    df.setTimeZone (TimeZone.getTimeZone ("GMT"));
+		    df.format(ultimaData);
+			imprimirMensagem("Digite a Data Final(A ultima reuniao foi realizada em " + df.format(ultimaData) + "):",update);
+			fim = update.getMessage().getText();
 			System.out.println("Final: " + fim);
-		}						
+			long dataFim = dataConvertida(fim);
+			
+			if(dataFim <= ultimaData) {
+				c8 = true;
+			} else {
+				c10 = true;
+			}
+			c7 = false;
+		}
+		if(c8) {
+			try {
+				dao.calcularFrequencia(update.getMessage().getFrom().getId(), inicial, fim, update);
+			} catch (ValorInvalido | AssociacaoNaoExistente | AssociadoJaExistente e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				c8 = false;
+				c2 = true;
+			}
+		}
+		if(c9) {
+			imprimirMensagem(update.getMessage().getFrom().getFirstName() + ", Data Inicial Invalida!\n",update);
+			c9 = false;
+			c6 = true;
+		}
+		if(c10) {
+			imprimirMensagem(update.getMessage().getFrom().getFirstName() + ", Data Final Invalida!\n",update);
+			c10 = false;
+			c6 = true;
+		}
 	}
 	
 	@Override
