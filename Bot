@@ -15,7 +15,7 @@ import alexander.associacao.*;
 import alexander.exececoes.*;
 
 public class Bot extends TelegramLongPollingBot{
-	MinhaAssociacao controle = new MinhaAssociacao();
+	//MinhaAssociacao controle = new MinhaAssociacao();
 	BotDao botDao = new BotDao();
 	boolean c1 = true;
 	boolean c2 = true;
@@ -29,10 +29,13 @@ public class Bot extends TelegramLongPollingBot{
 	boolean c10 = false;
 	boolean c11 = false;
 	boolean c12 = false;
+	boolean c13 = false;
 	String inicial = null;
 	String fim = null;
 	long primeiraData;
 	long ultimaData;
+	long dataInicial;
+	long dataFim;
 	
 	public String getBotUsername() {
 		// TODO Auto-generated method stub
@@ -85,15 +88,14 @@ public class Bot extends TelegramLongPollingBot{
 				c3 = true;
 				c2 = false;
 			}
-			if(resp.equals("Frequencia") || resp.equals("frequencia") || resp.equals("freq") || resp.equals("Freq")) {
+			else if(resp.equals("Frequencia") || resp.equals("frequencia") || resp.equals("freq") || resp.equals("Freq")) {
 				primeiraData = dao.primeiraReuniao(update.getMessage().getFrom().getId());
-				DateFormat df = new SimpleDateFormat ("dd/MM/yyyy");
-			    df.setTimeZone (TimeZone.getTimeZone ("GMT"));
-			    df.format(primeiraData);
-			    System.out.println(primeiraData);
-				imprimirMensagem("Digite a Data Inicial(A primeira reuniao foi realizada em " + df.format(primeiraData) + "):",update);
 				ultimaData = dao.ultimaReuniao(update.getMessage().getFrom().getId());
+				imprimirMensagem("Digite a Data Inicial(A primeira reuniao foi realizada em 27/02/2018):",update);
 				c6 = true;
+				c2 = false;
+			} else {
+				c12 = true;
 				c2 = false;
 			}
 		}
@@ -126,7 +128,7 @@ public class Bot extends TelegramLongPollingBot{
 		if(c6) { // Validação da DataInicial
 			inicial = update.getMessage().getText();
 			System.out.println("Inicial: " + inicial);
-			long dataInicial = dataConvertida(inicial);
+			dataInicial = dataConvertida(inicial);
 			
 			if(dataInicial >= primeiraData) {
 				c7 = true;
@@ -135,19 +137,24 @@ public class Bot extends TelegramLongPollingBot{
 			}
 			c6 = false;
 		}
-		if(c7){
-			DateFormat df = new SimpleDateFormat ("dd/MM/yyyy");
-		    df.setTimeZone (TimeZone.getTimeZone ("GMT"));
-		    df.format(ultimaData);
-			imprimirMensagem("Digite a Data Final(A ultima reuniao foi realizada em " + df.format(ultimaData) + "):",update);
-			c7 = false;
+		if(c12) {
 			c8 = true;
+		}
+		if(c7){
+			if(!(c12)) {
+			    if(!(c8)) {
+			    	imprimirMensagem("Digite a Data Final(A ultima reuniao foi realizada em 13/03/2018):",update);
+			    	c12 = true;
+			    }
+				c7 = false;
+			}
 		}
 		if(c8) {
 			fim = update.getMessage().getText();
-			System.out.println("Final: " + fim);
-			long dataFim = dataConvertida(fim);
-			
+			System.out.println("FiM: " + fim);
+			dataFim = dataConvertida(fim);
+			System.out.println("DataFim: " + dataFim);
+			System.out.println("ultimaData: " + ultimaData);
 			if(dataFim <= ultimaData) {
 				c9 = true;
 			} else {
@@ -156,25 +163,35 @@ public class Bot extends TelegramLongPollingBot{
 			c8 = false;
 		}
 		if(c9) {
+			dao.calcularFrequencia(update.getMessage().getFrom().getId(), dataInicial, dataFim, update);
+			imprimirMensagem(update.getMessage().getFrom().getFirstName() + ", Escolha:\n> Consultar Pagamentos\n> Consultar Frequencia",update);
+			/*
 			try {
-				dao.calcularFrequencia(update.getMessage().getFrom().getId(), inicial, fim, update);
+				dao.calcularFrequencia(update.getMessage().getFrom().getId(),inicial, fim, update);
 			} catch (ValorInvalido | AssociacaoNaoExistente | AssociadoJaExistente e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} finally {
-				c9 = false;
-				c2 = true;
 			}
+			*/
+			c9 = false;
+			c2 = true;
 		}
 		if(c10) {
 			imprimirMensagem(update.getMessage().getFrom().getFirstName() + ", Data Inicial Invalida!\n",update);
+			imprimirMensagem("Digite a Data Inicial(A primeira reuniao foi realizada em 27/02/2018):",update);
 			c10 = false;
 			c6 = true;
 		}
 		if(c11) {
 			imprimirMensagem(update.getMessage().getFrom().getFirstName() + ", Data Final Invalida!\n",update);
+			imprimirMensagem("Digite a Data Final(A ultima reuniao foi realizada em 13/03/2018):",update);
 			c11 = false;
-			c6 = true;
+			c8 = false;
+		}
+		if(c12) {
+			imprimirMensagem("Dados Invalidos! " + update.getMessage().getFrom().getFirstName() + ", Escolha:\n> Consultar Pagamentos\n> Consultar Frequencia",update);
+			c12 = false;
+			c2 = true;
 		}
 	}
 	
