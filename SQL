@@ -1,0 +1,49 @@
+CREATE DATABASE `associacao`;
+
+CREATE TABLE `associacao` (
+  `numero` int(11) NOT NULL,
+  `nome` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`numero`)
+);
+
+CREATE TABLE `associado` (
+  `numero` int(11) NOT NULL,
+  `nome` varchar(45) DEFAULT NULL,
+  `telefone` varchar(11) DEFAULT NULL,
+  `nascimento` bigint(20) DEFAULT NULL,
+  `data` bigint(20) DEFAULT NULL,
+  `remissao` bigint(20) DEFAULT NULL,
+  `associacao` int(11) DEFAULT NULL,
+  PRIMARY KEY (`numero`)
+);
+
+CREATE TABLE `frequencia` (
+  `data` bigint(20) DEFAULT NULL,
+  `associado` int(11) DEFAULT NULL,
+  `associacao` int(11) DEFAULT NULL
+);
+
+CREATE TABLE `pagamento` (
+  `data` bigint(20) DEFAULT NULL,
+  `valor` double DEFAULT NULL,
+  `nome` varchar(45) DEFAULT NULL,
+  `vigencia` int(11) DEFAULT NULL,
+  `associado` int(11) DEFAULT NULL,
+  `associacao` int(11) DEFAULT NULL
+);
+
+CREATE TABLE `reuniao` (
+  `data` bigint(20) NOT NULL,
+  `ata` varchar(1000) DEFAULT NULL,
+  `associacao` int(11) DEFAULT NULL,
+  PRIMARY KEY (`data`)
+);
+
+CREATE TABLE `taxa` (
+  `nome` varchar(45) DEFAULT NULL,
+  `vigencia` int(11) DEFAULT NULL,
+  `valor` double DEFAULT NULL,
+  `parcelas` int(11) DEFAULT NULL,
+  `administrativa` tinyint(4) DEFAULT NULL,
+  `associacao` int(11) DEFAULT NULL
+);
