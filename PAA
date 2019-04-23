@@ -1,0 +1,142 @@
+package ordenacao;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
+import java.util.Scanner;
+
+public class Main {
+
+	public static int bubbleSort(int a[], int n) {
+		long count = 0;
+		
+		for(int i = 1; i < n; i++) {
+			for(int j = 0; j < n - 1; j++) {
+				if(a[j] > a[j + 1]) {
+					int aux = a[j];
+					a[j] = a[j + 1];
+					a[j + 1] = aux;
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+	
+	
+	public static int insertionSort(int a[], int n) {
+		int count = 0;
+		
+		for(int i = 0; i < n; i++) {
+			int aux = a[i];
+			int j = i - 1;
+			while(j >= 0 && aux < a[j]) {
+				a[j + 1] = a[j];
+				j--;
+				count++;
+			}
+			a[j + 1] = aux;
+		}
+		return count;
+	}
+	
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		System.out.print("Tamanho do Vetor: ");
+		int n = scan.nextInt(), i;
+		long compRandom, compCrescente, compDecrescente;
+		
+		while(n != 0) {
+			int crescente[] = new int[n];
+			int decrescente[] = new int[n];
+			int random[] = new int[n];
+			
+			
+			//INICIALIZAÇÃO DOS VETORES COM VALORES CRESCENTES, DECRESCENTES E ALEATORICOS
+			Random gerador = new Random();
+			for(i = 0; i < n; i++) {
+				crescente[i] = i + 1;
+				decrescente[i] = n - i;
+				random[i] = gerador.nextInt(101);
+			}
+			
+			
+			//ORDENA_CRESCENTE - Tempo e Comparações;
+			long begin = System.currentTimeMillis();
+			compCrescente = insertionSort(crescente,n);
+			long end = System.currentTimeMillis();
+			System.out.print("\n-----CRESCENTE-----\n> Tempo de Execução: ");
+			System.out.print(new SimpleDateFormat("mm:ss").format(new Date(end - begin)));
+			if((end - begin) < 1000)
+	        	System.out.println(":" + (end - begin));
+			else System.out.printf("\n");
+	        System.out.println("> Quantidade de Comparações_Crescente: " + compCrescente);
+	        
+	        
+	        //ORDENA_DECRESCENTE - Tempo e Comparações;
+	        begin = System.currentTimeMillis();
+	        compDecrescente = insertionSort(decrescente,n);
+	        end = System.currentTimeMillis();
+	        System.out.print("\n-----DECRESCENTE-----\n> Tempo de Execução: ");
+	        System.out.print(new SimpleDateFormat("mm:ss").format(new Date(end - begin)));
+	        if((end - begin) < 1000)
+	        	System.out.println(":" + (end - begin));
+	        else System.out.printf("\n");
+	        System.out.println("> Quantidade de Comparações_Decrescente: " + compDecrescente);
+	        
+	        
+	        //ORDENA_ALEATORIO - Tempo e Comparações;
+	        begin = System.currentTimeMillis();
+	        compRandom = insertionSort(random,n);
+	        end = System.currentTimeMillis();
+	        System.out.print("\n-----ALEATORIO-----\n> Tempo de Execução: ");
+	        System.out.print(new SimpleDateFormat("mm:ss").format(new Date(end - begin)));
+	        if((end - begin) < 1000)
+	        	System.out.println(":" + (end - begin));
+	        else System.out.printf("\n");
+	        System.out.println("> Quantidade de Comparações_Aleatório: " + compRandom);
+			
+	        
+			
+			
+			/*													Ordenação pelo método da bolha (bublesort);
+			//ORDENA_CRESCENTE - Tempo e Comparações;
+			long begin = System.currentTimeMillis();
+			compCrescente = bubbleSort(crescente,n);
+			long end = System.currentTimeMillis();
+			System.out.print("\n-----CRESCENTE-----\n> Tempo de Execução: ");
+			System.out.print(new SimpleDateFormat("mm:ss").format(new Date(end - begin)));
+			if((end - begin) < 1000)
+	        	System.out.println(":" + (end - begin));
+			else System.out.printf("\n");
+	        System.out.println("> Quantidade de Comparações_Crescente: " + compCrescente);
+			
+			
+	        //ORDENA_DECRESCENTE - Tempo e Comparações;
+	        begin = System.currentTimeMillis();
+	        compDecrescente = bubbleSort(decrescente,n);
+	        end = System.currentTimeMillis();
+	        System.out.print("\n-----DECRESCENTE-----\n> Tempo de Execução: ");
+	        System.out.print(new SimpleDateFormat("mm:ss").format(new Date(end - begin)));
+	        if((end - begin) < 1000)
+	        	System.out.println(":" + (end - begin));
+	        else System.out.printf("\n");
+	        System.out.println("> Quantidade de Comparações_Decrescente: " + compDecrescente);
+	        
+	        
+	        //ORDENA_ALEATORIO - Tempo e Comparações;
+	        begin = System.currentTimeMillis();
+	        compRandom = bubbleSort(random,n);
+	        end = System.currentTimeMillis();
+	        System.out.print("\n-----ALEATORIO-----\n> Tempo de Execução: ");
+	        System.out.print(new SimpleDateFormat("mm:ss").format(new Date(end - begin)));
+	        if((end - begin) < 1000)
+	        	System.out.println(":" + (end - begin));
+	        else System.out.printf("\n");
+	        System.out.println("> Quantidade de Comparações_Aleatório: " + compRandom);
+	        */
+	        
+	        System.out.print("\n\nTamanho do Vetor: ");
+			n = scan.nextInt();
+		}
