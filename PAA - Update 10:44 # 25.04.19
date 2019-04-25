@@ -161,27 +161,24 @@ public class Main {
 			int decrescente[] = new int[n];
 			int random[] = new int[n];
 			
-			//INICIALIZAÇÃO DOS VETORES COM VALORES CRESCENTES, DECRESCENTES E ALEATORICOS
+		
 			Random gerador = new Random();
 			for(int i = 0; i < n; i++) {
 				crescente[i] = i + 1;
 				decrescente[i] = n - i;
 				random[i] = gerador.nextInt(101);
 			}
+			
 			/*
-			//												ORDENAÇÃO PELO METODO BOLHA (bubbleSort);
+			//ORDENAÇÃO PELO METODO BOLHA (bubbleSort);
 						
 			//ORDENA_CRESCENTE - Tempo e Comparações;
 			long begin = System.currentTimeMillis();
 			compCrescente = bubbleSort(crescente,n);
 			long end = System.currentTimeMillis();
 			
-			System.out.print("\n-----CRESCENTE-----\n> Tempo de Execução: ");
-			System.out.print(new SimpleDateFormat("mm:ss").format(new Date(end - begin)));
-			if((end - begin) < 1000)
-			System.out.println(":" + (end - begin));
-			else System.out.printf("\n");
-			System.out.println("> Quantidade de Comparações_Crescente: " + compCrescente);
+			System.out.print("\n-----CRESCENTE-----\n> Tempo de Execução(Milissegundos): " + (end - begin));
+			System.out.println("\n> Quantidade de Comparações_Crescente: " + compCrescente);
 			
 			
 			//ORDENA_DECRESCENTE - Tempo e Comparações;
@@ -189,12 +186,8 @@ public class Main {
 			compDecrescente = bubbleSort(decrescente,n);
 			end = System.currentTimeMillis();
 			
-			System.out.print("\n-----DECRESCENTE-----\n> Tempo de Execução: ");
-			System.out.print(new SimpleDateFormat("mm:ss").format(new Date(end - begin)));
-			if((end - begin) < 1000)
-			System.out.println(":" + (end - begin));
-			else System.out.printf("\n");
-			System.out.println("> Quantidade de Comparações_Decrescente: " + compDecrescente);
+			System.out.print("\n-----DECRESCENTE-----\n> Tempo de Execução(Milissegundos): " + (end - begin));
+			System.out.println("\n> Quantidade de Comparações_Decrescente: " + compDecrescente);
 			
 			
 			//ORDENA_ALEATORIO - Tempo e Comparações;
@@ -202,57 +195,41 @@ public class Main {
 			compRandom = bubbleSort(random,n);
 			end = System.currentTimeMillis();
 			
-			System.out.print("\n-----ALEATORIO-----\n> Tempo de Execução: ");
-			System.out.print(new SimpleDateFormat("mm:ss").format(new Date(end - begin)));
-			if((end - begin) < 1000)
-			System.out.println(":" + (end - begin));
-			else System.out.printf("\n");
-			System.out.println("> Quantidade de Comparações_Aleatório: " + compRandom);
+			System.out.print("\n-----ALEATORIO-----\n> Tempo de Execução(Milissegundos): " + (end - begin));
+			System.out.println("\n> Quantidade de Comparações_Aleatório: " + compRandom);
+			*/
 			
 			
-			//												ORDENAÇÃO POR INSERÇÃO (insertionSort);
+			//ORDENAÇÃO POR INSERÇÃO (insertionSort);
 			
 			//ORDENA_CRESCENTE - Tempo e Comparações;
 			long begin = System.currentTimeMillis();
 			compCrescente = insertionSort(crescente,n);
 			long end = System.currentTimeMillis();
 			
-			System.out.print("\n-----CRESCENTE-----\n> Tempo de Execução: ");
-			System.out.print(new SimpleDateFormat("mm:ss").format(new Date(end - begin)));
-			if((end - begin) < 1000)
-	        	System.out.println(":" + (end - begin));
-			else System.out.printf("\n");
-	        System.out.println("> Quantidade de Comparações_Crescente: " + compCrescente);
-	        
-	        
-	        //ORDENA_DECRESCENTE - Tempo e Comparações;
-	        begin = System.currentTimeMillis();
-	        compDecrescente = insertionSort(decrescente,n);
-	        end = System.currentTimeMillis();
-	        
-	        System.out.print("\n-----DECRESCENTE-----\n> Tempo de Execução: ");
-	        System.out.print(new SimpleDateFormat("mm:ss").format(new Date(end - begin)));
-	        if((end - begin) < 1000)
-	        	System.out.println(":" + (end - begin));
-	        else System.out.printf("\n");
-	        System.out.println("> Quantidade de Comparações_Decrescente: " + compDecrescente);
-	        
-	        
-	        //ORDENA_ALEATORIO - Tempo e Comparações;
-	        begin = System.currentTimeMillis();
-	        compRandom = insertionSort(random,n);
-	        end = System.currentTimeMillis();
-	        
-	        System.out.print("\n-----ALEATORIO-----\n> Tempo de Execução: ");
-	        System.out.print(new SimpleDateFormat("mm:ss").format(new Date(end - begin)));
-	        if((end - begin) < 1000)
-	        	System.out.println(":" + (end - begin));
-	        else System.out.printf("\n");
-	        System.out.println("> Quantidade de Comparações_Aleatório: " + compRandom);
-	      	*/
+			System.out.print("\n-----CRESCENTE-----\n> Tempo de Execução(Milissegundos): " + (end - begin));
+			System.out.println("\n> Quantidade de Comparações_Crescente: " + compCrescente);
 			
-			heapSort(random);
 			
+			//ORDENA_DECRESCENTE - Tempo e Comparações;
+			begin = System.currentTimeMillis();
+			compDecrescente = insertionSort(decrescente,n);
+			end = System.currentTimeMillis();
+			
+			System.out.print("\n-----DECRESCENTE-----\n> Tempo de Execução(Milissegundos): " + (end - begin));
+			System.out.println("\n> Quantidade de Comparações_Decrescente: " + compDecrescente);
+			
+			
+			//ORDENA_ALEATORIO - Tempo e Comparações;
+			begin = System.currentTimeMillis();
+			compRandom = insertionSort(random,n);
+			end = System.currentTimeMillis();
+			
+			System.out.print("\n-----ALEATORIO-----\n> Tempo de Execução(Milissegundos): " + (end - begin));
+			System.out.println("\n> Quantidade de Comparações_Aleatório: " + compRandom);
+	      	
+			
+			//heapSort(random);
 	        System.out.print("\n\nTamanho do Vetor: ");
 			n = scan.nextInt();
 		}
@@ -261,15 +238,11 @@ public class Main {
         //System.out.println("\nTempo em Milisegundos: "+ (fim - inicio));
         
         /*
-         * VERIFICA SE O CODE REALMENTE ORGANIZA
-		for(i = 0; i < n; i++) {
-			System.out.print(random[i] + " ");
-		}
-		System.out.printf("\n");
-		
+    
 		* PROBLEMAS:
-		1° - Valor das comparações retorna da função quando muito grande, um valor negativo;
-		2° - Conseguir encaixar um contador nas função recursivas > Merge, Quick e Heap;
+			1° - Valor das comparações retorna da função quando muito grande, um valor negativo;
+			2° - Conseguir encaixar um contador nas função recursivas > Merge, Quick e Heap;
+	
 	
         * TAMANHOS PEDIDOS PELO TIO:
         a. 100;
