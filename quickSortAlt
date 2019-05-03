@@ -1,0 +1,19 @@
+public static void quickSortAlt(int a[], int p, int r) {	
+		int i = p, j = r;
+		int x = a[(p + r)/2];
+		while(i <= j) {
+			while(a[i] < x)
+				i++;
+			while(a[j] > x)
+				j--;
+			if(i <= j) {
+				int aux = a[i];
+				a[i] = a[j];
+				a[j] = aux;
+				i++;
+				j--;
+			}
+		}
+		if(p < j) quickSortAlt(a,p,j);
+		if(r > i) quickSortAlt(a,i,r);
+	}
