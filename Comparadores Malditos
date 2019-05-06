@@ -4,10 +4,46 @@ import java.util.Random;
 
 public class Main2 {
 	
+	static long compara;
 	static long comparaMerge;
 	static long comparaQuick;
 	static long comparaHeap;
 	
+	public static void bubbleSort(int a[], int n) {
+		long controle = 0;
+		
+		for(int i = 0; i < n; i++) {
+			for(int j = n-1; j > i; j--) {
+				compara++;
+				if(a[j] < a[j - 1]) {
+					int aux = a[j];
+					a[j] = a[j - 1];
+					a[j - 1] = aux;
+					controle++;
+				}
+			}
+		}
+		if(controle > 0) compara = controle;
+	}
+	
+	public static void insertionSort(int a[], int n) {
+		compara = 0;
+		long controle = 0;
+		
+		for(int i = 0; i < n; i++) {
+			int aux = a[i];
+			int j = i - 1;
+			compara++;
+			while(j >= 0 && aux < a[j]) {
+				compara++;
+				controle++;
+				a[j + 1] = a[j];
+				j--;
+			}
+			a[j + 1] = aux;
+		}
+		if(controle > 0) compara = controle;
+	}
 	
 	//Conjunto mergeSort
 	public static void merge(int a[],int p,int q,int r){
