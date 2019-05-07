@@ -1,0 +1,58 @@
+public static void insertionSort(int a[], int n) {
+		
+		for(int i = 0; i < n; i++) {
+			int aux = a[i];
+			int j = i - 1;
+			comparaHibrido++;
+			while(j >= 0 && aux < a[j]) {
+				comparaHibrido++;
+				a[j + 1] = a[j];
+				j--;
+			}
+			a[j + 1] = aux;
+		}
+	}
+
+
+//Conjunto mergeSort
+	public static void mergeHibrido(int a[],int p,int q,int r){
+		int n1 = q - p + 1;
+	    int n2 = r - q;
+	    int left[] = new int[n1+1];
+	    int right[] = new int[n2+1];
+	       
+	    int i = 0, j = 0, k = 0;
+	       
+	    for(i = 0; i < n1; i++)
+	    	left[i] = a[p+i];
+	    
+	    for(j = 0; j < n2; j++)
+	    	right[j] = a[q+j+1];
+	    
+	    left[n1]  = Integer.MAX_VALUE;
+	    right[n2] = Integer.MAX_VALUE;
+	    i = j = 0;
+	       
+	    for(k = p;k <= r; k++){
+	    	comparaHibrido++;
+	    	if(left[i] <= right[j]){
+	    		a[k] = left[i];
+	    		i = i+1;
+		    } else {
+		    	a[k] = right[j];
+		    	j = j+1;
+		   }
+	    }
+	}    
+	public static void hibridoSort(int a[],int p,int r){
+		comparaHibrido++;
+		if(p < r){
+		    int q = (p+r)/2;
+		    hibridoSort(a,p,q);
+		    hibridoSort(a,q+1,r);
+		    comparaHibrido++;
+		    if(r - p >= 1000)
+		    	insertionSort(a,a.length-1);
+		    else mergeHibrido(a,p,q,r);
+		}
+	}
