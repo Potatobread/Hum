@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+int main(){
+	int i = 0, idade;
+	int menor = 0, media = 0;
+	
+	while(i < 10){
+		printf("Digite a idade do membro %d: ", i+1);
+		scanf("%d", &idade);
+		
+		if(idade < 30)
+			menor++;
+		
+		media = media + idade;
+		i++;
+	}
+	printf("\nQuantidade de membros menores de 30: %d\n", menor);
+	printf("Media da idade dos membros: %d\n", media/10);
+	
+	return 0;
+}
