@@ -1,0 +1,46 @@
+.data
+	num1: .asciiz "Digite uma idade: "
+	lmenor: .asciiz "menor de idade \n"
+	lmaior: .asciiz "maior de idade \n"
+.text
+
+	move $t0,$zero # t0 = 0
+	
+	looping:
+	
+	addi $t0,$t0,1 # t0 = t0 + 1
+	
+	li $v0,1       #
+	move $a0,$t0   #  printf("%d", t0)
+	syscall        #
+	
+
+	li $v0, 4      # 
+	la $a0, num1   #  printf("Digite uma idade: ")
+	syscall        #
+	
+	li $v0,5       #  
+	syscall        #  scanf("%d", &t2)
+	move $t2,$v0   # 
+	
+	# -------
+	
+	slti $t1,$t2,18      # if(t2 < 18)
+	bne $t1,$zero,menor  # 
+	
+	li $v0, 4      #  else {
+	la $a0, lmaior #  	printf("Maior de idade\n")
+	syscall        #  }
+	
+	j fim
+	
+	menor: # corpo do "if"
+		li $v0, 4        # 
+		la $a0, lmenor   # printf ("Menor de idade\n")
+		syscall          # 
+	fim:
+	
+	beq $t0,5,final  #  while (t0 < 5)
+	j looping        #
+	
+	final: # return 0
