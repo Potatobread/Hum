@@ -1,0 +1,41 @@
+.data	#Tudo que será printado
+
+	Numero1: .asciiz "Informe o primeiro numero: "
+	Numero2: .asciiz "Informe o segundo numero: "	
+	Resultado: .asciiz "O resultado da soma eh: " 
+.text 
+	li $v0,4
+	la $a0,Numero1
+	syscall
+	
+	li $v0,5
+	syscall
+	
+	move $t0, $v0
+	#Trecho acima, imprimi uma mensagem, pega o numero inserido e coloca
+	# e transforma de como ela é inserida e coloca em uma variavel temporaria
+	
+	
+	li $v0,4
+	la $a0,Numero2
+	syscall
+	
+	li $v0,5
+	syscall
+	
+	move $t1, $v0
+	#Trecho acima, imprimi uma mensagem, pega o numero inserido e coloca
+	# e transforma de como ela é inserida e coloca em uma variavel temporaria
+	
+	
+	add $t2, $t1, $t0 # Soma de t1 + t0
+	
+	li $v0,4
+	la $a0,Resultado
+	syscall
+	
+	li $v0,1
+	move $a0, $t2
+	syscall
+	# Trecho acima, primeira parte imprimi uma string, segunda imprime
+	# uma variavel
