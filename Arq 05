@@ -25,8 +25,9 @@ int main(){
 		i++;
 	}
 	
-	printf("Total de Positivos: %d\n", positivos);
+	printf("\nTotal de Positivos: %d\n", positivos);
 	printf("Total de Negativos: %d\n", negativos);
+	printf("Total de Nulos: %d\n", nulos);
 	media = media/i;
 	printf("Media dos Negativos: %.1f\n", media);
 	printf("Soma dos Numeros: %d\n", soma);
