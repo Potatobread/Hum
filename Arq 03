@@ -1,0 +1,18 @@
+#include <stdio.h>
+
+int main(){
+    int n,f=1;
+    
+    printf("Fatorial de: ");
+    scanf("%d", &n);
+    
+    while (n > 0){    	
+    	f = f * n;
+    	n--;
+    }    
+    printf("R: %d\n", f);
+
+    
+    
+    return 0;
+}
