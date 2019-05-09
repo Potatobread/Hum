@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <string.h>
+
+int main(){
+    
+    int i = 0, n, positivos = 0, negativos = 0, nulos = 0, soma = 0;
+    float media = 0;
+    
+    
+    while(i < 10){
+    	printf("%d - Digite o Numero: ", i+1);
+    	scanf("%d", &n);
+    	
+    	if(n != 0){
+			if(n > 0)
+				positivos++;
+			else{
+				negativos++;
+				media = media + n;
+			}
+			soma = soma + n;
+		} else
+			nulos++;
+			
+		i++;
+	}
+	
+	printf("Total de Positivos: %d\n", positivos);
+	printf("Total de Negativos: %d\n", negativos);
+	media = media/i;
+	printf("Media dos Negativos: %.1f\n", media);
+	printf("Soma dos Numeros: %d\n", soma);
+    
+    return 0;
+}
