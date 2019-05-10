@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int main(){
+    
+    int n, soma = 0, total = 0, media;
+
+	printf("Digite um Numero: ");
+	scanf("%d", &n);
+    while(n > 0){
+    	if(n % 2 != 0){
+			total++;
+			soma = soma + n;
+		}			
+		n--;
+	}
+	
+	media = soma/total;
+	printf("Media: %d\n", media);
+    
+    return 0;
+}
+
+/*
+
+9) Elabore um algoritmo para calcular e imprimir a média aritmética dos números inteiros positivos ímpares inferiores ou iguais a um número N lido inicialmente. 
+
+
+*/  
