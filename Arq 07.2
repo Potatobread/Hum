@@ -1,0 +1,39 @@
+#include <stdio.h>
+
+int main(){
+    
+    int i = 0;
+	int mediaIdade = 0, idade, contAltura = 0, contIdade = 0;
+	float mediaAltura = 0, altura;
+    
+    while(i < 10){
+    	printf("Aluno %d - Idade: ", i+1);
+    	scanf("%d", &idade);
+    	printf("Aluno %d - Altura: ", i+1);
+    	scanf("%f", &altura);
+    	
+    	if(altura < 1.70){
+			mediaIdade = mediaIdade + idade;
+			contAltura++;
+		}	
+    	
+    	if(idade > 20){
+    		mediaAltura = mediaAltura + altura;
+    		contIdade++;
+		}	
+    	
+		i++;
+	}
+	
+	mediaIdade = mediaIdade/contAltura;
+	printf("\nIdade Media dos Alunos com menos de 1.70m: %d\n", mediaIdade);
+	
+	mediaAltura = mediaAltura/contIdade;
+	printf("Altura Media dos Alunos com mais de 20 anos: %.2f\n", mediaAltura);
+    
+    return 0;
+}
+
+
+//7) Para uma turma de 10 alunos, construir um algoritmo que determine: - a idade média dos alunos com menos de 1,70 m de altura; 
+//    - a altura média dos alunos com mais de 20 anos. Ler a idade (em anos) e a altura (em metros) de cada aluno. 
