@@ -1,0 +1,27 @@
+#include <stdio.h>
+
+int main(){
+    
+    int numero = 85, soma = 0;
+
+
+    while(numero < 907){
+    	if(numero % 2 == 0){
+    		printf("Numero: %d\n", numero);
+    		soma = soma + numero;
+		}	
+    	
+    	numero++;
+	}
+	
+	printf("Soma: %d\n", soma);
+    
+    return 0;
+}
+
+/* 
+
+10) Construa um algoritmo que imprima todos os números pares compreendidos entre 85 e 907. O algoritmo deve também calcular e imprimir a soma destes valores.
+ 
+ 
+*/  
