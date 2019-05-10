@@ -1,32 +1,30 @@
 #include <stdio.h>
-#include <string.h>
 
 int main(){
     
-    int i = 0, media = 0,salario, tempo, total;
-    
-    //Salario do operario;
-    //Tempo de serviço em MESES;
-    
-    //Total de operarios de serviço inferior a 24 meses;
-    //Tempo médio de serviço;
-    //Porcentagem de operarios que recebem salario > 600;
+    int i = 0, media = 0,salario,tempo,salarioMaior = 0, menosMeses = 0;
     
     while(i < 10){
-    	printf("%d - Digite o Numero: ", i+1);
-    	scanf("%d", &n);
+    	printf("Funcionario %d - Salario: ", i+1);
+    	scanf("%d", &salario);
+    	printf("Funcionario %d - Tempo: ", i+1);
+    	scanf("%d", &tempo);
     	
+    	if(tempo < 24)
+			menosMeses++;
     	
-			
+    	if(salario > 600)
+    		salarioMaior++;
+    	
+		media = media + tempo;
 		i++;
 	}
 	
-	printf("\nTotal de Positivos: %d\n", positivos);
-	printf("Total de Negativos: %d\n", negativos);
-	printf("Total de Nulos: %d\n", nulos);
+	printf("\nTotal de Operarios Inferior a 24 meses: %d\n", menosMeses);
 	media = media/i;
-	printf("Media dos Negativos: %.1f\n", media);
-	printf("Soma dos Numeros: %d\n", soma);
+	printf("Media do Tempo de Servico: %d\n", media);
+	salarioMaior = (salarioMaior*100)/i;
+	printf("Porcentagem de Operarios de Salario acima de 600: %d\n", salarioMaior);
     
     return 0;
 }
