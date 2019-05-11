@@ -1,0 +1,36 @@
+#include <stdio.h>
+
+int main(){
+
+	int n1, n2, maior, menor, resultado = 0;
+	
+	printf("Digite o primeiro numero : ");
+	scanf("%d", &n1);
+	printf("Digite o segundo numero : ");
+	scanf("%d", &n2);
+	
+	if(n1 < n2){
+		maior = n2;
+		menor = n1;
+	} else{
+		maior = n1;
+		menor = n2;
+	}
+	
+	while(menor > 0){
+		resultado = resultado + maior;
+		menor--;
+	}
+		 
+	printf("Resultado: %d\n", resultado);
+	
+	return 0;
+}
+
+/*
+
+Sem utilizar a operação de multiplicação, escreva um algoritmo que multiplique dois números 
+inteiros (positivos). Ler os dois números e imprimir o resultado na forma: 
+Por exemplo: 5 * 3 = 15
+
+*/
