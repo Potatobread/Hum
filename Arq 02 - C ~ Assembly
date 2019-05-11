@@ -1,0 +1,108 @@
+#include <stdio.h>
+
+int main(){
+    int i = 0, saldo, media = 0,devedor = 0, credor = 0;
+    
+    while (i < 10){
+        printf("Digite o saldo do Cliente %d: ", i+1);
+        scanf("%d", &saldo);
+        
+        media = media + saldo;
+        
+        if(saldo < 0)
+            devedor++;
+        else 
+            credor++;
+    
+        i++;
+    }
+    
+    media = media/10;
+    printf("\nMedia de saldo dos Cliente: %d\n", media);
+    
+    devedor = (devedor*100)/10;
+    printf("Porcentagem de Devedores: %d\n", devedor);
+    
+    printf("Clientes com Saldo Credor: %d\n", credor);
+    
+    return 0;
+}
+
+
+.data
+	saldo: .asciiz "Digite o saldo do Cliente: "
+	media: .asciiz "\nMedia de saldo dos Cliente: "
+	devedor: .asciiz "\nPorcentagem de Devedores: "
+	credor: .asciiz "\nClientes com Saldo Credor: "
+
+.text
+	move $t0,$zero	# i = 0
+	move $t2,$zero	# media = 0
+	move $t3,$zero	# devedor = 0
+	move $t4,$zero	# credor = 0
+	
+	while:
+		li $v0, 4	
+		la $a0, saldo
+		syscall		
+
+		
+		li $v0,5	
+		syscall		
+		move $t1, $v0	
+		
+		add $t2, $t2, $t1	# media = media + saldo
+		
+		slti $t5, $t1, 0	
+		bne $t5, $zero, if
+		
+		addi $t4, $t4, 1	# credor++;
+		addi $t0, $t0, 1	# i++;
+		j fim		
+		
+		if:
+			addi $t3, $t3, 1	# devedor++;
+			addi $t0, $t0, 1	# i++;
+		fim:
+		
+		beq $t0, 10, final
+		j while	
+		
+		final: 	
+			div $t2,$t0	#	 	
+			mflo $s1	#	s1 = media/i
+							
+			li $v0,4		
+			la $a0,media		
+			syscall			
+		
+			li $v0,1		
+			move $a0,$s1		
+			syscall	
+			
+			# (devedor*100)/i;
+			move $t5,$zero		#  t5 = 0
+			addi $t5,$t5,100	#  t5 = t5 + 100
+			
+			mult  $t3,$t5		#  t3 * t5
+			mflo $s2		#  s2 = t3 * t5
+			
+			div $s2,$t0		#  s2 / t0
+			mflo $s1		#  s1 = s2 / t0
+
+			
+			li $v0,4		
+			la $a0, devedor
+			syscall			
+		
+			li $v0,1		
+			move $a0,$s1		
+			syscall	
+			
+			li $v0,4		
+			la $a0, credor
+			syscall			
+		
+			li $v0,1		
+			move $a0,$t4		
+			syscall					
