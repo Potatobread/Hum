@@ -1,0 +1,52 @@
+#include <stdio.h>
+
+int main(){
+    int n,f=1;
+    
+    printf("Fatorial de: ");
+    scanf("%d", &n);
+    
+    while (n > 0){    	
+    	f = f * n;
+    	n--;
+    }    
+    printf("R: %d\n", f);
+
+    return 0;
+}
+
+
+.data
+	numero: .asciiz "Fatorial do Numero: "
+	fatorial: .asciiz "\nResultado: "
+
+.text
+	li $v0, 4	
+	la $a0, numero
+	syscall		
+		
+	li $v0,5	
+	syscall		
+	move $t1, $v0	# t1 = n;
+	
+	move $t2, $zero 
+	addi $t2, $t2, 1
+	
+	while:
+		mult $t2,$t1
+		mflo $t2
+		
+		subi $t1,$t1,1
+		fim:
+		
+		beq $t1,$zero,final
+		j while
+		
+		final:
+			li $v0, 4	
+			la $a0, fatorial
+			syscall		
+		
+			li $v0,1		
+			move $a0,$t2		
+			syscall		
