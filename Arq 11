@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int main(){
+    
+	float h = 0, numero = 1;
+
+    while(numero != 11){
+    	h = h + (numero/(numero * numero));
+    	
+    	if(numero > 0){
+			numero = -numero;
+			numero--;
+		} else {
+			numero = -numero;
+			numero++;
+		}
+	}
+	
+	printf("H: %.4f\n", h);
+    
+    return 0;
+}
+
+/* 
+ 
+11) Faça um algoritmo para calcular e imprimir o valor de H. Obs.: utilizar apenas 1 (um) Para. H = 1/1 - 2/4 + 3/9 - 4/16 + 5/25 ....- 10/100
+ 
+*/  
