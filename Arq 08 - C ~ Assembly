@@ -1,0 +1,93 @@
+#include <stdio.h>
+
+int main(){
+    
+    int i = 0;
+    int n, pares = 0, impares = 0;
+
+    
+    while(i < 10){
+    	printf("%d - Numero: ", i+1);
+    	scanf("%d", &n);
+    	
+    	if(n % 2 == 0){
+			if(n > 0)
+				pares++;
+		} else
+			impares = impares + n;
+		
+		i++;
+	}
+	
+
+	printf("\nSoma dos Numeros Impares: %d\n", impares);
+	printf("Quantidade de Numeros Pares(Zero Não Incluso): %d\n", pares);
+    
+    return 0;
+}
+
+
+.data
+	numero: .asciiz "Numero: "
+	impares: .asciiz "\nSoma dos Numeros Impares: "
+	pares: .asciiz "\nQuantidade de Numeros Pares(Zero não Incluso): "
+	
+.text
+	move $t0, $zero		# i = 0
+	move $t2, $zero		# pares = 0
+	move $t3, $zero 	# impares = 0
+	
+	
+	while:
+		li $v0, 4	
+		la $a0, numero
+		syscall		
+
+		li $v0,5	
+		syscall		
+		move $t1, $v0	
+		#---------------
+		li $t4,2
+		div $t1, $t4
+		mfhi $s1
+		beq $s1, $zero, if
+		
+		add $t3, $t3, $t1
+		addi $t0, $t0, 1
+		
+		j fim
+		
+		if:
+			slti $t4, $t1, 0
+			beq $t4, $zero, ifPar
+			
+			addi $t0, $t0, 1
+		
+			j fim
+			
+			ifPar:
+				addi $t2, $t2, 1
+				
+				addi $t0, $t0, 1
+		
+		fim:
+		
+		beq $t0, 10, final
+		j while	
+		
+		final: 				
+			li $v0, 4
+			la $a0, impares
+			syscall 
+			
+			li $v0, 1
+			move $a0, $t3
+			syscall
+			#---------------
+			li $v0, 4
+			la $a0, pares
+			syscall 
+			
+			li $v0, 1
+			move $a0, $t2
+			syscall
