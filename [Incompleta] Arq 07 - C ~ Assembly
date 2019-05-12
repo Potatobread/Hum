@@ -1,0 +1,128 @@
+#include <stdio.h>
+
+int main(){
+    
+    int i = 0;
+	int mediaIdade = 0, idade, contAltura = 0, contIdade = 0;
+	float mediaAltura = 0, altura;
+    
+    while(i < 10){
+    	printf("Aluno %d - Idade: ", i+1);
+    	scanf("%d", &idade);
+    	printf("Aluno %d - Altura: ", i+1);
+    	scanf("%f", &altura);
+    	
+    	if(altura < 1.70){
+			mediaIdade = mediaIdade + idade;
+			contAltura++;
+		}	
+    	
+    	if(idade > 20){
+    		mediaAltura = mediaAltura + altura;
+    		contIdade++;
+		}	
+    	
+		i++;
+	}
+	
+	mediaIdade = mediaIdade/contAltura;
+	printf("\nIdade Media dos Alunos com menos de 1.70m: %d\n", mediaIdade);
+	
+	mediaAltura = mediaAltura/contIdade;
+	printf("Altura Media dos Alunos com mais de 20 anos: %.2f\n", mediaAltura);
+    
+    return 0;
+}
+
+
+.data
+	idade: .asciiz "Aluno - Idade: "
+	altura: .asciiz "Aluno - Altura: "
+	mediaIdade: .asciiz "\nIdade Media dos alunos com menos de 1.70m: "
+	mediaAltura: .asciiz "\nAltura Media dos alunos com mais de 20 anos: "
+	alt: .float 1.70
+	
+.text
+	move $t0, $zero		# i = 0
+	move $t2, $zero		# mediaIdade = 0
+	move $t3, $zero 	# contAltura = 0
+	move $t4, $zero 	# contIdade = 0
+	
+	move $t5, $zero		#
+	mtc1.d  $t5, $f2	#  (double)mediaAltura = 0
+	cvt.s.w $f2, $f2	#
+	
+	lwc1 $f3, alt	
+	
+	while:
+		li $v0, 4	
+		la $a0, idade
+		syscall		
+
+		li $v0,5	
+		syscall		
+		move $t1, $v0	
+		
+		li $v0, 4	
+		la $a0, altura
+		syscall		
+
+		li $v0,7
+		syscall
+		
+		#---------------
+		c.lt.d $f0, $f3
+		bc1t ifAltura
+		
+		slti $t5, $t1, 20
+		beq $t5, $zero, ifIdade	
+
+		addi $t0, $t0, 1
+		
+		j fim
+		
+		ifAltura:
+			add $t2, $t2, $t1
+			addi $t3, $t3, 1
+			
+			slti $t5, $t1, 20
+			beq $t5, $zero, ifIdade	
+			
+			addi $t0, $t0, 1
+		
+			j fim
+			
+			ifIdade:
+				add.d $f2, $f2, $f0	
+				addi $t4, $t4, 1
+				
+				addi $t0, $t0, 1
+		
+		fim:
+		
+		beq $t0, 10, final
+		j while	
+		
+		final: 	
+			div $t5, $t2, $t3
+			
+			li $v0, 4
+			la $a0, mediaIdade
+			syscall 
+			
+			li $v0, 1
+			move $a0, $t5
+			syscall
+			#---------------
+			mtc1.d  $t4, $f4
+			cvt.s.w $f4, $f4
+			
+			div.d $f3, $f2, $f4
+			
+			li $v0, 4
+			la $a0, mediaAltura
+			syscall 
+			
+			li $v0, 3
+			mov.d $f12, $f3
+			syscall
