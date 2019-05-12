@@ -50,7 +50,8 @@ int main(){
 	move $t3, $zero 	# negativos = 0
 	move $t4, $zero 	# nulos = 0
 	move $t5, $zero		# soma = 0
-	move $t6, $zero		# media = 0	
+	move $t6, $zero		# media = 0
+		
 	
 	while:
 		li $v0, 4	
@@ -96,7 +97,7 @@ int main(){
 			li $v0, 1
 			move $a0, $t2
 			syscall
-			
+			#---------------
 			li $v0, 4
 			la $a0, negativos
 			syscall 
@@ -104,7 +105,7 @@ int main(){
 			li $v0, 1
 			move $a0, $t3
 			syscall
-			
+			#---------------
 			li $v0, 4
 			la $a0, nulos
 			syscall 
@@ -112,18 +113,22 @@ int main(){
 			li $v0, 1
 			move $a0, $t4
 			syscall
+			#---------------
+			mtc1 $t6, $f1		# Converte (int)t6 em (float)f1
+			cvt.s.w $f1, $f1	#	
+			mtc1 $t0, $f2		# Converte (int)t0 em (float)f2
+			cvt.s.w $f2, $f2	#
 			
-			div $t6,$t0
-			mflo $s1
+			div.s $f3, $f1, $f2
 							
 			li $v0, 4		
 			la $a0, media		
 			syscall			
 		
-			li $v0, 1
-			move $a0, $s1
+			li $v0, 2
+			mov.s $f12, $f3
 			syscall
-			
+			#---------------
 			li $v0, 4		
 			la $a0, soma
 			syscall			
