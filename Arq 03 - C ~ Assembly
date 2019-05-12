@@ -29,8 +29,7 @@ int main(){
 	syscall		
 	move $t1, $v0	# t1 = n;
 	
-	move $t2, $zero 
-	addi $t2, $t2, 1
+	li $t2, 1
 	
 	while:
 		mult $t2,$t1
