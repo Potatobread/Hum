@@ -24,16 +24,16 @@ int main(){
 
 .data
 	h: .asciiz "\nH: "
-	float1: .float 0.0
-	float2: .float 1.0
-	float3: .float 11.0
+	zero: .float 0.0
+	um: .float 1.0
+	float1: .float 11.0
 	
 .text
-	l.s $f1, float1
-	l.s $f2, float2
-	l.s $f3, float2
-	l.s $f4, float2
-	l.s $f7, float3
+	l.s $f1, zero
+	l.s $f2, um
+	l.s $f3, um
+	l.s $f4, um
+	l.s $f7, float1
 	
 	# $f1 = h = 0
 	# $f2 = numero = 1
