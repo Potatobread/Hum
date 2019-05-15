@@ -126,5 +126,5 @@ int main(){
 			syscall 
 			
 			li $v0, 2
-			mov.d $f12, $f2
+			mov.s $f12, $f2
 			syscall
