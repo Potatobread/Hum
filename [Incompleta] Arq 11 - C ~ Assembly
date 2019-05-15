@@ -2,7 +2,7 @@
 
 int main(){
     
-	float h = 0, numero = 1;
+    float h = 0, numero = 1;
 
     while(numero != 11){
     	h = h + (numero/(numero * numero));
@@ -23,63 +23,53 @@ int main(){
 
 
 .data
-	msg: .asciiz "H: "
-	zero: .double 0.00
-	um: .double 1.00
+	h: .asciiz "\nH: "
+	float1: .float 0.0
+	float2: .float 1.0
+	float3: .float 11.0
 	
 .text
-	move $t0, $zero
-	li $t1, 1
+	l.s $f1, float1
+	l.s $f2, float2
+	l.s $f3, float2
+	l.s $f4, float2
+	l.s $f7, float3
 	
-	#mtc1 $t0, $f1		#  h = 0.00
-	#cvt.d.w $f1, $f1	#
+	# $f1 = h = 0
+	# $f2 = numero = 1
+	# $f3 = 1
+	# $f4 = 0
+	# $f7 = 11.0
 	
-	lwc1 $f1, zero
-	lwc1 $f2, um
-	
-	#mtc1 $t1, $f2		#  n = 1.00
-	#cvt.d.w $f2, $f2	#
+	while: 
+		mul.s $f5, $f2, $f2
+		div.s $f6, $f2, $f5
+		add.s $f1, $f1, $f6
+			
+		c.lt.s $f2, $f4
+		bc1f if
 		
-	while:
-		mul.d $f0,$f2,$f2
-		
-		div.d $f3,$f2,$f0
-		
-		add.d $f1, $f1, $f3
-		
-		mtc1 $t0, $f4
-		cvt.d.w $f4, $f4
-		mtc1 $t1, $f5
-		cvt.d.w $f5, $f5
-		
-		c.lt.d $f2, $f4
-		bc1t if
-		
-		sub.d $f2, $f4, $f2
-		add.d $f2, $f2, $f5
+		neg.s $f2,$f2
+		add.s $f2, $f2, $f3
 		
 		j fim
 		
 		if:
-			sub.d $f2, $f4, $f2
-			sub.d $f2, $f2, $f5
-			
-		fim:
+			neg.s $f2,$f2
+		        sub.s $f2, $f2, $f3
 		
-		li $t2, 10
-		mtc1 $t2, $f6
-		cvt.d.w $f5, $f5
+		fim:        
 		
-		c.lt.d $f2, $f5
-		bc1f final
-		
-		j while	
-		
-		final: 				
-			li $v0, 4
-			la $a0, msg
-			syscall 
-			
-			li $v0, 3
-			mov.d  $f12, $f1
-			syscall
+	c.lt.s $f2, $f7
+	bc1f final
+	
+	j while
+	
+	final:
+		li $v0, 4
+		la $a0, h
+		syscall
+	
+		li $v0, 2
+		mov.s $f12, $f1
+		syscall
