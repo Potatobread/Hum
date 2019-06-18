@@ -13,34 +13,38 @@ public class GreedyAlgorithm {
 	
 	
 	static ArrayList<VertexInfo> createVertices(ArrayList<Edge> edges, int size, int order){
+		
 		ArrayList<VertexInfo> vertices = new ArrayList<VertexInfo>();
-		VertexInfo v = new VertexInfo();
 		
 		for(int i = 0; i < order; i++) {
+			VertexInfo v = new VertexInfo();
 			v.setState(noGrafo);
 			v.setDegree(0);
 			vertices.add(v);
 		}
 		for(int i = 0; i < size; i++) {
-			v = vertices.get(edges.get(i).getFirst());
-			v.setDegree(v.getDegree()+1);
-			vertices.set(edges.get(i).getFirst(), v);
+			VertexInfo vert = new VertexInfo();
+			
+			vert = vertices.get(edges.get(i).getFirst());
+			vert.setDegree(vert.getDegree()+1);
+			vertices.set(edges.get(i).getFirst(), vert);
 				
-			v = vertices.get(edges.get(i).getSecond());
-			v.setDegree(v.getDegree()+1);
-			vertices.set(edges.get(i).getSecond(), v);
+			vert = vertices.get(edges.get(i).getSecond());
+			vert.setDegree(vert.getDegree()+1);
+			vertices.set(edges.get(i).getSecond(), vert);
 		}
 		
 		return vertices;
 	}
 	
 	static int minDegreeVertex(ArrayList<VertexInfo> vertices, int order) {
+		
 		int minDegree = 0;
 		int minVertex = -1;
 		
 		for(int i = 0; i < order; i++) {
 			if(vertices.get(i).getState() == noGrafo && (minDegree == 0 || vertices.get(i).getDegree() < minDegree)) {
-				minDegree = vertices.get(i).getDegree() ;
+				minDegree = vertices.get(i).getDegree();
 				minVertex = i;
 			}
 		}
@@ -54,44 +58,36 @@ public class GreedyAlgorithm {
 		
 		for(int e = 0; e < size; e++) {
 			if(edges.get(e).getFirst() == v && vertices.get(edges.get(e).getSecond()).getState() == noGrafo) {
+				
 				vertices.get(edges.get(e).getSecond()).setDegree(vertices.get(edges.get(e).getSecond()).getDegree()-1);
+				
 			} else if(edges.get(e).getSecond() == v && vertices.get(edges.get(e).getFirst()).getState() == noGrafo) {
+				
 				vertices.get(edges.get(e).getFirst()).setDegree(vertices.get(edges.get(e).getFirst()).getDegree()-1);
+				
 			}	
 		}
 	}
 	
-	static ArrayList<Integer> createMIS(ArrayList<VertexInfo> vertices, int order, int m) {
-		ArrayList<Integer> mis = new ArrayList<Integer>();
-		m = 0;
-		
-		for(int v = 0; v < order; v++) {
-			if(vertices.get(v).getState() == noMIS) {
-				mis.add(v);
-			}
-		}
+	static void maximumIndependentSet(ArrayList<Edge> edges, int size, int order) {
 
-		return mis;
-	}
-	
-	static int maximumIndependentSet(ArrayList<Edge> edges, int size, int order, ArrayList<Integer> mis) {
-		int m = 0;
 		ArrayList<VertexInfo> vertices = new ArrayList<VertexInfo>();
 		boolean finished = false;
 		
 		vertices = createVertices(edges, size, order);
-		
+
 		while(!finished) {
 			int v = minDegreeVertex(vertices, order);
 			if(v != -1) {
 				moveVertex(vertices, order, edges, size, v, noMIS);
-				m++;
 				
 				for(int i = 0; i < size; i++) {					
 					if(edges.get(i).getFirst() == v && vertices.get(edges.get(i).getSecond()).getState() == noGrafo) {
 						moveVertex(vertices, order, edges, size, edges.get(i).getSecond(), descartado);
+						
 					} else if(edges.get(i).getSecond() == v && vertices.get(edges.get(i).getFirst()).getState() == noGrafo) {
-						moveVertex(vertices, order, edges, size, edges.get(i).getSecond(), descartado);
+						moveVertex(vertices, order, edges, size, edges.get(i).getFirst(), descartado);
+						
 					}
 				}
 			}
@@ -100,82 +96,100 @@ public class GreedyAlgorithm {
 			}
 		}
 		
-		mis = createMIS(vertices, order, m);
-		printa(vertices, order);
-		if(mis == null)
-			m = 0;
-		
-		return m;
+		MIS(vertices, order);
 	}
 	
-	static int wheelGraph(int n, ArrayList<Edge> edges) {
+	static void MIS(ArrayList<VertexInfo> vertices, int order) {
+		for(int i = 0; i < order; i++)
+			if(vertices.get(i).getState() == noMIS) {
+				System.out.printf("%d " ,i);
+			}
+	}
+	
+	static int Graph(int n, ArrayList<Edge> edges) {
 		int size = 2 * n - 2, i;
-		Edge e = new Edge();
 		
-		for(i = 0; i < n - 2; i++) {
-			e.setFirst(i);
-			e.setSecond(i + 1);
-			System.out.printf("i: %d | %d  %d\n", i, e.getFirst(), e.getSecond());
-			edges.add(e);
-			System.out.printf("i: %d | %d  %d\n", i, edges.get(i).getFirst(), edges.get(i).getSecond());
-		}
-		e.setFirst(n - 2);
-		e.setSecond(0);
-		edges.add(e);
-		System.out.printf("\ni: %d | %d  %d\n\n", i, edges.get(i).getFirst(), edges.get(i).getSecond());
-		for(i = 0; i < n - 1; i++) {
-			e.setFirst(i);
-			e.setSecond(n - 1);
-			System.out.printf("i: %d | %d  %d\n", i, e.getFirst(), e.getSecond());
-			edges.add(e);
-			System.out.printf("i: %d | %d  %d\n", i, edges.get(i).getFirst(), edges.get(i).getSecond());
-		}
-		System.out.printf("\n\n\n");
-		for(i = 0; i < size; i++) {
-			System.out.printf("i: %d | %d  %d\n", i, edges.get(i).getFirst(), edges.get(i).getSecond());
+		int mat[][] = new int[n][n];
+		
+		mat[0][0] = 0;
+		mat[0][1] = 1;
+		mat[0][2] = 0;
+		mat[0][3] = 0;
+		mat[0][4] = 0;
+		mat[0][5] = 1;
+		mat[0][6] = 1;
+		
+		mat[1][0] = 1;
+		mat[1][1] = 0; 
+		mat[1][2] = 1;
+		mat[1][3] = 0;
+		mat[1][4] = 0;
+		mat[1][5] = 0;
+		mat[1][6] = 1;			
+			
+		mat[2][0] = 0;
+		mat[2][1] = 1;
+		mat[2][2] = 0;
+		mat[2][3] = 1; 
+		mat[2][4] = 0;
+		mat[2][5] = 0;
+		mat[2][6] = 1;
+		
+		mat[3][0] = 0;
+		mat[3][1] = 0;
+		mat[3][2] = 1;
+		mat[3][3] = 0;
+		mat[3][4] = 1;
+		mat[3][5] = 0;
+		mat[3][6] = 1;
+													
+		mat[4][0] = 0;
+		mat[4][1] = 0;
+		mat[4][2] = 0;
+		mat[4][3] = 1;
+		mat[4][4] = 0;
+		mat[4][5] = 1;
+		mat[4][6] = 1;
+		
+		mat[5][0] = 1;
+		mat[5][1] = 0;
+		mat[5][2] = 0;
+		mat[5][3] = 0;
+		mat[5][4] = 1;
+		mat[5][5] = 0;
+		mat[5][6] = 1;
+		
+		mat[6][0] = 1;
+		mat[6][1] = 1;
+		mat[6][2] = 1;
+		mat[6][3] = 1;
+		mat[6][4] = 1;
+		mat[6][5] = 1;
+		mat[6][6] = 0;
+		
+		for(i = 0; i < n; i++) {
+			for(int j = 0; j < n; j++) {
+				if(mat[i][j] == 1) {
+					mat[j][i] = 0;
+					Edge e = new Edge();
+					e.setFirst(i);
+					e.setSecond(j);
+					edges.add(e);
+				}
+			}
 		}
 		
 		return size;
 	}
-	/*
-	static void printaWheelGraph(ArrayList<Edge> edges, int size) {
-		for(int i = 0; i < size; i++) {
-			System.out.printf("i: %d | %d  %d\n", i, edges.get(i).getFirst(), edges.get(i).getSecond());
-		}
-	}
-	*/
-	static void printMIS(ArrayList<Integer> mis, int m) {
-		for(int x : mis) {
-			System.out.printf("%d ", x);
-		}
-		System.out.printf("\n");
-	}	
 	
-	static void printa(ArrayList<VertexInfo> vertices, int order) {
-		int mis[] = new int[order];
-		int count = 0;
-		
-		for(int v = 0; v < order; v++) {
-			if(vertices.get(v).getState() == noMIS) {
-				mis[v] = v+1;
-				System.out.printf("%d ", mis[v]);
-			}
-		}
-		
-	}
 	
 	public static void main(String[] args) {
 		int order = 7;
 		
-		ArrayList<Integer> mis = new ArrayList<Integer>();
 		ArrayList<Edge> edges = new ArrayList<Edge>();
 		
-		int size = wheelGraph(order, edges);
-		
-		//printaWheelGraph(edges, size);
-		
-		int m = maximumIndependentSet(edges, size, order, mis);
-		
-		printMIS(mis, m);
+		int size = Graph(order, edges);
+						
+		maximumIndependentSet(edges, size, order);
 	}
 }
